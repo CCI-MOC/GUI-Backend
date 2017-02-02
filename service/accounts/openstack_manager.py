@@ -68,7 +68,7 @@ class AccountDriver(BaseAccountDriver):
         is_v3 = '3' in keystone_auth_version
         version_prefix = "/v2.0" if is_v2 else '/v3'
         #auth_url = all_creds.get('auth_url', '<AUTH URL MISSING>') + version_prefix
-        admin_url = all_creds.get('admin_url', '<ADMIN URL MISSING>') + version_prefix
+        admin_url = all_creds.get('admin_url', '<ADMIN URL MISSING>').replace('/v2.0/tokens', '') + version_prefix
         export_data = {
             "OS_REGION_NAME": region_name,
             "OS_AUTH_URL": admin_url,
@@ -403,10 +403,22 @@ class AccountDriver(BaseAccountDriver):
         return keypair
 
     def shared_images_for(self, image_id):
-        projects = []
+        acct_driver = None
+
         shared_with = self.image_manager.shared_images_for(
             image_id=image_id)
-        projects = [self.get_project_by_id(member.member_id)
+
+	if getattr(settings, "REPLICATION_PROVIDER_LOCATION"):
+            from core.models import Provider
+            from service.driver import get_account_driver
+            provider = Provider.objects.get(location=settings.REPLICATION_PROVIDER_LOCATION)
+            acct_driver = get_account_driver(provider)
+            if not acct_driver:
+                raise Exception("Cannot create account_driver for %s" % provider)
+        else:
+            acct_driver = self
+
+        projects = [acct_driver.get_project_by_id(member.member_id)
                     for member in shared_with]
         return projects
 
