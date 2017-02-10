@@ -19,7 +19,7 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
     # Flags
     username = serializers.CharField(write_only=True)
     token = serializers.CharField(write_only=True)
-    project_name = serializers.CharField(write_only=True)
+    project_name = serializers.CharField(required=False,allow_null=True)
     provider = serializers.UUIDField(format='hex_verbose', write_only=True)
     identity_uuid = serializers.CharField(source='uuid', read_only=True)
 
