@@ -27,6 +27,10 @@ class Project(models.Model):
     owner = models.ForeignKey(Group, related_name="projects")
     applications = models.ManyToManyField(Application, related_name="projects",
                                           blank=True)
+    #specfic to openstack
+    os_domain_id=models.CharField(null=True,blank=True,max_length=512)
+    os_project_id=models.CharField(null=True,blank=True,max_length=512)
+
     # FIXME: Instances + Volumes are *NOT* MANYTOMANY
     instances = models.ManyToManyField(Instance, related_name="projects",
                                        blank=True)
