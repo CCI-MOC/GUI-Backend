@@ -290,8 +290,6 @@ def create_new_accounts(username, selected_provider=None):
     return identities
 
 def create_new_account_for(provider, user):
-    #Here at the MOC we do not need to create the account
-    return None
     from service.driver import get_account_driver
     existing_user_list = provider.identity_set.values_list('created_by__username', flat=True)
     if user.username in existing_user_list:

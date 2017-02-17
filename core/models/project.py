@@ -6,9 +6,6 @@ from core.models.link import ExternalLink
 from core.models.instance import Instance
 from core.models.group import Group
 from core.models.volume import Volume
-from core.query import only_current_source
-
-from threepio import logger
 
 
 class Project(models.Model):
@@ -27,9 +24,9 @@ class Project(models.Model):
     owner = models.ForeignKey(Group, related_name="projects")
     applications = models.ManyToManyField(Application, related_name="projects",
                                           blank=True)
-    #specfic to openstack
-    os_domain_id=models.CharField(null=True,blank=True,max_length=512)
-    os_project_id=models.CharField(null=True,blank=True,max_length=512)
+    # specfic to openstack
+    os_domain_id = models.CharField(null=True, blank=True, max_length=512)
+    os_project_id = models.CharField(null=True, blank=True, max_length=512)
 
     # FIXME: Instances + Volumes are *NOT* MANYTOMANY
     instances = models.ManyToManyField(Instance, related_name="projects",
@@ -37,8 +34,7 @@ class Project(models.Model):
     # FIXME: Instances + Volumes are *NOT* MANYTOMANY
     volumes = models.ManyToManyField(Volume, related_name="projects",
                                      blank=True)
-    links = models.ManyToManyField(ExternalLink, related_name="projects",
-                                          blank=True)
+    links = models.ManyToManyField(ExternalLink, related_name="projects", blank=True)
 
     def active_volumes(self):
         return self.volumes.model.active_volumes.filter(

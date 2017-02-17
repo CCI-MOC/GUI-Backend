@@ -62,14 +62,11 @@ Imports should be grouped into the sections below and in sorted order.
 
 See LICENSE.txt for license information
 
-## Lead
 
-+ **Edwin Skidmore <edwin@iplantcollaborative.org>**
-
-## Authors 
+## Original Authors 
 
 The following individuals who have help/helped make :cloud: great appear in alphabetic order, by surname.
-
++ **Edwin Skidmore <edwin@iplantcollaborative.org>**
 + **Evan Briones <cloud-alum@iplantcollaborative.org>**
 + **Tharon Carlson <tharon@iplantcollaborative.org>**
 + **Joseph Garcia <cloud-alum@iplantcollaborative.org>**
