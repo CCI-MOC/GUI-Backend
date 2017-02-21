@@ -34,7 +34,10 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         logger.info("TokenUpdateSerializer::create called")
         identity = self._find_identity_match(data['provider'], data['username'], data.get('project_name'))
         if not identity:
-            identity = self._create_identity(data['provider'], data['username'], data.get('project_name'), data.get('token'))
+            identity = self._create_identity(data['provider'],
+                                             data['username'],
+                                             data.get('project_name'),
+                                             data.get('token'))
         logger.info("cred -> ex_force_auth_token = %s" % (data.get('token')))
         identity.update_credential(identity, 'key', data['username'], replace=True)
         identity.update_credential(identity, 'ex_force_auth_token', data.get('token'), replace=True)
@@ -52,15 +55,19 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         except KeyError:
             raise serializers.ValidationError("Invalid token passed")
         endpoint_catalog = catalog['token']['catalog']
-        nova = {}
+        compute = None
         for l in endpoint_catalog:
             if l['type'] == 'compute':
                 compute = l
+        if not compute:
+            raise serializers.ValidationError("Cannot find compute endpoint catalog")
         # need to go through the endpoints to find the public one
-        nova_url = ""
+        compute_url = None
         for ep in compute['endpoints']:
             if ep['interface'] == 'public':
                 compute_url = ep['url']
+        if not compute_url:
+            raise serializers.ValidationError("Cannot find a public compute endpoint url")
         identity.update_credential(identity, 'ex_force_base_url', compute_url, replace=True)
         identity.update_credential(identity, 'ex_tenant_name', str(project['name']))
         identity.update_credential(identity, 'ex_project_name', str(project['name']))
