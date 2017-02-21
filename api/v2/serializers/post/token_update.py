@@ -32,12 +32,12 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         logger.info("TokenUpdateSerializer::create called")
-        identity = self._find_identity_match(data['provider'], data['username'], data['project_name'])
+        identity = self._find_identity_match(data['provider'], data['username'], data.get('project_name'))
         if not identity:
-            identity = self._create_identity(data['provider'], data['username'], data['project_name'], data['token'])
-        logger.info("cred -> ex_force_auth_token = %s" % (data['token']))
+            identity = self._create_identity(data['provider'], data['username'], data.get('project_name'), data.get('token'))
+        logger.info("cred -> ex_force_auth_token = %s" % (data.get('token')))
         identity.update_credential(identity, 'key', data['username'], replace=True)
-        identity.update_credential(identity, 'ex_force_auth_token', data['token'], replace=True)
+        identity.update_credential(identity, 'ex_force_auth_token', data.get('token'), replace=True)
         identity.update_credential(identity,
                                    'ex_force_auth_url',
                                    settings.AUTHENTICATION['KEYSTONE_SERVER'],
@@ -54,14 +54,14 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         endpoint_catalog = catalog['token']['catalog']
         nova = {}
         for l in endpoint_catalog:
-            if l['name'] == 'nova':
-                nova = l
+            if l['type'] == 'compute':
+                compute = l
         # need to go through the endpoints to find the public one
         nova_url = ""
-        for ep in nova['endpoints']:
+        for ep in compute['endpoints']:
             if ep['interface'] == 'public':
-                nova_url = ep['url']
-        identity.update_credential(identity, 'ex_force_base_url', nova_url, replace=True)
+                compute_url = ep['url']
+        identity.update_credential(identity, 'ex_force_base_url', compute_url, replace=True)
         identity.update_credential(identity, 'ex_tenant_name', str(project['name']))
         identity.update_credential(identity, 'ex_project_name', str(project['name']))
         logger.info("TokenUpdateSerializer::create finished")
