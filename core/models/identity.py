@@ -220,9 +220,7 @@ class Identity(models.Model):
         # 1. Make sure that an Identity exists for the user/group+provider
         # 2. Make sure that all kwargs exist as credentials for the identity
         """
-        identity_qs = Identity.objects.filter(
-                created_by=user, provider=provider)
-
+        identity_qs = Identity.objects.filter(created_by=user, provider=provider)
         if identity_qs.count() > 1:
             raise Exception("Could not uniquely identify the identity")
         identity = identity_qs.first()
