@@ -1,27 +1,17 @@
 """
 Atmosphere api email
 """
-from django.utils.timezone import datetime
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from threepio import logger
-
 from django_cyverse_auth.decorators import api_auth_token_required
 from django_cyverse_auth.protocol.ldap import lookupEmail
 
-from core.models.provider import AccountProvider
-from core.models.volume import convert_esh_volume
-
-from service.volume import create_volume
-from service.exceptions import OverQuotaError
-
-from api.serializers import VolumeSerializer
-from api import failure_response, invalid_creds
+from api import failure_response
 
 from web.emails import feedback_email, quota_request_email, support_email
+
 
 class Feedback(APIView):
     """
@@ -33,11 +23,11 @@ class Feedback(APIView):
         Creates a new feedback email and sends it to admins
         """
         data = request.data
-        required = ['message',]
+        required = ['message']
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)
-        #Pass arguments
+        # Pass arguments
         user = request.user
         message = data['message']
         user_email = lookupEmail(user.username)
@@ -59,7 +49,7 @@ class QuotaEmail(APIView):
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)
-        #Pass arguments
+        # Pass arguments
         username = request.user.username
         quota = data['quota']
         reason = data['reason']
@@ -77,7 +67,7 @@ class SupportEmail(APIView):
         Creates a new support email and sends it to admins
         """
         data = request.data
-        required = ['message','subject']
+        required = ['message', 'subject']
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)
@@ -91,7 +81,7 @@ def valid_post_data(data, required_keys):
     """
     Return any missing required post key names.
     """
-    return [key for key in required_keys if not key in data]
+    return [key for key in required_keys if key not in data]
 
 
 def keys_not_found(missing_keys):

@@ -1,15 +1,13 @@
-"""
-The Allocation Engine --
-
-Takes as input a Warlock-Defined 'Allocation' Object.
-Returns as output the amount of allocation consumed.
-
-TODO: Refactor #1 - have one AllocationResult PER INSTANCE so that each can be
-      individually evaluated, printed
-
-    #TODO: Do we have rules that 'use time' that are NOT
-    # directed at instances? (Global?)
-"""
+# The Allocation Engine --
+#
+# Takes as input a Warlock-Defined 'Allocation' Object.
+# Returns as output the amount of allocation consumed.
+#
+# TODO: Refactor #1 - have one AllocationResult PER INSTANCE so that each can be
+#       individually evaluated, printed
+#
+# TODO: Do we have rules that 'use time' that are NOT
+#       directed at instances? (Global?)
 import pytz
 
 from django.utils.timezone import timedelta, datetime
@@ -48,6 +46,44 @@ def get_allocation_window(allocation,
     return window_start_date, window_end_date
 
 
+def process_allocation_rules(allocation, current_result):
+    instance_rules = []
+    # First loop - Apply all global rules.
+    #             Collect instance rules seperately.
+    for rule in allocation.rules:
+        if issubclass(rule.__class__, GlobalRule):
+            rule.apply_global_rule(allocation, current_result)
+        elif issubclass(rule.__class__, InstanceRule):
+            # Non-global rules assumed to be applied at instance-level.
+            # Keeping them seperate for now..
+            instance_rules.append(rule)
+        else:
+            raise Exception("Unknown Type of Rule: %s" % rule)
+    return instance_rules
+
+
+def process_instance_results(allocation, instance_rules, current_period, print_logs):
+    instance_results = []
+
+    for instance in allocation.instances:
+        # "Chatty" Warning - Uncomment at your own risk
+        # logger.debug("> > Calculating Instance history:%s"
+        #             % instance.identifier)
+        if not instance:
+            continue
+        history_list = _calculate_instance_history_list(
+            instance, instance_rules,
+            current_period.start_counting_date,
+            current_period.stop_counting_date,
+            print_logs=print_logs)
+        if not history_list:
+            continue
+        instance_result = InstanceResult(
+            identifier=instance.identifier, history_list=history_list)
+        instance_results.append(instance_result)
+    return instance_results
+
+
 # Main ###
 def calculate_allocation(allocation, print_logs=False):
     (window_start_date, window_end_date) = get_allocation_window(allocation)
@@ -61,18 +97,7 @@ def calculate_allocation(allocation, print_logs=False):
         logger.debug(
             "New AllocationResult, Start On & (End On): %s (%s)"
             % (current_result.window_start, current_result.window_end))
-    instance_rules = []
-    # First loop - Apply all global rules.
-    #             Collect instance rules seperately.
-    for rule in allocation.rules:
-        if issubclass(rule.__class__, GlobalRule):
-            rule.apply_global_rule(allocation, current_result)
-        elif issubclass(rule.__class__, InstanceRule):
-            # Non-global rules assumed to be applied at instance-level.
-            # Keeping them seperate for now..
-            instance_rules.append(rule)
-        else:
-            raise Exception("Unknown Type of Rule: %s" % rule)
+    instance_rules = process_allocation_rules(allocation, current_result)
     time_forward = timedelta(0)
     for current_period in current_result.time_periods:
         if current_result.carry_forward and time_forward:
@@ -85,25 +110,10 @@ def calculate_allocation(allocation, print_logs=False):
                              % current_period.total_credit)
         # Second loop - Go through all the instances and apply
         #              the specific rules (This loop relates to time USED)
-        instance_results = []
-
-        for instance in allocation.instances:
-            # "Chatty" Warning - Uncomment at your own risk
-            # logger.debug("> > Calculating Instance history:%s"
-            #             % instance.identifier)
-            if not instance:
-                continue
-            history_list = _calculate_instance_history_list(
-                instance, instance_rules,
-                current_period.start_counting_date,
-                current_period.stop_counting_date,
-                print_logs=print_logs)
-            if not history_list:
-                continue
-            instance_result = InstanceResult(
-                identifier=instance.identifier, history_list=history_list)
-            instance_results.append(instance_result)
-
+        instance_results = process_instance_results(allocation,
+                                                    instance_rules,
+                                                    current_period,
+                                                    print_logs)
         if print_logs:
             logger.debug("> > Instance history Results:")
             for instance_result in instance_results:

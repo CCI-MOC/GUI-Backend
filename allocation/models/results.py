@@ -142,7 +142,7 @@ class TimePeriodResult(object):
         difference = self.total_credit - total_runtime
         is_over = difference <= timedelta(0)
         if is_over:
-            #Absolute values required..
+            # Absolute values required..
             difference = -difference
         return (is_over, difference)
 
@@ -265,7 +265,8 @@ class AllocationResult():
                 total_diff_overage += difference
             else:
                 total_diff_credit += difference
-            #Keep your math in order -- dealing with absvalues (and -timedelta means something else)!
+            # Keep your math in order -- dealing with absvalues
+            #   (and -timedelta means something else)!
             if total_diff_overage > total_diff_credit:
                 over_allocation = True
                 total_diff = total_diff_overage - total_diff_credit
@@ -333,11 +334,10 @@ class AllocationResult():
         time_periods = []
         current_period = TimePeriodResult(self.window_start, None)
 
-        key_fn = lambda credit: (credit.increase_date,
-                                 AllocationResult._sort_credit_type(credit))
-
         # NOTE: This is sorted! We can guarantee order!
-        for allocation_credit in sorted(self.allocation.credits, key=key_fn):
+        for allocation_credit in sorted(self.allocation.credits,
+                                        key=lambda credit: (credit.increase_date,
+                                                            AllocationResult._sort_credit_type(credit))):
             # Sanity Checks..
             if allocation_credit.increase_date < self.window_start:
                 raise ValueError(

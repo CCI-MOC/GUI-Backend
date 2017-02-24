@@ -11,6 +11,7 @@ from allocation.models import Instance as AllocInstance
 
 from threepio import logger
 
+
 class PythonAllocationStrategy(object):
 
     """
