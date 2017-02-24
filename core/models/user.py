@@ -234,7 +234,7 @@ def get_default_identity(username, provider=None):
         from core.models.group import get_user_group
         group = get_user_group(username)
         if not group or not group.current_identities.all().count():
-            logger.info("Cannot find group for user: %s" % username)
+            logger.info("Cannot find the group for user: %s" % username)
             return None
         identities = group.current_identities.all()
         if provider:
