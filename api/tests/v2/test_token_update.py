@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase, APIRequestFactory, force_authentica
 from api.tests.factories import UserFactory, AnonymousUserFactory, ProviderFactory
 from api.v2.views import TokenUpdateViewSet, IdentityViewSet, CredentialViewSet
 
+
 class TokenUpdateTests(APITestCase):
     def setUp(self):
         self.anonymous_user = AnonymousUserFactory()
@@ -31,7 +32,9 @@ class TokenUpdateTests(APITestCase):
         response = self.view(request)
         self.assertTrue(response.status_code == 400)
         self.assertTrue('provider' in response.data)
-        self.assertTrue("not a valid UUID" in response.data['provider'][0], "API returned unexpected error message %s" % response.data['provider'][0])
+        self.assertTrue("not a valid UUID" in response.data['provider'][0],
+                        "API returned unexpected error message %s"
+                        % response.data['provider'][0])
 
     def test_valid_data_token_update(self):
         factory = APIRequestFactory()

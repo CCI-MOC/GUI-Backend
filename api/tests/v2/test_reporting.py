@@ -1,11 +1,12 @@
 import json
-from unittest import skip, skipUnless
+from unittest import skip
 
 from django.core.urlresolvers import reverse
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 
 from api.tests.factories import UserFactory, AnonymousUserFactory
 from api.v2.views import ReportingViewSet
+from test_utils.comparison_utils import dict_eq_
 from core.models import AtmosphereUser
 
 
@@ -26,23 +27,24 @@ class ReportingTests(APITestCase):
         self.user = UserFactory.create()
         self.view = ReportingViewSet.as_view({'get': 'list'})
 
-    #def test_long_history_pull_excel_file(self):
-    #    """Will only work with a correct database."""
-    #    factory = APIRequestFactory()
-    #    url = '/api/v2/reporting?format=xlsx&start_date=2015-01-01&end_date=2017-01-28&provider_id=4&provider_id=5&provider_id=6'
-    #    request = factory.get(url)
-    #    sanity_user = AtmosphereUser.objects.get_by_natural_key('sgregory')
-    #    force_authenticate(request, user=sanity_user)
-    #    response = self.view(request)
-    #    self.assertEquals(response.status_code, 200)
-    #    self.assertEquals(response.accepted_media_type, 'application/vnd.ms-excel')
-    #    with open('/opt/dev/atmosphere/reporting.xlsx','wb') as reporting_file:
-    #        for chunk in response.rendered_content:
-    #            reporting_file.write(chunk)
-    #        reporting_file.flush()
-    #    return
+    def test_long_history_pull_excel_file(self):
+        """Will only work with a correct database."""
+        factory = APIRequestFactory()
+        url = '/api/v2/reporting?format=xlsx&start_date=2015-01-01&'\
+              'end_date=2017-01-28&provider_id=4&provider_id=5&provider_id=6'
+        request = factory.get(url)
+        sanity_user = AtmosphereUser.objects.get_by_natural_key('sgregory')
+        force_authenticate(request, user=sanity_user)
+        response = self.view(request)
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.accepted_media_type, 'application/vnd.ms-excel')
+        with open('/opt/dev/atmosphere/reporting.xlsx', 'wb') as reporting_file:
+            for chunk in response.rendered_content:
+                reporting_file.write(chunk)
+            reporting_file.flush()
+        return
 
-    #@skipUnless(contains_user('test-julianp'), 'The database does not contain the user test-julianp')
+    # @skipUnless(contains_user('test-julianp'), 'The database does not contain the user test-julianp')
     @skip('skip for now')
     def test_a_sanity_check(self):
         """Will only work with a correct database.

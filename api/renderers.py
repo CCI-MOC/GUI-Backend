@@ -17,17 +17,19 @@ class PandasExcelRenderer(CSVRenderer):
 
     def render(self, data, media_type=None, renderer_context={}):
         filename = renderer_context.get('filename', 'workbook.xlsx')
-        # Hard-coded headers_ordering required to force an explicit ordering, otherwise headers are sorted by key-name
+        # Hard-coded headers_ordering required to force an explicit ordering,
+        #   otherwise headers are sorted by key-name
         headers_ordering = renderer_context.get('headers_ordering', None)
         table_gen = self.tablize(data, header=headers_ordering)
         table = [r for r in table_gen]
         headers = table.pop(0)
         raw_dataframe = pd.DataFrame(table, columns=headers)
-        #Save to StringIO
+        # Save to StringIO
         sio = StringIO()
         writer = pd.ExcelWriter(sio, engine='xlsxwriter')
         if 'excel_writer_hook' not in renderer_context:
-            raise Exception("Implementation error -- Using PandasExcelRenderer without including 'excel_writer_hook' in renderer_context")
+            raise Exception("Implementation error -- Using PandasExcelRenderer "
+                            "without including 'excel_writer_hook' in renderer_context")
 
         callback = renderer_context.get('excel_writer_hook')
         writer = callback(raw_dataframe, writer)
@@ -36,7 +38,7 @@ class PandasExcelRenderer(CSVRenderer):
         sio.seek(0)
         workbook = sio.getvalue()
         response = StreamingHttpResponse(workbook, content_type='application/vnd.ms-excel')
-        #FIXME: This doesn't... actually.. work. Filename == pathname.
+        # FIXME: This doesn't... actually.. work. Filename == pathname.
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         return response
 

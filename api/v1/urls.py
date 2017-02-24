@@ -195,8 +195,8 @@ urlpatterns = format_suffix_patterns([
         views.QuotaDetail.as_view(), name='quota-detail'),
 
 
-    url(r'^version$', base_views.VersionViewSet.as_view({'get':'list'}), name='v1-atmo'),
-    url(r'^deploy_version$', base_views.DeployVersionViewSet.as_view({'get':'list'}), name='v1-deploy'),
+    url(r'^version$', base_views.VersionViewSet.as_view({'get': 'list'}), name='v1-atmo'),
+    url(r'^deploy_version$', base_views.DeployVersionViewSet.as_view({'get': 'list'}), name='v1-deploy'),
     url(r'^maintenance$',
         views.MaintenanceRecordList.as_view(),
         name='maintenance-record-list'),

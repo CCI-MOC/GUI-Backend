@@ -11,7 +11,8 @@ class OverrideLoginBackend():
     def __init__(self, *args, **kwargs):
         pass
 
-    def authenticate(self, username=None, password=None, *args, **kwargs):       # Authenticate username/password if the user exists, otherwise create it
+    # Authenticate username/password if the user exists, otherwise create it
+    def authenticate(self, username=None, password=None, *args, **kwargs):
         user = None
         try:
             user = AtmosphereUser.objects.get(username=username)
@@ -39,7 +40,8 @@ class AuthTests(APITestCase):
     @mock.patch('django_cyverse_auth.authBackends.OpenstackLoginBackend', side_effect=OverrideLoginBackend)
     def test_valid_openstack_auth(self, patch_func):
         if 'django_cyverse_auth.authBackends.OpenstackLoginBackend' not in settings.AUTHENTICATION_BACKENDS:
-            self.skipTest('django_cyverse_auth.authBackends.OpenstackLoginBackend not in settings.AUTHENTICATION_BACKENDS')
+            self.skipTest('django_cyverse_auth.authBackends.OpenstackLoginBackend '
+                          'not in settings.AUTHENTICATION_BACKENDS')
         data = {
             'username': self.username,
             'password': self.password,
@@ -55,7 +57,8 @@ class AuthTests(APITestCase):
     @override_settings(AUTHENTICATION_BACKENDS=('django_cyverse_auth.authBackends.OpenstackLoginBackend',))
     def test_invalid_openstack_auth(self):
         if 'django_cyverse_auth.authBackends.OpenstackLoginBackend' not in settings.AUTHENTICATION_BACKENDS:
-            self.skipTest('django_cyverse_auth.authBackends.OpenstackLoginBackend not in settings.AUTHENTICATION_BACKENDS')
+            self.skipTest('django_cyverse_auth.authBackends.OpenstackLoginBackend '
+                          'not in settings.AUTHENTICATION_BACKENDS')
         data = {
             'username': self.username,
             'password': self.password,
@@ -74,7 +77,8 @@ class AuthTests(APITestCase):
     @mock.patch('django_cyverse_auth.authBackends.LDAPLoginBackend', side_effect=OverrideLoginBackend)
     def test_valid_ldap_auth(self, patch_func):
         if 'django_cyverse_auth.authBackends.LDAPLoginBackend' not in settings.AUTHENTICATION_BACKENDS:
-            self.skipTest('django_cyverse_auth.authBackends.LDAPLoginBackend not in settings.AUTHENTICATION_BACKENDS')
+            self.skipTest('django_cyverse_auth.authBackends.LDAPLoginBackend '
+                          'not in settings.AUTHENTICATION_BACKENDS')
         data = {
             'username': self.username,
             'password': self.password
@@ -82,7 +86,9 @@ class AuthTests(APITestCase):
         response = self.client.post(self.auth_url, data)
         resp_data = response.data
         self.assertEquals(response.status_code, 201)
-        self.assertTrue(resp_data['username'] == self.username, "Response returned unexpected username <%s>, expected %s" % (resp_data['username'], self.username))
+        self.assertTrue(resp_data['username'] == self.username,
+                        "Response returned unexpected username <%s>, expected %s"
+                        % (resp_data['username'], self.username))
         self.assertTrue(resp_data['token'] is not None)
 
     @override_settings(AUTHENTICATION_BACKENDS=('django_cyverse_auth.authBackends.LDAPLoginBackend',))

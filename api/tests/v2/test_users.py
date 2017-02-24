@@ -2,7 +2,6 @@ from rest_framework.test import APITestCase, APIRequestFactory, force_authentica
 from api.v2.views import UserViewSet
 from api.tests.factories import UserFactory, AnonymousUserFactory
 from django.core.urlresolvers import reverse
-from core.models import AtmosphereUser as User
 
 
 class GetListTests(APITestCase):

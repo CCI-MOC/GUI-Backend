@@ -5,7 +5,6 @@ from api.tests.factories import UserFactory, AnonymousUserFactory,\
     IdentityMembershipFactory, QuotaFactory, AllocationFactory,\
     LeadershipFactory
 from django.core.urlresolvers import reverse
-from core.models import Identity
 
 
 class GetListTests(APITestCase):
@@ -25,7 +24,7 @@ class GetListTests(APITestCase):
         self.quota = QuotaFactory.create()
         self.identity = IdentityFactory.create(
             provider=self.provider,
-	    quota=self.quota,
+            quota=self.quota,
             created_by=self.user)
         self.allocation = AllocationFactory.create()
         IdentityMembershipFactory.create(
