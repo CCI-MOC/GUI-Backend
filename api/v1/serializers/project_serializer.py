@@ -32,7 +32,8 @@ class ProjectSerializer(serializers.ModelSerializer):
                                    instance_source__provider__active=True)]
 
     def __init__(self, *args, **kwargs):
-        user = get_context_user(self, kwargs)
+        # following line was: user = get_context_user(self, kwargs)
+        get_context_user(self, kwargs)
         super(ProjectSerializer, self).__init__(*args, **kwargs)
 
     class Meta:

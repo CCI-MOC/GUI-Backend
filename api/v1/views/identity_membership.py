@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from threepio import logger
 
 from core.models.group import Group
+from core.models import Identity
 from core.models import IdentityMembership as CoreIdentityMembership
-from core.query import only_current_provider
 
 from api import failure_response
 from api.v1.serializers import IdentitySerializer
@@ -51,14 +51,17 @@ class IdentityMembershipList(AuthAPIView):
         """
         # Sanity checks:
         # User is authenticated
-        user = request.user
         try:
             # User is a member of a group ( TODO: loop through all instead)
-            group = user.group_set.get(name=user.username)
             # Group has access to the identity on an active,
             # currently-running provider
-            identity = group.current_identities.get(
-                                            uuid=identity_uuid)
+            #
+            # RBB: I have just commented the following lines as it gives a
+            #      notion as to how to implement the aforemented TODO.
+            #
+            # group = user.group_set.get(name=request.user.username)
+            # identity = group.current_identities.get(
+            #                                uuid=identity_uuid)
             # All other members of the identity are visible
             id_members = CoreIdentityMembership.objects.filter(
                 identity__uuid=identity_uuid)
@@ -89,16 +92,16 @@ class IdentityMembership(AuthAPIView):
             return failure_response(
                 status.HTTP_404_NOT_FOUND,
                 "Identity does not exist.")
-        if not identity.can_share(user):
+        if not identity.can_share(request.user):
             logger.error(
                 "User %s cannot remove sharing from identity %s. "
                 "This incident will be reported"
-                % (user, identity_uuid))
+                % (request.user, identity_uuid))
             return failure_response(
                 status.HTTP_401_UNAUTHORIZED,
                 "User %s cannot remove sharing from identity %s. "
                 "This incident will be reported"
-                % (user, identity_uuid))
+                % (request.user, identity_uuid))
         group = Group.objects.get(name=group_name)
         id_member = identity.unshare(group)
         serializer = IdentitySerializer(id_member.identity)

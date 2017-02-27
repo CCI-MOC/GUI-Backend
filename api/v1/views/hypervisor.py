@@ -1,7 +1,5 @@
 import json
 
-from django.utils import timezone
-
 from rest_framework.response import Response
 
 from socket import error as socket_error
@@ -28,8 +26,6 @@ class HypervisorList(AuthAPIView):
         TODO: Cache this request
         """
         # TODO: Decide how we should pass this in (I.E. GET query string?)
-        active = False
-        user = request.user
         provider = Provider.objects.filter(uuid=provider_uuid)
         if not provider:
             return invalid_creds(provider_uuid, identity_uuid)
@@ -68,7 +64,6 @@ class HypervisorDetail(AuthAPIView):
         provider/identity)
         Update on server DB (If applicable)
         """
-        user = request.user
         provider = Provider.objects.filter(uuid=provider_uuid)
         if not provider:
             return invalid_creds(provider_uuid, identity_uuid)

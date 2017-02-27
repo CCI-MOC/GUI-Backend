@@ -44,7 +44,7 @@ class Meta(AuthAPIView):
             return invalid_creds(provider_uuid, identity_uuid)
         data = add_user_urls(request, provider_uuid, identity_uuid)
         if request.user.is_staff:
-            add_staff_urls(request, provider_uuid, identity_uuid)
+            data = add_staff_urls(request, provider_uuid, identity_uuid)
         return Response(data)
 
 
@@ -53,6 +53,7 @@ def add_staff_urls(request, provider_uuid, identity_uuid):
         'request-image-list':
         reverse('api:v1:direct-machine-request-list',
                 request=request), }
+    return data
 
 
 def add_user_urls(request, provider_uuid, identity_uuid):
