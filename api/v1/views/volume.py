@@ -142,9 +142,9 @@ class VolumeSnapshot(AuthAPIView):
         # STEP 2 - Create volume from snapshot
         try:
             success, esh_volume = create_esh_volume(esh_driver, identity_uuid,
-                                                display_name, size,
-                                                description, metadata,
-                                                snapshot=snapshot)
+                                                    display_name, size,
+                                                    description, metadata,
+                                                    snapshot=snapshot)
             if not success:
                 return failure_response(
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -207,7 +207,8 @@ class VolumeSnapshotDetail(AuthAPIView):
         snapshot = esh_driver._connection.get_snapshot(snapshot_id)
         if not snapshot:
             return snapshot_not_found(snapshot_id)
-        delete_success = esh_driver._connection.ex_delete_snapshot(snapshot)
+        # TODO: set a conditional off of the return value if we are above icehouse
+        esh_driver._connection.ex_delete_snapshot(snapshot)
         # NOTE: Always false until icehouse...
         #    return failure_response(
         #        status.HTTP_400_BAD_REQUEST,
@@ -269,13 +270,15 @@ class VolumeList(AuthAPIView):
         """
         user = request.user
         try:
-            membership = IdentityMembership.objects.get(
-                identity__uuid=identity_uuid,
-                member__name=user.username)
+            # This is throwing away the membership returned just a check
+            # to see if it exists
+            IdentityMembership.objects.get(identity__uuid=identity_uuid,
+                                           member__name=user.username)
         except:
             return failure_response(
                 status.HTTP_409_CONFLICT,
-                "Identity %s is invalid -OR- User %s does not have the appropriate IdentityMembership." % (identity_uuid, user))
+                "Identity %s is invalid -OR- User %s does not have the"
+                " appropriate IdentityMembership." % (identity_uuid, user))
         try:
             driver = prepare_driver(request, provider_uuid, identity_uuid)
         except ProviderNotActive as pna:
@@ -314,8 +317,8 @@ class VolumeList(AuthAPIView):
             snapshot = None
         try:
             success, esh_volume = create_esh_volume(driver, user.username, identity_uuid,
-                                                name, size, description,
-                                                snapshot=snapshot, image=image)
+                                                    name, size, description,
+                                                    snapshot=snapshot, image=image)
         except BaseHTTPError as http_error:
             if 'Requested volume or snapshot exceed' in http_error.message:
                 return over_quota(http_error)
@@ -346,18 +349,26 @@ class Volume(AuthAPIView):
     Details of specific volume on Identity.
     """
 
+    def _check_volume(request, provider_uuid, identity_uuid):
+        # Ensure volume exists
+        try:
+            esh_driver = prepare_driver(request, provider_uuid, identity_uuid)
+        except ProviderNotActive as pna:
+            return (inactive_provider(pna), None)
+        except Exception as e:
+            return (failure_response(
+                    status.HTTP_409_CONFLICT,
+                    e.message),
+                    None)
+        return (None, esh_driver)
+
     def get(self, request, provider_uuid, identity_uuid, volume_id):
         """
         """
         user = request.user
-        try:
-            esh_driver = prepare_driver(request, provider_uuid, identity_uuid)
-        except ProviderNotActive as pna:
-            return inactive_provider(pna)
-        except Exception as e:
-            return failure_response(
-                status.HTTP_409_CONFLICT,
-                e.message)
+        (rv, esh_driver) = self._check_volume(request, provider_uuid, identity_uuid)
+        if rv:
+            return rv
 
         if not esh_driver:
             return invalid_creds(provider_uuid, identity_uuid)
@@ -374,9 +385,8 @@ class Volume(AuthAPIView):
                                     str(exc.message))
         if not esh_volume:
             try:
-                source = InstanceSource.objects.get(
-                    identifier=volume_id,
-                    provider__uuid=provider_uuid)
+                source = InstanceSource.objects.get(identifier=volume_id,
+                                                    provider__uuid=provider_uuid)
                 source.end_date = datetime.now()
                 source.save()
             except (InstanceSource.DoesNotExist, CoreVolume.DoesNotExist):
@@ -395,15 +405,10 @@ class Volume(AuthAPIView):
         """
         user = request.user
         data = request.data
-        # Ensure volume exists
-        try:
-            esh_driver = prepare_driver(request, provider_uuid, identity_uuid)
-        except ProviderNotActive as pna:
-            return inactive_provider(pna)
-        except Exception as e:
-            return failure_response(
-                status.HTTP_409_CONFLICT,
-                e.message)
+
+        (rv, esh_driver) = self._check_volume(request, provider_uuid, identity_uuid)
+        if rv:
+            return rv
 
         if not esh_driver:
             return invalid_creds(provider_uuid, identity_uuid)
@@ -443,15 +448,9 @@ class Volume(AuthAPIView):
         user = request.user
         data = request.data
 
-        # Ensure volume exists
-        try:
-            esh_driver = prepare_driver(request, provider_uuid, identity_uuid)
-        except ProviderNotActive as pna:
-            return inactive_provider(pna)
-        except Exception as e:
-            return failure_response(
-                status.HTTP_409_CONFLICT,
-                e.message)
+        (rv, esh_driver) = self._check_volume(request, provider_uuid, identity_uuid)
+        if rv:
+            return rv
 
         if not esh_driver:
             return invalid_creds(provider_uuid, identity_uuid)
@@ -543,13 +542,11 @@ class BootVolume(AuthAPIView):
             return None
 
     def post(self, request, provider_uuid, identity_uuid, volume_id=None):
-        user = request.user
         data = request.data
 
         missing_keys = valid_launch_data(data)
         if missing_keys:
             return keys_not_found(missing_keys)
-        source = None
         name = data.pop('name')
         size_id = data.pop('size')
         key_name = self._select_source_key(data)
@@ -580,17 +577,6 @@ def valid_launch_data(data):
     Return any missing required post key names.
     """
     required = ['name', 'size']
-    return [key for key in required
-            # Key must exist and have a non-empty value.
-            if key not in data or
-            (isinstance(data[key], str) and len(data[key]) > 0)]
-
-
-def valid_snapshot_post_data(data):
-    """
-    Return any missing required post key names.
-    """
-    required = ['display_name', 'volume_id', 'size']
     return [key for key in required
             # Key must exist and have a non-empty value.
             if key not in data or

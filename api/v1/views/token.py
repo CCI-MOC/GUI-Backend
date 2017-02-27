@@ -12,9 +12,6 @@ from django_cyverse_auth.models import create_token
 
 from core.models import AtmosphereUser
 
-from service.accounts.eucalyptus import AccountDriver
-
-from api.v1.serializers import ProfileSerializer
 from api.v1.views.base import AuthAPIView
 
 
@@ -32,7 +29,6 @@ class TokenEmulate(AuthAPIView):
         Create a new token in the database on behalf of 'username'
         Returns success 201 Created - Body is JSON and contains
         """
-        params = request.data
         user = request.user
         if not username:
             return Response("Username was not provided",
