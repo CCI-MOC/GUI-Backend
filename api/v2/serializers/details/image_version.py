@@ -99,7 +99,6 @@ class ImageVersionSerializer(serializers.HyperlinkedModelSerializer):
                 "Value of mem must be between 1 & 32 GB")
         return value
 
-
     def update_threshold(self, instance, validated_data):
         current_threshold = instance.get_threshold()
 

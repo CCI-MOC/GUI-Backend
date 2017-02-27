@@ -1,4 +1,4 @@
-from core.models import Application as Image, BootScript
+from core.models import Application as Image
 from rest_framework import serializers
 
 from api.v2.serializers.summaries import UserSummarySerializer
@@ -28,6 +28,7 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:application-detail',
     )
+
     class Meta:
         model = Image
         fields = (

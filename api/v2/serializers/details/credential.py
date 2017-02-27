@@ -24,11 +24,14 @@ class CredentialSerializer(serializers.HyperlinkedModelSerializer):
         """
         parse_result = urlparse(url_value)
         if not parse_result.scheme:
-            raise serializers.ValidationError("Key: %s expects Valid URL - Value %s throws Error: Missing scheme (http(s)://)" % (key, url_value))
+            raise serializers.ValidationError(
+                "Key: %s expects Valid URL - Value %s throws Error: Missing"
+                " scheme (http(s)://)" % (key, url_value))
         return url_value
 
     def validate(self, data):
-        # Object-level validation of the key to ensure value 'makes sense' and that only credentials understood by Atmosphere are added.
+        # Object-level validation of the key to ensure value 'makes sense' and that
+        # only credentials understood by Atmosphere are added.
         if data['key'] in ['admin_url', 'auth_url']:
             self.validate_url(data['key'], data['value'])
         elif data['key'] in ['key', 'secret', 'ex_tenant_name', 'ex_project_name', 'router_name']:
@@ -43,4 +46,3 @@ class CredentialSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Credential
         fields = ('id', 'uuid', 'url', 'identity', 'key', 'value')
-

@@ -22,6 +22,7 @@ class ImageBookmarkSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:applicationbookmark-detail',
     )
+
     def validate_image(self, value):
         """
         Check that the image has not already been bookmarked
@@ -29,7 +30,9 @@ class ImageBookmarkSerializer(serializers.HyperlinkedModelSerializer):
         user = self.context['request'].user
 
         try:
-            existing_image_bookmark = ImageBookmark.objects.get(
+            # Throwing away value just to check to see if it exists as
+            # a valid object in the database
+            ImageBookmark.objects.get(
                 application=value,
                 user=user)
             raise serializers.ValidationError("Image already bookmarked")

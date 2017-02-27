@@ -1,8 +1,6 @@
-from decimal import Decimal
 from rest_framework import serializers
 
 from core.models.allocation_source import AllocationSource, AllocationSourceSnapshot, UserAllocationSnapshot
-from core.models.user import AtmosphereUser
 
 
 class AllocationSourceSerializer(serializers.HyperlinkedModelSerializer):
