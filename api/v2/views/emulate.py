@@ -33,7 +33,7 @@ class TokenEmulateViewSet(ViewSet):
                 remote_ip=self.request.META['REMOTE_ADDR'],
                 token_expire=expireDate,
                 issuer="DRF-EmulatedToken-%s" % user.username)
-        serialized_data = TokenSerializer(new_token, context={'request':self.request}).data
+        serialized_data = TokenSerializer(new_token, context={'request': self.request}).data
         return Response(serialized_data, status=status.HTTP_201_CREATED)
 
 

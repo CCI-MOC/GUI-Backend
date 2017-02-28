@@ -12,6 +12,7 @@ class LicenseSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:license-detail',
     )
+
     class Meta:
         model = License
         fields = ('id', 'url', 'uuid', 'title', 'type', 'text')

@@ -70,6 +70,7 @@ class InstanceSuperSummarySerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:v2:instance-detail',
         uuid_field='provider_alias'
     )
+
     class Meta:
         model = Instance
         fields = (

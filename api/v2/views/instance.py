@@ -2,18 +2,16 @@ from api.v2.serializers.details import InstanceSerializer, InstanceActionSeriali
 from api.v2.serializers.post import InstanceSerializer as POST_InstanceSerializer
 from api.v2.views.base import AuthViewSet
 from api.v2.views.mixins import MultipleFieldLookup
-from api.v2.views.instance_action import InstanceActionViewSet
 
 from core.exceptions import ProviderNotActive
-from core.models import Instance, Identity, AllocationSource, EventTable
+from core.models import Instance, Identity, AllocationSource
 from core.models.boot_script import _save_scripts_to_instance
 from core.models.instance import find_instance
 from core.models.instance_action import InstanceAction
 from core.query import only_current
 
 from rest_framework import status
-from rest_framework import renderers
-from rest_framework.decorators import detail_route, renderer_classes
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from service.instance import (
@@ -168,7 +166,7 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
         identity = Identity.objects.get(uuid=identity_uuid)
         try:
             # Test that there is not an attached volume BEFORE we destroy
-            #NOTE: Although this is a task we are calling and waiting for response..
+            # NOTE: Although this is a task we are calling and waiting for response..
             core_instance = destroy_instance(
                 user,
                 identity_uuid,
@@ -227,45 +225,38 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
             raise Exception(error_map)
         return
 
-    def create(self, request):
-        user = request.user
-        data = request.data
+    def _generate_inital_response(self, user, identity, data):
         try:
-            self.validate_input(user, data)
-        except Exception as exc:
-            return failure_response(
-                status.HTTP_400_BAD_REQUEST,
-                exc.message)
-
-        # Create a mutable dict and start modifying.
-        data = data.copy()
-        name = data.get('name')
-        identity_uuid = data.get('identity')
-        source_alias = data.get('source_alias')
-        size_alias = data.get('size_alias')
-        allocation_source_id = data.get('allocation_source_id')
-        boot_scripts = data.pop("scripts", [])
-        deploy = data.get('deploy')
-        extra = data.get('extra')
-        try:
-            identity = Identity.objects.get(uuid=identity_uuid)
+            # Create a mutable dict and start modifying.
+            data = data.copy()
+            name = data.get('name')
+            source_alias = data.get('source_alias')
+            size_alias = data.get('size_alias')
+            allocation_source_id = data.get('allocation_source_id')
+            boot_scripts = data.pop("scripts", [])
+            deploy = data.get('deploy')
+            extra = data.get('extra')
             allocation_source = AllocationSource.objects.get(source_id=allocation_source_id)
             core_instance = launch_instance(
-                user, identity_uuid, size_alias, source_alias, name, deploy,
+                user, identity.uuid, size_alias, source_alias, name, deploy,
                 **extra)
             # Faking a 'partial update of nothing' to allow call to 'is_valid'
             serialized_instance = InstanceSerializer(
                 core_instance, context={'request': self.request},
                 data={}, partial=True)
             if not serialized_instance.is_valid():
-                return Response(serialized_instance.errors,
-                                status=status.HTTP_400_BAD_REQUEST)
+                return(
+                    False,
+                    Response(serialized_instance.errors, status=status.HTTP_400_BAD_REQUEST)
+                )
             instance = serialized_instance.save()
             if boot_scripts:
                 _save_scripts_to_instance(instance, boot_scripts)
             instance.change_allocation_source(allocation_source)
-            return Response(
-                serialized_instance.data, status=status.HTTP_201_CREATED)
+            return(
+                True,
+                Response(serialized_instance.data, status=status.HTTP_201_CREATED)
+            )
         except UnderThresholdError as ute:
             return under_threshold(ute)
         except (OverQuotaError, OverAllocationError) as oqe:
@@ -276,6 +267,22 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
             return size_not_available(snae)
         except HypervisorCapacityError as hce:
             return over_capacity(hce)
+
+    def create(self, request):
+        user = request.user
+        data = request.data
+        try:
+            self.validate_input(user, data)
+        except Exception as exc:
+            return failure_response(
+                status.HTTP_400_BAD_REQUEST,
+                exc.message)
+        try:
+            identity_uuid = data.get('identity')
+            identity = Identity.objects.get(uuid=identity_uuid)
+            (success, response) = self._generate_initial_response(user, identity, data)
+            if not success:
+                return response
         except SecurityGroupNotCreated:
             return connection_failure(identity)
         except (socket_error, ConnectionFailure):
@@ -287,4 +294,3 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
                              "Returning 409-CONFLICT")
             return failure_response(status.HTTP_409_CONFLICT,
                                     str(exc.message))
-

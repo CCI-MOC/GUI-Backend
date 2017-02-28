@@ -1,10 +1,11 @@
 from core.models import (
     BootScript, Identity, Instance, InstanceSource,
-    Provider, ProviderMachine, Project, UserAllocationSource,
-    Size, Volume)
+    Provider, Project, UserAllocationSource,
+    Size)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from api.v2.serializers.fields.base import ReprSlugRelatedField
+from atmosphere import settings
+
 
 class InstanceSerializer(serializers.ModelSerializer):
     """
@@ -27,10 +28,18 @@ class InstanceSerializer(serializers.ModelSerializer):
     scripts = serializers.SlugRelatedField(
         slug_field="uuid", queryset=BootScript.objects.all(),
         many=True, required=False)
-    #NOTE: These 'alias' point to the 'cloud/native IDs' NOT the db-UUID!
-    #NOTE: source_alias should belong to volume.identifier or providermachine.identifier
-    source_alias = serializers.SlugRelatedField(source="source", slug_field="identifier", queryset=InstanceSource.objects.all())
-    size_alias = serializers.SlugRelatedField(source="instancestatushistory_set.size", slug_field="alias", queryset=Size.objects.all())
+    # NOTE: These 'alias' point to the 'cloud/native IDs' NOT the db-UUID!
+    # NOTE: source_alias should belong to volume.identifier or providermachine.identifier
+    source_alias = serializers.SlugRelatedField(
+        source="source",
+        slug_field="identifier",
+        queryset=InstanceSource.objects.all()
+    )
+    size_alias = serializers.SlugRelatedField(
+        source="instancestatushistory_set.size",
+        slug_field="alias",
+        queryset=Size.objects.all()
+    )
     # Optional kwargs to be inluded
     deploy = serializers.BooleanField(default=True)
     extra = serializers.DictField(required=False)
@@ -41,7 +50,8 @@ class InstanceSerializer(serializers.ModelSerializer):
         """
         Overwrite to force custom logic required before accepting data to launch an instance.
         1. check of identity prior to checking size_alias or source_alias
-        NOTE: This is required because we have identical alias' on multiple providers, so we must first filter-down based on the identity requested for launching the instance.
+        NOTE: This is required because we have identical alias' on multiple providers, so we
+              must first filter-down based on the identity requested for launching the instance.
         2. Check source_alias is either a Volume or a ProviderMachine before continuing.
         """
 
@@ -57,7 +67,8 @@ class InstanceSerializer(serializers.ModelSerializer):
         source_queryset = self.fields['source_alias'].queryset
 
         allocation_source_id = data.get('allocation_source_id')
-        #NOTE: When CyVerse uses the allocation_source feature, remove 'and 'jetstream' in settings.INSTALLED_APPS'
+        # NOTE: When CyVerse uses the allocation_source feature, remove i
+        #       'and 'jetstream' in settings.INSTALLED_APPS'
         if not allocation_source_id and 'jetstream' in settings.INSTALLED_APPS:
             raise ValidationError({
                 'allocation_source_id': 'This field is required.'
@@ -94,18 +105,18 @@ class InstanceSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """
-        As of DRF 3.2.4 This is the *ONLY* way to 'limit_choices_to' 
+        As of DRF 3.2.4 This is the *ONLY* way to 'limit_choices_to'
         or to dynamically assign a queryset based on the data passed to the serializer.
         See https://github.com/tomchristie/django-rest-framework/issues/1811
         AND https://github.com/tomchristie/django-rest-framework/issues/1985
         For a 'Future-Proof' solution.
         """
         # This is required to be passed in
-        identity_uuid = kwargs.get('data',{}).get('identity')
+        identity_uuid = kwargs.get('data', {}).get('identity')
         if not identity_uuid:
-            super (InstanceSerializer, self).__init__(*args, **kwargs)
+            super(InstanceSerializer, self).__init__(*args, **kwargs)
             return
-        #request_user = self.context['request'].user
+        # request_user = self.context['request'].user
         # These fields have querysets that are *dynamic* based on provider (uuid)
         project_f = self.fields['project']
         provider_f = self.fields['provider_uuid']
@@ -119,12 +130,12 @@ class InstanceSerializer(serializers.ModelSerializer):
         elif len(provider_queryset) > 1:
             raise Exception("Implementation Error -- Only ever expected one value here! Fix this line!")
         else:
-            #ASSERT: Queryset is EXACTLY ONE value.
+            # ASSERT: Queryset is EXACTLY ONE value.
             provider_f.queryset = provider_queryset
             provider_uuid = provider_queryset.first().uuid
             source_f.queryset = source_f.queryset.filter(provider__uuid=provider_uuid)
             size_f.queryset = size_f.queryset.filter(provider__uuid=provider_uuid)
-        super (InstanceSerializer, self).__init__(*args, **kwargs)
+        super(InstanceSerializer, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Instance
@@ -141,4 +152,3 @@ class InstanceSerializer(serializers.ModelSerializer):
             'extra',
             'allocation_source_id'
         )
-

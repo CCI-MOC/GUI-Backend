@@ -26,7 +26,9 @@ def unresolved_requests_only(fn):
     @wraps(fn)
     def wrapper(self, request, *args, **kwargs):
         instance = self.get_object()
-        staff_can_act = request.user.is_staff or request.user.is_superuser or CloudAdministrator.objects.filter(user=request.user.id).exists()
+        staff_can_act = request.user.is_staff \
+            or request.user.is_superuser \
+            or CloudAdministrator.objects.filter(user=request.user.id).exists()
         user_can_act = request.user == getattr(instance, 'created_by')
         if not (user_can_act or staff_can_act):
             message = (
@@ -143,7 +145,7 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
             if serializer.initial_data.get("admin_url"):
                 admin_url = serializer.initial_data.get("admin_url") + str(instance.id)
                 self.submit_action(instance, options={"admin_url": admin_url})
-            else: 
+            else:
                 self.submit_action(instance)
         except (core_exceptions.ProviderLimitExceeded,  # NOTE: DEPRECATED -- REMOVE SOON, USE BELOW.
                 core_exceptions.RequestLimitExceeded):
@@ -206,7 +208,10 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
     @detail_route()
     def deny(self, *args, **kwargs):
         """
-        #FIXME: Both of these actions do something similar, they also 'create and abuse' serializers. Is there a better way to handle this? Lets lok into how `create` vs `perform_create` is called in a DRF 'normal' view.
+        # FIXME: Both of these actions do something similar, they also
+        #        'create and abuse' serializers. Is there a better way
+        #        to handle this? Lets lok into how `create` vs
+        #        `perform_create` is called in a DRF 'normal' view.
         """
         request_obj = self.get_object()
         SerializerCls = self.get_serializer_class()
@@ -239,19 +244,30 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
         instance.end_date = timezone.now()
         instance.save()
 
-    def perform_update(self, serializer):
-        """
-        Updates the request and performs any update actions.
-        """
+    def _get_idenity_id(self, serializer):
         # NOTE: An identity could possible have multiple memberships
         # It may be better to directly take membership rather than an identity
         identity = serializer.initial_data.get('identity', {})
-        membership = None
-
         if isinstance(identity, dict):
             identity_id = identity.get("id", None)
         else:
             identity_id = identity
+        return identity_id
+
+    def _check_instance(self, instance):
+        if instance.is_approved():
+            self.approve_action(instance)
+        if instance.is_closed():
+            self.close_action(instance)
+        if instance.is_denied():
+            self.deny_action(instance)
+
+    def perform_update(self, serializer):
+        """
+        Updates the request and performs any update actions.
+        """
+        membership = None
+        identity_id = self._get_idenity_id(serializer)
 
         try:
             if identity_id is not None:
@@ -266,14 +282,7 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
                     instance = serializer.save(status=StatusType.objects.get(id=serializer.initial_data['status']))
                 else:
                     instance = serializer.save()
-            if instance.is_approved():
-                self.approve_action(instance)
-
-            if instance.is_closed():
-                self.close_action(instance)
-
-            if instance.is_denied():
-                self.deny_action(instance)
+            self._check_instance(instance)
         except (core_exceptions.ProviderLimitExceeded,  # NOTE: DEPRECATED -- REMOVE SOON, USE BELOW.
                 core_exceptions.RequestLimitExceeded):
             message = "Only one active request is allowed per provider."
@@ -296,7 +305,6 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
             }
             logger.exception(e)
             raise exceptions.ParseError(detail=message)
-
 
     @unresolved_requests_only
     def update(self, request, *args, **kwargs):

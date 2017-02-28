@@ -1,5 +1,5 @@
 from core.models import (
-    AtmosphereUser, AccountProvider, Group, Identity, Provider, Quota
+    AtmosphereUser, AccountProvider, Group, Identity, Quota
 )
 from core.query import only_current, contains_credential
 from api.v2.serializers.details.credential import CredentialSerializer
@@ -22,13 +22,14 @@ class AccountSerializer(serializers.Serializer):
     credentials = CredentialSerializer(many=True, write_only=True)
     # Optional fields
     quota = serializers.UUIDField(required=False, allow_null=True)
-    #allocation_source_id = serializers.CharField(required=False, allow_null=True)  NOTE: Uncomment when feature is completed
+    # NOTE: Uncomment when feature is completed
+    # allocation_source_id = serializers.CharField(required=False, allow_null=True)
 
     def validate(self, data):
         """
         Validation will:
         - Ensure that user/group exists (Or create it)
-        - 
+        -
         """
         validated_data = data
         self.validate_user(data['provider'])
@@ -42,7 +43,8 @@ class AccountSerializer(serializers.Serializer):
         validated_data['quota'] = self._validate_quota(data)
 
         # Validate that the allocation source exists (Or set a default)
-        # validated_data['allocation_source'] = self._validate_allocation(data)  NOTE: Uncomment when feature is completed
+        # NOTE: Uncomment when feature is completed
+        # validated_data['allocation_source'] = self._validate_allocation(data)
 
         # Validate the credentials (?)
 
@@ -78,7 +80,8 @@ class AccountSerializer(serializers.Serializer):
                 provider=new_identity.provider,
                 identity=new_identity)
 
-        # TODO: When the refactor of rtwo/get_esh_driver is complete, validate_identity should be call-able without the django model (to avoid create-then-delete)
+        # TODO: When the refactor of rtwo/get_esh_driver is complete, validate_identity should
+        #       be call-able without the django model (to avoid create-then-delete)
         validate_identity(new_identity)
         return new_identity
 
@@ -135,7 +138,8 @@ class AccountSerializer(serializers.Serializer):
 
     def _validate_openstack_credentials(self, credentials, required_keys):
         """
-        Note: If this can be reused elsewhere, we can move this to a class/staticmethod for service.accounts.openstack.AccountDriver
+        Note: If this can be reused elsewhere, we can move this to a class/staticmethod
+              for service.accounts.openstack.AccountDriver
         """
         keys = [c['key'] for c in credentials]
         missing_keys = [key for key in required_keys if key not in keys]
@@ -176,7 +180,9 @@ class AccountSerializer(serializers.Serializer):
             acct_driver = get_account_driver(provider, raise_exception=True)
             return acct_driver
         except Exception as exc:
-            raise serializers.ValidationError("Attempting to create an account for provider %s failed. Message: %s" % (provider, exc.message))
+            raise serializers.ValidationError(
+                "Attempting to create an account for provider %s failed. Message: %s"
+                % (provider, exc.message))
 
     def validate_user(self, provider_uuid):
         request_user = self._get_request_user()
@@ -206,7 +212,9 @@ class AccountSerializer(serializers.Serializer):
                 domain_name=credentials.get('domain_name')
             )
         except KeystoneUnauthorized:
-            raise serializers.ValidationError("The credentials used to create this account are invalid. Double-check your credentials and try again.")
+            raise serializers.ValidationError(
+                "The credentials used to create this account are invalid."
+                " Double-check your credentials and try again.")
         except:
             raise serializers.ValidationError("Error creating the account - %s")
         return username, password, project
@@ -265,4 +273,4 @@ def validate_identity(new_identity):
         driver.list_sizes()
     except:
         new_identity.delete()
-        raise # Exception("The driver created by this identity was invalid")
+        raise  # Exception("The driver created by this identity was invalid")

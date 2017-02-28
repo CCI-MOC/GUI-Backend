@@ -1,9 +1,8 @@
 from core.models import (
-    AtmosphereUser, Identity, Provider
+    Identity, Provider
 )
 from core.query import contains_credential
 from service.driver import get_esh_driver
-from api.v2.serializers.summaries import IdentitySummarySerializer
 
 from rest_framework import serializers
 
@@ -28,9 +27,18 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         return validated_data
 
     def create(self, validated_data):
-        identity = self._find_identity_match(validated_data['provider'], validated_data['username'], validated_data['project_name'])
+        identity = self._find_identity_match(
+            validated_data['provider'],
+            validated_data['username'],
+            validated_data['project_name']
+        )
         if not identity:
-            identity = self._create_identity(validated_data['provider'], validated_data['username'], validated_data['project_name'], validated_data['token'])
+            identity = self._create_identity(
+                validated_data['provider'],
+                validated_data['username'],
+                validated_data['project_name'],
+                validated_data['token']
+            )
             return identity
 
         token_cred = identity.credential_set.filter(key='ex_force_auth_token').first()
@@ -64,7 +72,8 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         identity = Identity.create_identity(
             username, provider.location,
             cred_key=username, cred_ex_project_name=project_name, cred_ex_force_auth_token=token)
-        # FIXME: In a different PR re-work quota to sync with the values in OpenStack. otherwise the value assigned (default) will differ from the users _actual_ quota in openstack.
+        # FIXME: In a different PR re-work quota to sync with the values in OpenStack.
+        #        otherwise the value assigned (default) will differ from the users _actual_ quota in openstack.
         self.validate_token_with_driver(provider_uuid, username, project_name, token)
         return identity
 
@@ -80,7 +89,8 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
                 contains_credential('key', username),
                 created_by=request_user, provider=provider)\
             .filter(
-                contains_credential('ex_project_name', project_name) | contains_credential('ex_tenant_name', project_name))\
+                contains_credential('ex_project_name', project_name)
+                | contains_credential('ex_tenant_name', project_name))\
             .first()
         return ident
 

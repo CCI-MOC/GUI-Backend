@@ -1,5 +1,3 @@
-from django.contrib.auth.models import AnonymousUser
-
 from api.v2.serializers.details import AllocationSerializer
 from api.v2.views.base import AuthViewSet
 from api.v2.views.mixins import MultipleFieldLookup

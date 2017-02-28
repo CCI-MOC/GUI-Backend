@@ -219,6 +219,7 @@ class UserResourceRequestSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:resourcerequest-detail',
     )
+
     class Meta:
         model = ResourceRequest
         fields = (

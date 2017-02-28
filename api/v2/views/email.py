@@ -4,7 +4,6 @@
 
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.template import Context
 
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -13,9 +12,9 @@ from rest_framework import status
 from api import permissions
 from api.v2.exceptions import failure_response
 
-from core.email import lookupEmail, resource_request_email, support_email, email_admin, request_data
-from core.models import AtmosphereUser as User
+from core.email import resource_request_email, email_admin, request_data
 from core.models import Instance, Volume
+
 
 class EmailViewSet(ViewSet):
     permission_classes = (permissions.ApiAuthRequired,)
@@ -56,9 +55,9 @@ class VolumeSupportEmailViewSet(EmailViewSet):
 
         Returns a response.
         """
-        subject = "Volume Instance Report from %s" % user.username;
+        subject = "Volume Instance Report from %s" % user.username
         volume = Volume.objects \
-                .filter(id=data["volume"])[0]
+                       .filter(id=data["volume"])[0]
 
         context = {
             "problems": data.get("problems", []),
@@ -72,12 +71,17 @@ class VolumeSupportEmailViewSet(EmailViewSet):
         context.update(request_data(self.request))
 
         message = render_to_string("volume_report.html", context=context)
-        email_success = email_admin(self.request, subject, message, 
-                request_tracker=True)
+        email_success = email_admin(
+            self.request,
+            subject,
+            message,
+            request_tracker=True
+        )
         email_response = {"email_sent": email_success}
         if not email_success:
             return Response(email_response, status=status.HTTP_400_BAD_REQUEST)
         return Response(email_response, status=status.HTTP_200_OK)
+
 
 class InstanceSupportEmailViewSet(EmailViewSet):
     required_keys = ["message", "instance"]
@@ -88,7 +92,7 @@ class InstanceSupportEmailViewSet(EmailViewSet):
 
         Returns a response.
         """
-        subject = "Atmosphere Instance Report from %s" % user.username;
+        subject = "Atmosphere Instance Report from %s" % user.username
         instance = Instance.objects.filter(id=data["instance"])[0]
         last_status = instance.instancestatushistory_set \
                               .order_by('start_date')  \
@@ -107,12 +111,17 @@ class InstanceSupportEmailViewSet(EmailViewSet):
         context.update(request_data(self.request))
 
         message = render_to_string("instance_report.html", context=context)
-        email_success = email_admin(self.request, subject, message,
-                request_tracker=True) 
+        email_success = email_admin(
+            self.request,
+            subject,
+            message,
+            request_tracker=True
+        )
         email_response = {"email_sent": email_success}
         if not email_success:
             return Response(email_response, status=status.HTTP_400_BAD_REQUEST)
         return Response(email_response, status=status.HTTP_200_OK)
+
 
 class FeedbackEmailViewSet(EmailViewSet):
     required_keys = ["message"]
@@ -146,22 +155,33 @@ class FeedbackEmailViewSet(EmailViewSet):
         context.update(request_data(self.request))
 
         body = render_to_string("feedback.html", context=context)
-        email_success = email_admin(self.request, subject, body, 
-                request_tracker=True)
+        email_success = email_admin(
+            self.request,
+            subject,
+            body,
+            request_tracker=True
+        )
         if email_success:
             resp_status = status.HTTP_200_OK
-            email_response = {'result':
-                    {'code': 'success',
-                        'meta': '',
-                        'value': (
-                            'Thank you for your feedback! '
-                            'Support has been notified.')}}
+            email_response = {
+                'result': {
+                    'code': 'success',
+                    'meta': '',
+                    'value': (
+                        'Thank you for your feedback! '
+                        'Support has been notified.'
+                    )
+                }
+            }
         else:
             resp_status = status.HTTP_400_BAD_REQUEST
-            email_response = {'result':
-                    {'code': 'failed',
-                     'meta': '',
-                     'value': 'Failed to send feedback!'}}
+            email_response = {
+                'result': {
+                    'code': 'failed',
+                    'meta': '',
+                    'value': 'Failed to send feedback!'
+                }
+            }
         return Response(email_response, status=resp_status)
 
 

@@ -5,8 +5,8 @@ atmosphere service post boot scripts rest api.
 from rest_framework import status
 from rest_framework.response import Response
 
-from core.models.group import Group
-from core.models.boot_script import ScriptType, BootScript,\
+from core.models.boot_script import \
+    BootScript as CoreBootScript,\
     get_scripts_for_user
 
 from api import failure_response
@@ -35,7 +35,6 @@ class BootScriptList(AuthAPIView):
         """
         Authentication Required, list of BootScripts on your account.
         """
-        username = request.user.username
         data = request.data
         serializer = BootScriptSerializer(data=data)
         if serializer.is_valid():
