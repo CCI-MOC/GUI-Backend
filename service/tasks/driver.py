@@ -395,7 +395,7 @@ def user_deploy_failed(
         celery_logger.error(err_str)
         # Send deploy email
         _send_instance_email_with_failure(driverCls, provider, identity, instance_id, user.username, err_str)
-	# Update metadata on the instance
+        # Update metadata on the instance
         metadata={'tmp_status': 'user_deploy_error'}
         update_metadata.s(driverCls, provider, identity, instance_id,
                           metadata, replace_metadata=False).apply_async()
@@ -880,7 +880,7 @@ def _get_boot_script_chain(
             script_zero.link_error(
                 boot_script_failed.s(driverCls, provider, identity, instance_id))
         else:
-	    # All other links: Add init to end_task (a deploy)
+            # All other links: Add init to end_task (a deploy)
             end_task.link(init_script_status_task)
 
         init_script_status_task.link(deploy_script_task)

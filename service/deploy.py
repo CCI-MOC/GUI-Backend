@@ -77,7 +77,7 @@ def ready_to_deploy(instance_ip, username, instance_id):
 
 
 def instance_deploy(instance_ip, username, instance_id,
-		    limit_playbooks=[]):
+                    limit_playbooks=[]):
     """
     Use service.ansible to deploy to an instance.
     """
@@ -119,7 +119,7 @@ def run_utility_playbooks(instance_ip, username, instance_id,
     playbooks_dir = os.path.join(settings.ANSIBLE_PLAYBOOKS_DIR, 'utils')
     return ansible_deployment(
         instance_ip, username, instance_id, playbooks_dir, limit_playbooks,
-	 raise_exception=raise_exception)
+        raise_exception=raise_exception)
 
 
 def select_install_playbooks(install_action):

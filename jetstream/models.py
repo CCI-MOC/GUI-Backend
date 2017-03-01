@@ -47,7 +47,7 @@ class TASAllocationReport(models.Model):
                 driver = TASAPIDriver()
             success = driver.report_project_allocation(
                 self.id, self.username,
-		self.project_name, float(self.compute_used),
+                self.project_name, float(self.compute_used),
                 self.start_date, self.end_date,
                 self.queue_name, self.scheduler_id)
             self.success = True if success else False
