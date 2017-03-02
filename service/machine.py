@@ -210,7 +210,7 @@ def upload_privacy_data(machine_request, new_machine):
     if hasattr(img, 'visibility'):  # Treated as an obj.
         is_public = img.visibility == 'public'
     elif hasattr(img, 'items'):  # Treated as a dict.
-        is_public = img.get('visibility','N/A') == 'public'
+        is_public = img.get('visibility', 'N/A') == 'public'
 
     if is_public:
         print "Marking image %s private" % img.id

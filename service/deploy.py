@@ -352,7 +352,7 @@ def raise_playbook_errors(pbs, instance_ip, hostname, allow_failures=False):
                 error_message += playbook_error_message(
                     pb.stats.failures[instance_ip], "Failures")
     if error_message:
-        msg = error_message[:-2] + str(pb.stats.processed_playbooks.get(hostname,{}))
+        msg = error_message[:-2] + str(pb.stats.processed_playbooks.get(hostname, {}))
         raise AnsibleDeployException(msg)
 
 

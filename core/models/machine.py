@@ -128,7 +128,7 @@ class ProviderMachine(BaseSource):
         #NOTE: Reaching deep -- Don't do this in the new API.
         if self.esh and self.esh._image\
            and self.esh._image.extra\
-           and 'application_owner' in self.esh._image.extra.get('metadata',{}):
+           and 'application_owner' in self.esh._image.extra.get('metadata', {}):
             username = self.esh._image.extra['metadata']['application_owner']
         return username
 
@@ -224,7 +224,7 @@ def replicate_app_kwargs(image_id):
     """
     try:
         app = Application.objects.get(versions__machines__instance_source__identifier=image_id)
-        tag_list = list(app.tags.values_list('name',flat=True))
+        tag_list = list(app.tags.values_list('name', flat=True))
         json_tags = json.dumps(tag_list)
         return {
             'uuid': app.uuid,
@@ -254,7 +254,7 @@ def convert_glance_image(glance_image, provider_uuid, owner=None):
     if provider_machine:
         return (provider_machine, False)
     app_kwargs = collect_image_metadata(glance_image)
-    if owner and hasattr(owner,'name'):
+    if owner and hasattr(owner, 'name'):
         owner_name = owner.name
     else:
         owner_name = glance_image.get('application_owner')

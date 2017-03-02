@@ -30,7 +30,7 @@ def create_request_uri(uuid, params):
     endpoint = "{server}/render/?target={target}&format={format}"
     query = "stats.*.{uuid}.{field}"
     summarize = "summarize({metric}, {resolution}, 'avg')"
-    metric = query.format(uuid=uuid,field=params.get("field"))
+    metric = query.format(uuid=uuid, field=params.get("field"))
 
     # Apply function to metric
     if "fun" in params:

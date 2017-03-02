@@ -172,13 +172,13 @@ def request_data(request):
     user_agent, remote_ip, location, resolution = request_info(request)
     username, email, name = lookup_user(request)
     return {
-        "username" : username,
-        "email" : email,
-        "name" : name,
-        "resolution" : resolution,
-        "location" : location,
-        "remote_ip" : remote_ip,
-        "user_agent" : user_agent,
+        "username": username,
+        "email": email,
+        "name": name,
+        "resolution": resolution,
+        "location": location,
+        "remote_ip": remote_ip,
+        "user_agent": user_agent,
     }
 
 def request_info(request):
@@ -385,12 +385,12 @@ def send_allocation_usage_email(user, allocation_source, threshold, usage_percen
     # For simplicity, force all values to integer.
     usage_percentage = int(usage_percentage)
     threshold = int(threshold)
-    total_used = int(allocation_source.compute_allowed * (usage_percentage/100.0))
+    total_used = int(allocation_source.compute_allowed * (usage_percentage / 100.0))
     if user_compute_used is None:
         user_compute_used = "N/A"
         user_compute_used_percent = "N/A"
     else:
-        user_compute_used_percent = int((user_compute_used/allocation_source.compute_allowed)*100)
+        user_compute_used_percent = int((user_compute_used / allocation_source.compute_allowed) * 100)
         user_compute_used = min(int(user_compute_used), total_used)  # This is a hack until the values can be more accurately calcualted in EventTable.
 
     allocation_source_total = int(allocation_source.compute_allowed)

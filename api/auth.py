@@ -24,7 +24,7 @@ class Authentication(APIView):
                             status=status.HTTP_403_FORBIDDEN)
         token = lookupSessionToken(request)
         if not token:
-            token = create_token(user.username, request.session.pop('token_key',None))
+            token = create_token(user.username, request.session.pop('token_key', None))
         serialized_data = TokenSerializer(token).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
@@ -37,7 +37,7 @@ class Authentication(APIView):
         if not username:
             return invalid_auth("Username missing")
 
-        auth_kwargs = {"username":username, "password":password, "request":request}
+        auth_kwargs = {"username": username, "password": password, "request": request}
         if project_name and auth_url:
             auth_kwargs['project_name'] = project_name
             auth_kwargs['auth_url'] = auth_url

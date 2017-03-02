@@ -29,7 +29,7 @@ class InstanceHistoryResult(object):
 
     def get_total_hours(self):
         return round(
-            self.total_time.total_seconds()/3600.0,
+            self.total_time.total_seconds() / 3600.0,
             2)
 
     def __repr__(self):

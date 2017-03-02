@@ -33,7 +33,7 @@ class Feedback(APIView):
         Creates a new feedback email and sends it to admins
         """
         data = request.data
-        required = ['message',]
+        required = ['message', ]
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)
@@ -77,7 +77,7 @@ class SupportEmail(APIView):
         Creates a new support email and sends it to admins
         """
         data = request.data
-        required = ['message','subject']
+        required = ['message', 'subject']
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)

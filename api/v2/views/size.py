@@ -14,7 +14,7 @@ class SizeViewSet(MultipleFieldLookup, AuthReadOnlyViewSet):
     API endpoint that allows instance actions to be viewed or edited.
     """
     lookup_fields = ("id", "uuid")
-    queryset = Size.objects.all().order_by('-cpu','-mem')
+    queryset = Size.objects.all().order_by('-cpu', '-mem')
     serializer_class = SizeSerializer
     ordering = ("cpu", "mem", "disk", "root", "name")
     filter_fields = ('provider__id',)
@@ -26,7 +26,7 @@ class SizeViewSet(MultipleFieldLookup, AuthReadOnlyViewSet):
         request_user = self.request.user
         # Switch based on user's ClassType
         if isinstance(request_user, AnonymousUser):
-            provider_ids = Provider.objects.filter(only_current(), active=True).values_list('id',flat=True)
+            provider_ids = Provider.objects.filter(only_current(), active=True).values_list('id', flat=True)
         else:
             try:
                 group = Group.objects.get(name=request_user.username)

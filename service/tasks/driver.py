@@ -396,7 +396,7 @@ def user_deploy_failed(
         # Send deploy email
         _send_instance_email_with_failure(driverCls, provider, identity, instance_id, user.username, err_str)
         # Update metadata on the instance
-        metadata={'tmp_status': 'user_deploy_error'}
+        metadata = {'tmp_status': 'user_deploy_error'}
         update_metadata.s(driverCls, provider, identity, instance_id,
                           metadata, replace_metadata=False).apply_async()
         celery_logger.debug("user_deploy_failed task finished at %s." % datetime.now())
@@ -431,7 +431,7 @@ def deploy_failed(
         driver = get_driver(driverCls, provider, identity)
         instance = driver.get_instance(instance_id)
 
-        metadata={'tmp_status': 'deploy_error'}
+        metadata = {'tmp_status': 'deploy_error'}
         update_metadata.s(driverCls, provider, identity, instance.id,
                           metadata, replace_metadata=False).apply_async()
         # Send deploy email
@@ -621,15 +621,15 @@ def get_chain_from_build(
 def print_chain(start_task, idx=0):
     #FINAL case
     count = idx + 1
-    signature = "\n%s Task %s: %s(args=%s) " % ("  "*(idx), count, start_task.task, start_task.args)
+    signature = "\n%s Task %s: %s(args=%s) " % ("  " * (idx), count, start_task.task, start_task.args)
     if not start_task.options.get('link'):
-        mystr = '%s\n%s(FINAL TASK)' % (signature, "  "*(idx+1))
+        mystr = '%s\n%s(FINAL TASK)' % (signature, "  " * (idx + 1))
         return mystr
     #Recursive Case
     mystr = "%s" % signature
     next_tasks = start_task.options['link']
     for task in next_tasks:
-        mystr += print_chain(task, idx+1)
+        mystr += print_chain(task, idx + 1)
     return mystr
 
 def get_chain_from_active_no_ip(
@@ -828,7 +828,7 @@ def boot_script_failed(task_uuid, driverCls, provider, identity, instance_id,
         driver = get_driver(driverCls, provider, identity)
         instance = driver.get_instance(instance_id)
 
-        metadata={'tmp_status': 'boot_script_error'}
+        metadata = {'tmp_status': 'boot_script_error'}
         update_metadata.s(driverCls, provider, identity, instance.id,
                           metadata, replace_metadata=False).apply_async()
         # TODO: Send 'boot script failed' email
@@ -955,7 +955,7 @@ def _deploy_ready_failed_email_test(
     if 'terminated' in str(exc_message):
         # Do NOTHING!
         pass
-    elif num_retries == int(task_class.max_retries/2):
+    elif num_retries == int(task_class.max_retries / 2):
         # Halfway point. Send preemptive failure
         send_preemptive_deploy_failed_email(core_instance, message)
     elif num_retries == task_class.max_retries - 1:
@@ -1484,7 +1484,7 @@ def update_membership_for(provider_uuid):
         else:
             pm = pm[0]
         app_manager = pm.application_version.application.applicationmembership_set
-        if img.get('visibility','') is not 'public':
+        if img.get('visibility', '') is not 'public':
             # Lookup members
             image_members = acct_driver.image_manager.shared_images_for(
                 image_id=img.id)

@@ -222,7 +222,7 @@ def machine_is_valid(cloud_machine, accounts):
     """
     provider = accounts.core_provider
     # If the name of the machine indicates that it is a Ramdisk, Kernel, or Chromogenic Snapshot, skip it.
-    if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-','eki-', 'ChromoSnapShot']):
+    if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-', 'eki-', 'ChromoSnapShot']):
         celery_logger.info("Skipping cloud machine %s" % cloud_machine)
         return False
     # If the metadata 'skip_atmosphere' is found, do not add the machine.
@@ -275,10 +275,10 @@ def update_image_membership(account_driver, cloud_machine, db_machine):
     """
     Given a cloud_machine and db_machine, create any relationships possible for ProviderMachineMembership and ApplicationVersionMembership
     """
-    image_visibility = cloud_machine.get('visibility','private')
+    image_visibility = cloud_machine.get('visibility', 'private')
     if image_visibility.lower() == 'public':
         return
-    image_owner = cloud_machine.get('application_owner','')
+    image_owner = cloud_machine.get('application_owner', '')
     #TODO: In a future update to 'imaging' we might image 'as the user' rather than 'as the admin user', in this case we should just use 'owner' metadata
     shared_group_names = [image_owner]
     shared_projects = account_driver.shared_images_for(cloud_machine.id)
@@ -309,7 +309,7 @@ def get_public_and_private_apps(provider):
     # if you do not believe this is the case, you should call 'prune_machines_for'
     for cloud_machine in cloud_machines:
         #Filter out: ChromoSnapShot, eri-, eki-, ... (Or dont..)
-        if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-','eki-', 'ChromoSnapShot']):
+        if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-', 'eki-', 'ChromoSnapShot']):
             #celery_logger.debug("Skipping cloud machine %s" % cloud_machine)
             continue
         db_machine = get_or_create_provider_machine(cloud_machine.id, cloud_machine.name, provider.uuid)
@@ -402,13 +402,13 @@ def make_machines_private(application, identities, account_drivers={}, provider_
 def memoized_image(account_driver, db_machine, image_maps={}):
     provider = db_machine.instance_source.provider
     identifier = db_machine.instance_source.identifier
-    cloud_machine = image_maps.get( (provider, identifier) )
+    cloud_machine = image_maps.get((provider, identifier))
     # Return memoized result
     if cloud_machine:
         return cloud_machine
     # Retrieve and remember
     cloud_machine = account_driver.get_image(identifier)
-    image_maps[ (provider, identifier) ] = cloud_machine
+    image_maps[(provider, identifier)] = cloud_machine
     return cloud_machine
 
 def memoized_driver(machine, account_drivers={}):
@@ -519,14 +519,14 @@ def make_machines_public(application, account_drivers={}, dry_run=False):
                 celery_logger.info("Image not found on this provider: %s" % (machine))
                 continue
 
-            image_is_public = image.is_public if hasattr(image,'is_public') else image.get('visibility','') == 'public'
+            image_is_public = image.is_public if hasattr(image, 'is_public') else image.get('visibility', '') == 'public'
             if image and image_is_public == False:
                 celery_logger.info("Making Machine %s public" % image.id)
                 if not dry_run:
                     account_driver.image_manager.glance.images.update(image.id, visibility='public')
     # Set top-level application to public (This will make all versions and PMs public too!)
     application.private = False
-    celery_logger.info("Making Application %s:%s public" % (application.id,application.name))
+    celery_logger.info("Making Application %s:%s public" % (application.id, application.name))
     if not dry_run:
         application.save()
 
@@ -562,7 +562,7 @@ def monitor_instance_allocations():
         celery_logger.info("Skipping the old method of monitoring instance allocations")
         return False
     for p in Provider.get_active():
-        monitor_instances_for.apply_async(args=[p.id], kwargs={'check_allocations':True})
+        monitor_instances_for.apply_async(args=[p.id], kwargs={'check_allocations': True})
 
 
 @task(name="monitor_instances_for")
@@ -832,7 +832,7 @@ def _share_image(account_driver, cloud_machine, identity, members, dry_run=False
     elif missing_tenant.count() > 1:
         raise Exception("Safety Check -- You should not be here")
     tenant_name = missing_tenant[0]
-    cloud_machine_is_public = cloud_machine.is_public if hasattr(cloud_machine,'is_public') else cloud_machine.get('visibility','') == 'public'
+    cloud_machine_is_public = cloud_machine.is_public if hasattr(cloud_machine, 'is_public') else cloud_machine.get('visibility', '') == 'public'
     if cloud_machine_is_public == True:
         celery_logger.info("Making Machine %s private" % cloud_machine.id)
         account_driver.image_manager.glance.images.update(cloud_machine.id, visibility='private')

@@ -45,7 +45,7 @@ class AccountDriver(BaseAccountDriver):
         for key, val in export_data.iteritems():
             str_builder += "export %s=%s\n" % (key, val)
         if filename:
-            with open(filename,'w') as the_file:
+            with open(filename, 'w') as the_file:
                 the_file.write(str_builder)
         return str_builder
 
@@ -59,7 +59,7 @@ class AccountDriver(BaseAccountDriver):
         all_creds = identity.get_all_credentials()
         tenant_name = all_creds.get('ex_project_name', "<PROJECT MISSING>")
         username = all_creds.get('key', "<USERNAME MISSING>")
-        password = all_creds.get('secret',"<PASSWORD MISSING>")
+        password = all_creds.get('secret', "<PASSWORD MISSING>")
         project_domain = all_creds.get('project_domain', 'default')
         user_domain = all_creds.get('user_domain', 'default')
         region_name = all_creds.get('region_name', 'RegionOne')
@@ -787,7 +787,7 @@ class AccountDriver(BaseAccountDriver):
         return self.image_manager.list_images(**kwargs)
 
     def list_all_snapshots(self, **kwargs):
-        return [img for img in self.list_all_images(**kwargs) if 'snapshot' in img.get('image_type','image').lower()]
+        return [img for img in self.list_all_images(**kwargs) if 'snapshot' in img.get('image_type', 'image').lower()]
 
     def get_project_by_id(self, project_id):
         return self.user_manager.get_project_by_id(project_id)
@@ -945,13 +945,13 @@ class AccountDriver(BaseAccountDriver):
             user_id = self.get_user(username).id
         except:
             logger.exception("Failed to find user %s" % username)
-            raise ValueError ("Unknown user %s" % username)
+            raise ValueError("Unknown user %s" % username)
 
         try:
             project_id = self.get_project(project_name).id
         except:
             logger.exception("Failed to find project %s" % project_name)
-            raise ValueError ("Unknown project %s" % project_name)
+            raise ValueError("Unknown project %s" % project_name)
 
         user_limits = self._ex_list_quota_for_user(user_id, project_id)
 
@@ -1083,8 +1083,8 @@ class AccountDriver(BaseAccountDriver):
             ex_version = '3.x_password'
 
         osdk_creds = {
-            "auth_url": self.user_manager.nova.client.auth_url.replace('/v3','').replace('/v2.0',''),
-            "admin_url": self.user_manager.keystone._management_url.replace('/v2.0','').replace('/v3',''),
+            "auth_url": self.user_manager.nova.client.auth_url.replace('/v3', '').replace('/v2.0', ''),
+            "admin_url": self.user_manager.keystone._management_url.replace('/v2.0', '').replace('/v3', ''),
             "ex_force_auth_version": ex_version,
             "region_name": self.user_manager.nova.client.region_name,
             "username": username,
@@ -1193,7 +1193,7 @@ class AccountDriver(BaseAccountDriver):
             auth_version = 'v3'
         img_args['version'] = auth_version
 
-        img_args["auth_url"] = img_args.get('auth_url','').replace("/v2.0","").replace("/tokens", "").replace('/v3','')
+        img_args["auth_url"] = img_args.get('auth_url', '').replace("/v2.0", "").replace("/tokens", "").replace('/v3', '')
         if auth_url_prefix not in img_args['auth_url']:
             img_args["auth_url"] += auth_url_prefix
         return img_args

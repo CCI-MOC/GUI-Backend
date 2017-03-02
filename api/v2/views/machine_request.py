@@ -124,7 +124,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
             parent_machine = parent_machine[0]
         else:
             raise rest_exceptions.ParseError(detail="Could not retrieve parent machine.")
-        new_tags = self.filter_tags(request_user, serializer.validated_data.get("new_version_tags",""))
+        new_tags = self.filter_tags(request_user, serializer.validated_data.get("new_version_tags", ""))
         try:
             membership = IdentityMembership.objects.get(identity=identity_id)
             instance = serializer.save(

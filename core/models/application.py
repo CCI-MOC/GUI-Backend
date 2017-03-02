@@ -162,8 +162,8 @@ class Application(models.Model):
         for version in versions:
             version_metrics = version.get_metrics()
             provider_metrics = version_metrics['providers']
-            for key,val in version_metrics['domains'].items():
-                count = all_user_domain_map.get(key,0)
+            for key, val in version_metrics['domains'].items():
+                count = all_user_domain_map.get(key, 0)
                 count += val
                 all_user_domain_map[key] = count
             all_avg += sum([prov['avg_time'] for prov in provider_metrics.values()], timezone.timedelta(0))
@@ -172,7 +172,7 @@ class Application(models.Model):
             version_map[version.name] = version_metrics
         return {'versions': {
             'avg_time': all_avg, 'total': all_total,
-            'count': all_count,'domains':all_user_domain_map
+            'count': all_count, 'domains': all_user_domain_map
         }
         }
 

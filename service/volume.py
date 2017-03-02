@@ -232,7 +232,7 @@ def create_bootable_volume(
 def attach_volume(driver, instance_id, volume_id, device_choice=None):
     instance = driver.get_instance(instance_id)
     volume = driver.get_volume(volume_id)
-    if volume.extra.get('status','N/A') in 'in-use':
+    if volume.extra.get('status', 'N/A') in 'in-use':
         attachments = volume.extra['attachments']
         for attach_data in attachments:
             if instance_id in attach_data['serverId']:

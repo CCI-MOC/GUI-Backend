@@ -128,7 +128,7 @@ def sort_most_used_machines(provider, limit=0, offset=0):
         .annotate(instance_count=Count('instances'))\
         .order_by('-instance_count')
     if limit != 0:
-        query = query[offset:offset+limit]
+        query = query[offset:offset + limit]
     for source in query:
         machine_alias = source.identifier
         results |= ProviderMachine.objects.filter(

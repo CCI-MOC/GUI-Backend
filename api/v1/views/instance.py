@@ -158,7 +158,7 @@ class InstanceList(AuthAPIView):
             return keys_not_found(missing_keys)
         # Pass these as args
         size_alias = data.pop("size_alias")
-        allocation_source_id = data.pop("allocation_source_id",None)
+        allocation_source_id = data.pop("allocation_source_id", None)
         machine_alias = data.pop("machine_alias")
         hypervisor_name = data.pop("hypervisor", None)
         if hypervisor_name:

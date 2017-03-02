@@ -29,11 +29,11 @@ class TokenEmulateViewSet(ViewSet):
         expireDate = timezone.now() + secrets.TOKEN_EXPIRY_TIME
         new_token = create_token(
             username,
-            token_key='EMULATED-'+str(uuid4()),
+            token_key='EMULATED-' + str(uuid4()),
             remote_ip=self.request.META['REMOTE_ADDR'],
             token_expire=expireDate,
             issuer="DRF-EmulatedToken-%s" % user.username)
-        serialized_data = TokenSerializer(new_token, context={'request':self.request}).data
+        serialized_data = TokenSerializer(new_token, context={'request': self.request}).data
         return Response(serialized_data, status=status.HTTP_201_CREATED)
 
 
@@ -73,7 +73,7 @@ def emulate_session(request, username=None):
         expireDate = timezone.now() + secrets.TOKEN_EXPIRY_TIME
         token = create_token(
             username,
-            token_key='EMULATED-'+str(uuid4()),
+            token_key='EMULATED-' + str(uuid4()),
             token_expire=expireDate,
             remote_ip=request.META['REMOTE_ADDR'],
             issuer="DRF-EmulatedSession-%s" % user.username)

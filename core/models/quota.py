@@ -189,7 +189,7 @@ def has_mem_quota(driver, quota, new_size=0, raise_exc=True):
     # Always True if ram is null
     if not quota.memory or quota.memory < 0:
         return True
-    total_size = new_size/1024.0
+    total_size = new_size / 1024.0
     _pre_cache_sizes(driver)
     instances = driver.list_instances()
     for inst in instances:
@@ -202,7 +202,7 @@ def has_mem_quota(driver, quota, new_size=0, raise_exc=True):
     if total_size <= quota.memory:
         return True
     if raise_exc:
-        _raise_quota_error('Memory', (total_size - new_size)/1024.0, new_size/1024.0, quota.memory)
+        _raise_quota_error('Memory', (total_size - new_size) / 1024.0, new_size / 1024.0, quota.memory)
     return False
 
 

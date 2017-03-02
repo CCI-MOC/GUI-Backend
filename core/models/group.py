@@ -62,13 +62,13 @@ class Group(DjangoGroup):
     @property
     def current_identities(self):
         identity_ids = self.identity_memberships.filter(
-            only_active_memberships()).values_list('identity',flat=True)
+            only_active_memberships()).values_list('identity', flat=True)
         return Identity.objects.filter(only_current_provider(), only_active_provider(), id__in=identity_ids)
 
     @property
     def current_providers(self):
         provider_ids = self.identity_memberships.filter(
-            only_active_memberships()).values_list('identity__provider',flat=True)
+            only_active_memberships()).values_list('identity__provider', flat=True)
         return Provider.objects.filter(id__in=provider_ids)
 
     @classmethod

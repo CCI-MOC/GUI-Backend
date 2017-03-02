@@ -205,13 +205,13 @@ def _set_compute_quota(user_quota, identity):
     # Use THESE values...
     compute_values = {
         'cores': user_quota.cpu,
-        'ram': user_quota.memory*1024,  # NOTE: Value is stored in GB, Openstack (Liberty) expects MB
+        'ram': user_quota.memory * 1024,  # NOTE: Value is stored in GB, Openstack (Liberty) expects MB
         'floating_ips': user_quota.floating_ip_count,
         'fixed_ips': user_quota.port_count,
         'instances': user_quota.instance_count,
     }
     creds = identity.get_all_credentials()
-    if creds.get('ex_force_auth_version','2.0_password') == "2.0_password":
+    if creds.get('ex_force_auth_version', '2.0_password') == "2.0_password":
         compute_values.pop('instances')
     username = identity.created_by.username
     logger.info("Updating quota for %s to %s" % (username, compute_values))

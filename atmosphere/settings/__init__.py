@@ -24,7 +24,7 @@ DEBUG = True
 ENFORCING = False
 
 USE_ALLOCATION_SOURCE = False
-BLACKLIST_TAGS = ["Featured",]
+BLACKLIST_TAGS = ["Featured", ]
 
 SETTINGS_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -178,12 +178,10 @@ AUTH_USER_MODEL = 'core.AtmosphereUser'
 
 AUTHENTICATION_BACKENDS = (
     # For Token-Access
-    #'django_cyverse_auth.authBackends.GlobusOAuthLoginBackend',
     'django_cyverse_auth.authBackends.AuthTokenLoginBackend',
     # For Web-Access
     'django_cyverse_auth.authBackends.CASLoginBackend',
-    #'django_cyverse_auth.authBackends.SAMLLoginBackend',
-    ## For Service-Access
+    # For Service-Access
     'django_cyverse_auth.authBackends.LDAPLoginBackend',
 )
 
@@ -198,7 +196,7 @@ AUTH_SERVER_URL = SERVER_URL + REDIRECT_URL + '/auth'
 DEPLOY_SERVER_URL = SERVER_URL.replace("https", "http")
 
 # These DEFAULT variables can be overridden per provider..
-DEFAULT_NAMESERVERS = ['8.8.8.8','8.8.4.4.']
+DEFAULT_NAMESERVERS = ['8.8.8.8', '8.8.4.4.']
 DEFAULT_RULES = [
     ("ICMP", -1, -1),
     # FTP Access

@@ -135,7 +135,7 @@ class MachineRequestSerializer(serializers.HyperlinkedModelSerializer):
     status = StatusTypeRelatedField(queryset=StatusType.objects.none(),
                                     allow_null=True,
                                     required=False)
-    old_status = serializers.CharField(required = False)
+    old_status = serializers.CharField(required=False)
 
     new_application_visibility = serializers.CharField()
     new_application_version = ImageVersionSummarySerializer(read_only=True)
@@ -168,23 +168,23 @@ class MachineRequestSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         queryset=Group.objects.all(),
         serializer_class=GroupSummarySerializer,
-        style={'base_template':'input.html'},
+        style={'base_template': 'input.html'},
         required=False)
     new_machine_provider = ModelRelatedField(
         queryset=Provider.objects.all(),
         serializer_class=ProviderSummarySerializer,
-        style={'base_template':'input.html'})
+        style={'base_template': 'input.html'})
     new_machine_owner = ModelRelatedField(
         queryset=User.objects.all(),
-        serializer_class = UserSummarySerializer,
-        style={'base_template':'input.html'})
+        serializer_class=UserSummarySerializer,
+        style={'base_template': 'input.html'})
     start_date = serializers.DateTimeField(read_only=True)
     end_date = serializers.DateTimeField(read_only=True)
     new_machine = ModelRelatedField(
-        required = False,
-        queryset = ProviderMachine.objects.all(),
-        serializer_class = ProviderMachineSummarySerializer,
-        style = {'base_template':'input.html'})
+        required=False,
+        queryset=ProviderMachine.objects.all(),
+        serializer_class=ProviderMachineSummarySerializer,
+        style={'base_template': 'input.html'})
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:machinerequest-detail',
     )
@@ -238,7 +238,7 @@ class UserMachineRequestSerializer(serializers.HyperlinkedModelSerializer):
     status = StatusTypeRelatedField(queryset=StatusType.objects.none(),
                                     allow_null=True,
                                     required=False)
-    old_status = serializers.CharField(required = False)
+    old_status = serializers.CharField(required=False)
 
     new_application_visibility = serializers.CharField()
     new_application_version = ImageVersionSummarySerializer(read_only=True)
@@ -271,12 +271,12 @@ class UserMachineRequestSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         queryset=Group.objects.all(),
         serializer_class=GroupSummarySerializer,
-        style={'base_template':'input.html'},
+        style={'base_template': 'input.html'},
         required=False)
     new_machine_provider = ModelRelatedField(
         queryset=Provider.objects.all(),
         serializer_class=ProviderSummarySerializer,
-        style={'base_template':'input.html'},
+        style={'base_template': 'input.html'},
         required=False)
     # Absent: new_machine_owner -- determined by User submission
     url = UUIDHyperlinkedIdentityField(

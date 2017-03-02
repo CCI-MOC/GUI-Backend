@@ -76,7 +76,7 @@ class DebugHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 class UUIDHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
-    lookup_field ='uuid'
+    lookup_field = 'uuid'
     lookup_url_kwarg = 'uuid'
     #
     uuid_field = None
@@ -112,7 +112,7 @@ class InstanceSourceHyperlinkedIdentityField(serializers.HyperlinkedIdentityFiel
         """
         Given an object, return the URL that hyperlinks to the object based on lookup_field. Raises a 'NoReverseMatch' without a 'lookup_field'.
         """
-        if obj.pk is None or not getattr(obj,"instance_source"):
+        if obj.pk is None or not getattr(obj, "instance_source"):
             return None
         obj_uuid = obj.instance_source.identifier
         if obj_uuid is None:

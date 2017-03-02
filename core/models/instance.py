@@ -90,7 +90,7 @@ class Instance(models.Model):
         result = _get_allocation_result(
             identity,
             limit_instances=limit_instances)
-        total_hours = result.total_runtime().total_seconds()/3600.0
+        total_hours = result.total_runtime().total_seconds() / 3600.0
         hours = round(total_hours, 2)
         return hours
 

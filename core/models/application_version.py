@@ -137,7 +137,7 @@ class ApplicationVersion(models.Model):
             }
             provider_map[key] = metrics
         return {
-            'domains' : user_domain_map,
+            'domains': user_domain_map,
             'providers': provider_map
         }
 
@@ -360,11 +360,11 @@ def create_app_version(
         if change_log != None:
             app_version.change_log = change_log
         else:
-            app_version.change_log=last_version.change_log
+            app_version.change_log = last_version.change_log
         if allow_imaging != None:
             app_version.allow_imaging = allow_imaging
         else:
-            app_version.allow_imaging=last_version.allow_imaging
+            app_version.allow_imaging = last_version.allow_imaging
         app_version.save()
         transfer_licenses(last_version, app_version)
         transfer_membership(last_version, app_version)

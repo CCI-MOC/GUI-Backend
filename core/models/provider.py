@@ -140,8 +140,8 @@ class Provider(models.Model):
     def get_esh_credentials(self, esh_provider):
         cred_map = self.get_credentials()
         if isinstance(esh_provider, OSProvider):
-            cred_map['ex_force_auth_url'] = cred_map.pop('auth_url','')
-            if cred_map.get('ex_force_auth_version','2.0_password') == '2.0_password'\
+            cred_map['ex_force_auth_url'] = cred_map.pop('auth_url', '')
+            if cred_map.get('ex_force_auth_version', '2.0_password') == '2.0_password'\
                     and cred_map['ex_force_auth_url'] and '/v2.0/tokens' not in cred_map['ex_force_auth_url']:
                 cred_map['ex_force_auth_url'] += '/v2.0/tokens'
 
@@ -253,7 +253,7 @@ class Provider(models.Model):
                 logger.info("Skipping unknown router: %s" % key)
                 del router_count_map[key]
 
-        logger.info( "Current distribution of routers:")
+        logger.info("Current distribution of routers:")
         for entry, count in router_count_map.items():
             logger.info("%s: %s" % (entry, count))
 

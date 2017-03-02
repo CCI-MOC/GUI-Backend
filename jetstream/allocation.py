@@ -219,11 +219,11 @@ class TASAPIDriver(object):
         except ValueError as exc:
             if raise_exception:
                 raise TASAPIException("JSON Decode error -- %s" % exc)
-            logger.info( exc)
+            logger.info(exc)
         except Exception as exc:
             if raise_exception:
                 raise
-            logger.info( exc)
+            logger.info(exc)
         return user_names
 
 
@@ -240,16 +240,16 @@ class TASAPIDriver(object):
                 allocations = project['allocations']
                 for allocation in allocations:
                     if allocation['resource'] == self.resource_name:
-                        user_allocations.append( (project, allocation) )
+                        user_allocations.append((project, allocation))
             return user_allocations
         except ValueError as exc:
             if raise_exception:
                 raise TASAPIException("JSON Decode error -- %s" % exc)
-            logger.info( exc)
+            logger.info(exc)
         except Exception as exc:
             if raise_exception:
                 raise
-            logger.info( exc)
+            logger.info(exc)
         return None
 
 

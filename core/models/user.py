@@ -140,7 +140,7 @@ class AtmosphereUser(AbstractBaseUser, PermissionsMixin):
     @classmethod
     def for_allocation_source(cls, allocation_source_id):
         from core.models import UserAllocationSource
-        user_ids = UserAllocationSource.objects.filter(allocation_source__source_id=allocation_source_id).values_list('user',flat=True)
+        user_ids = UserAllocationSource.objects.filter(allocation_source__source_id=allocation_source_id).values_list('user', flat=True)
         return AtmosphereUser.objects.filter(id__in=user_ids)
 
     def can_use_identity(self, identity_id):

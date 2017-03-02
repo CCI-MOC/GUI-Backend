@@ -127,8 +127,7 @@ def get_scripts_for_instance(instance):
             | Q(
                 applications__uuid=instance.source.providermachine.application.uuid)
             | Q(
-                application_versions__id=instance.source.providermachine.application_version.id)
-            ,  # Note: Trailing comma on single-arg to force tuple-conversion
+                application_versions__id=instance.source.providermachine.application_version.id),  # Note: Trailing comma on single-arg to force tuple-conversion
         )
     return BootScript.objects.filter(*query_args, **query_kwargs)
 
@@ -155,9 +154,9 @@ def _save_scripts_to_instance(instance, boot_script_list):
     for script_id in boot_script_list:
         try:
             if type(script_id) == int:
-                query=Q(id=script_id)
+                query = Q(id=script_id)
             else:
-                query=Q(uuid=script_id)
+                query = Q(uuid=script_id)
             script = BootScript.objects.get(query)
         except BootScript.DoesNotExist:
             # This 2nd-attempt can be removed when API v1 is removed

@@ -152,7 +152,7 @@ def stop_instance(esh_driver, esh_instance, provider_uuid, identity_uuid, user,
         remove_ips(esh_driver, esh_instance, identity_uuid)
     stopped = esh_driver.stop_instance(esh_instance)
     if reclaim_ip:
-        remove_empty_network(esh_driver, identity_uuid, {"skip_network":True})
+        remove_empty_network(esh_driver, identity_uuid, {"skip_network": True})
     update_status(
         esh_driver,
         esh_instance.id,
@@ -216,7 +216,7 @@ def suspend_instance(esh_driver, esh_instance,
         remove_ips(esh_driver, esh_instance, identity_uuid)
     suspended = esh_driver.suspend_instance(esh_instance)
     if reclaim_ip:
-        remove_empty_network(esh_driver, identity_uuid, {"skip_network":True})
+        remove_empty_network(esh_driver, identity_uuid, {"skip_network": True})
     update_status(
         esh_driver,
         esh_instance.id,
@@ -245,7 +245,7 @@ def remove_ips(esh_driver, esh_instance, identity_uuid, update_meta=True):
         identity = esh_driver.identity
         provider = esh_driver.provider
 
-        metadata={'public-ip': '', 'public-hostname': ''}
+        metadata = {'public-ip': '', 'public-hostname': ''}
         update_metadata.s(driver_class, provider, identity, esh_instance.id,
                           metadata, replace_metadata=False).apply()
     # Fixed
@@ -584,7 +584,7 @@ def shelve_instance(esh_driver, esh_instance,
         remove_ips(esh_driver, esh_instance, identity_uuid)
     shelved = esh_driver._connection.ex_shelve_instance(esh_instance)
     if reclaim_ip:
-        remove_empty_network(esh_driver, identity_uuid, {"skip_network":True})
+        remove_empty_network(esh_driver, identity_uuid, {"skip_network": True})
     update_status(
         esh_driver,
         esh_instance.id,
@@ -636,7 +636,7 @@ def offload_instance(esh_driver, esh_instance,
         remove_ips(esh_driver, esh_instance, identity_uuid)
     offloaded = esh_driver._connection.ex_shelve_offload_instance(esh_instance)
     if reclaim_ip:
-        remove_empty_network(esh_driver, identity_uuid, {"skip_network":True})
+        remove_empty_network(esh_driver, identity_uuid, {"skip_network": True})
     update_status(
         esh_driver,
         esh_instance.id,
@@ -717,7 +717,7 @@ def os_cleanup_networking(core_identity_uuid):
         clean_task = clean_empty_ips.si(driverCls, provider, identity,
                                         immutable=True, countdown=5)
         remove_task = remove_empty_network.si(
-            driverCls, provider, identity, core_identity_uuid, {"skip_network":False},
+            driverCls, provider, identity, core_identity_uuid, {"skip_network": False},
             immutable=True, countdown=60)
         clean_task.link(remove_task)
         clean_task.apply_async()
@@ -1323,7 +1323,7 @@ def security_group_init(core_identity, max_attempts=3):
 
 def user_security_group_init(core_identity, security_group_name='default'):
     # Rules can come from the provider _or_ from settings _otherwise_ empty-list
-    rules = core_identity.provider.get_config('network', 'default_security_rules',getattr(settings,'DEFAULT_RULES',[]))
+    rules = core_identity.provider.get_config('network', 'default_security_rules', getattr(settings, 'DEFAULT_RULES', []))
     driver = get_cached_driver(identity=core_identity)
     lc_driver = driver._connection
     security_group = get_or_create_security_group(lc_driver, security_group_name)
@@ -1365,7 +1365,7 @@ def get_or_create_security_group(lc_driver, security_group_name):
     if len(security_group) > 0:
         security_group = security_group[0]
     else:
-        security_group = lc_driver.ex_create_security_group(security_group_name,'Security Group created by Atmosphere')
+        security_group = lc_driver.ex_create_security_group(security_group_name, 'Security Group created by Atmosphere')
 
     if security_group is None:
         raise Exception("Could not find or create security group")

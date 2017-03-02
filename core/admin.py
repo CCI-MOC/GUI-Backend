@@ -45,7 +45,7 @@ class MaintenanceAdmin(admin.ModelAdmin):
 @admin.register(models.ApplicationVersion)
 class ImageVersionAdmin(admin.ModelAdmin):
     search_fields = [
-        "name","application__name",
+        "name", "application__name",
         "machines__instance_source__identifier"
     ]
     actions = [end_date_object, ]
@@ -72,7 +72,7 @@ class QuotaAdmin(admin.ModelAdmin):
 @admin.register(models.AllocationSource)
 class AllocationSourceAdmin(admin.ModelAdmin):
     search_fields = [
-        "name","source_id",
+        "name", "source_id",
         "users__user__username"
     ]
     actions = [end_date_object, ]
@@ -475,7 +475,7 @@ class InstanceStatusHistoryAdmin(admin.ModelAdmin):
     search_fields = ["instance__created_by__username",
                      "instance__source__identifier",
                      "instance__provider_alias", "status__name"]
-    list_display = ["instance_alias", "machine_alias", "instance_owner","instance_ip_address","status", "start_date", "end_date"]
+    list_display = ["instance_alias", "machine_alias", "instance_owner", "instance_ip_address", "status", "start_date", "end_date"]
     list_filter = ["instance__source__provider__location",
                    "status__name",
                    "instance__created_by__username"]

@@ -58,7 +58,7 @@ def filter_events_and_instances(report_start_date, report_end_date, username=Non
         try:
             user_id_int = AtmosphereUser.objects.get(username=username)
         except:
-            raise Exception("User '%s' does not exist"%(username))
+            raise Exception("User '%s' does not exist" % (username))
         events = events.filter(Q(payload__username__exact=username) | Q(entity_id=username)).order_by('timestamp')
         instances = instances.filter(Q(created_by__exact=user_id_int))
     return {'events': events, 'instances': instances}
@@ -89,7 +89,7 @@ def get_all_histories_for_instance(instances, report_start_date, report_end_date
 def map_events_to_histories(filtered_instance_histories, event_instance_dict):
     out_dic = {}
     for instance, events in event_instance_dict.iteritems():
-        hist_list = filtered_instance_histories.get(instance,[])
+        hist_list = filtered_instance_histories.get(instance, [])
         for info in events:
             ts = info.timestamp
             inst_history = [i.id for i in hist_list if i.start_date <= ts and ((not i.end_date) or (i.end_date and i.end_date >= ts))]
@@ -106,7 +106,7 @@ def get_allocation_source_name_from_event(username, report_start_date, instance_
         if allocation_source_object:
             return allocation_source_object.last().name
         else:
-            raise Exception('Allocation Source ID %s in event %s does not exist' % (events.last().payload['allocation_source_id'],events.last().id))
+            raise Exception('Allocation Source ID %s in event %s does not exist' % (events.last().payload['allocation_source_id'], events.last().id))
        
 
 def create_rows(filtered_instance_histories, events_histories_dict, report_start_date, report_end_date):
@@ -126,7 +126,7 @@ def create_rows(filtered_instance_histories, events_histories_dict, report_start
                 current_user = hist.instance.created_by.username
 
             if current_instance_id != hist.instance.id:
-                current_as_name = get_allocation_source_name_from_event(current_user,report_start_date,hist.instance.provider_alias)
+                current_as_name = get_allocation_source_name_from_event(current_user, report_start_date, hist.instance.provider_alias)
                 allocation_source_name = current_as_name if current_as_name else 'N/A' 
                 current_instance_id = hist.instance.id
             
@@ -177,7 +177,7 @@ def calculate_allocation(hist, start_date, end_date, report_start_date, report_e
     if hist.status.name == 'active':
         effective_start_date = max(start_date, report_start_date)
         effective_end_date = report_end_date if end_date is None else min(end_date, report_end_date)
-        applicable_duration = (effective_end_date - effective_start_date).total_seconds()*hist.size.cpu
+        applicable_duration = (effective_end_date - effective_start_date).total_seconds() * hist.size.cpu
         return applicable_duration
     else:
         return 0

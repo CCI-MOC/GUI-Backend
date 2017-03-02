@@ -12,7 +12,7 @@ CHANGE_FILE = os.path.join(project_root, "CHANGES")
 def create_changelog(args):
     g = git.Git(project_root)
     commit_range = "%s..%s" % (args.start, args.stop)
-    commits = g.log("--date=short", "--format=%ad %h %s",  "--no-merges", commit_range).split("\n")
+    commits = g.log("--date=short", "--format=%ad %h %s", "--no-merges", commit_range).split("\n")
 
     if not len(commits):
         print "Please specify a valid commit range."
