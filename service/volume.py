@@ -91,9 +91,9 @@ def create_volume_or_fail(name, size, user, provider, identity,
     #: Create the volume or raise an exception
     #NOTE: username can be removed when 'quota' is not linked to IdentityMembership
     _, esh_volume = create_esh_volume(driver, user.username, identity.uuid, name, size,
-                              description=description,
-                              snapshot=snapshot, image=image,
-                              raise_exception=True)
+                                      description=description,
+                                      snapshot=snapshot, image=image,
+                                      raise_exception=True)
     identifier = esh_volume.id
     start_date = esh_volume.extra.get('created_at')
     source = InstanceSource.objects.create(
@@ -136,8 +136,8 @@ def create_snapshot(esh_driver, username, identity_uuid, name,
 
 
 def create_esh_volume(esh_driver, username, identity_uuid, name, size,
-                  description=None, metadata=None, snapshot=None, image=None,
-                  raise_exception=False):
+                      description=None, metadata=None, snapshot=None, image=None,
+                      raise_exception=False):
     quota = get_quota(identity_uuid)
     try:
         check_over_storage_quota(username, identity_uuid, new_volume_size=size)
@@ -240,5 +240,5 @@ def attach_volume(driver, instance_id, volume_id, device_choice=None):
     # Step 1. Attach the volume
     # NOTE: device_choice !== device 100%
     return driver.attach_volume(instance,
-                             volume,
-                             device_choice)
+                                volume,
+                                device_choice)

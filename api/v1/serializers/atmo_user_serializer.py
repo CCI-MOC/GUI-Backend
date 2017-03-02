@@ -26,7 +26,7 @@ class AtmoUserSerializer(serializers.ModelSerializer):
                 if id_member.identity == selected_identity:
                     return selected_identity
         raise serializers.ValidationError( 
-                "User is not a member of selected_identity: %s" % selected_identity)
+            "User is not a member of selected_identity: %s" % selected_identity)
 
     class Meta:
         model = AtmosphereUser

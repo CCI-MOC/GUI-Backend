@@ -25,7 +25,7 @@ class ProjectExternalLinkSerializer(serializers.HyperlinkedModelSerializer):
             UniqueTogetherValidator(
                 queryset=ProjectExternalLink.objects.all(),
                 fields=('project', 'externallink')
-                ),
+            ),
         ]
         fields = (
             'id',

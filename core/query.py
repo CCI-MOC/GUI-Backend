@@ -82,8 +82,8 @@ def only_current_machines(now_time=None):
     """
     def _active_provider():
         return (
-                Q(providermachine__instance_source__provider__end_date__isnull=True) | \
-                Q(providermachine__instance_source__provider__end_date__gt=now_time)) & \
+            Q(providermachine__instance_source__provider__end_date__isnull=True) | \
+            Q(providermachine__instance_source__provider__end_date__gt=now_time)) & \
             Q(providermachine__instance_source__provider__active=True)
 
     def _in_range():
@@ -157,10 +157,10 @@ def only_current_machines_in_version(now_time=None):
     def _active_provider():
         return (Q(machines__instance_source__provider__end_date__isnull=True) | \
                 Q(machines__instance_source__provider__end_date__gt=now_time)) &\
-                    Q(machines__instance_source__provider__active=True)
+            Q(machines__instance_source__provider__active=True)
     def _in_range():
         return (Q(machines__instance_source__end_date__isnull=True) | \
-         Q(machines__instance_source__end_date__gt=now_time)) & \
+                Q(machines__instance_source__end_date__gt=now_time)) & \
             Q(machines__instance_source__start_date__lt=now_time)
     if not now_time:
         now_time = timezone.now()
@@ -218,7 +218,7 @@ def only_active_provider_memberships(user=None, now_time=None):
     query = (
         Q(identity__provider__end_date__isnull=True) |
         Q(identity__provider__end_date__gt=now_time)
-        ) & Q(identity__provider__active=True)
+    ) & Q(identity__provider__active=True)
     if user:
         query = query & Q(member__user__username=user.username)
     return query
@@ -230,10 +230,10 @@ def only_active_memberships(user=None, now_time=None):
     query = (
         Q(identity__provider__end_date__isnull=True) |
         Q(identity__provider__end_date__gt=now_time)
-        ) & (
+    ) & (
         Q(end_date__isnull=True) |
         Q(end_date__gt=now_time)
-        ) & Q(identity__provider__active=True)
+    ) & Q(identity__provider__active=True)
     if user:
         query = query & Q(member__user__username=user.username)
     return query
@@ -276,7 +276,7 @@ def images_shared_with_user(user):
     """
     group_ids = user.group_ids()
     return (Q(versions__machines__members__id__in=group_ids) |
-        Q(versions__membership__id__in=group_ids))
+            Q(versions__membership__id__in=group_ids))
 
 def created_by_user(user):
     """
@@ -295,11 +295,11 @@ def contains_credential(key, value):
     Use this query to determine if `Identity` contains credential key/value
     """
     return (Q(credential__key=key) &
-        Q(credential__value=value))
+            Q(credential__value=value))
 
 def provider_credential(key, value):
     """
     Use this query to determine if `Provider` contains credential key/value
     """
     return (Q(providercredential__key=key) &
-        Q(providercredential__value=value))
+            Q(providercredential__value=value))

@@ -17,8 +17,8 @@ class InstanceStatusHistoryFilter(django_filters.FilterSet):
         try:
             int_val = int(value)
             return queryset.filter(
-                    Q(instance__provider_alias=int_val)
-                    | Q(instance_id=int_val))
+                Q(instance__provider_alias=int_val)
+                | Q(instance_id=int_val))
         except ValueError:
             #Dealing with a UUID
             return queryset.filter(instance__provider_alias=value)

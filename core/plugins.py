@@ -27,7 +27,7 @@ class PluginManager(object):
             plugin_classes.append(fn)
         if cls.plugin_required and not plugin_classes:
             raise ImproperlyConfigured(
-                    cls.plugin_required_message)
+                cls.plugin_required_message)
         return plugin_classes
 
 

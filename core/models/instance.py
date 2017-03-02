@@ -411,21 +411,21 @@ class Instance(models.Model):
     def application_uuid(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.uuid
+                .application_version.application.uuid
         else:
             return None
 
     def application_name(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.name
+                .application_version.application.name
         else:
             return None
 
     def application_id(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.id
+                .application_version.application.id
         else:
             return None
 
@@ -444,7 +444,7 @@ class Instance(models.Model):
     def esh_source_name(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.name
+                .application_version.application.name
         elif self.source.is_volume():
             return self.source.volume.name
         else:
@@ -463,7 +463,7 @@ class Instance(models.Model):
     def allocation_source(self):
         #FIXME: look up the current allocation source by "Scanning the event table" on this instance.
         from core.models.allocation_source import \
-                InstanceAllocationSourceSnapshot as Snapshot
+            InstanceAllocationSourceSnapshot as Snapshot
         snapshot = Snapshot.objects.filter(instance=self).first()
         return snapshot.allocation_source if snapshot else None
 
@@ -480,8 +480,8 @@ class Instance(models.Model):
         if not allocation_source:
             raise Exception("Allocation source must not be null")
         payload = {
-                'allocation_source_id': allocation_source.source_id,
-                'instance_id': self.provider_alias
+            'allocation_source_id': allocation_source.source_id,
+            'instance_id': self.provider_alias
         }
         return EventTable.create_event(
             "instance_allocation_source_changed",

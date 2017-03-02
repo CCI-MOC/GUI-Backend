@@ -48,7 +48,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
                 return all_active.order_by('-start_date')
             return all_active.filter(
                 created_by=request_user
-                ).order_by('-start_date')
+            ).order_by('-start_date')
         return super(MachineRequestViewSet, self).get_queryset()
 
     def _get_new_provider(self):

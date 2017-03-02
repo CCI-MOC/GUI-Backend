@@ -173,7 +173,7 @@ def read_openrc_file(filename):
         "username": os_environ["OS_USERNAME"],
         "tenant": os_environ["OS_TENANT_NAME"],
         "password": os_environ["OS_PASSWORD"],
-        }
+    }
     credential_info = {
         "admin_url": "%s://%s:%s" % (server_scheme, server_hostname, "35357"),
         "auth_url": "%s://%s:%s" % (server_scheme, server_hostname, "5000"),
@@ -195,8 +195,8 @@ def get_provider_info(provider_info={}):
         print "Images on Public providers are advertised on Troposphere UI without authentication."
         print "Generally, users will have an identity created on each public provider."
         provider_info['public'] = require_input(
-        "Is this provider public? (yes/[no]): ",
-        yes_no_truth, default='no', allow_falsy=True, use_validated_answer=True)
+            "Is this provider public? (yes/[no]): ",
+            yes_no_truth, default='no', allow_falsy=True, use_validated_answer=True)
     # 2.  Collect platform type
     if not provider_info.get('platform'):
         print "Select a platform type for your new provider"
@@ -311,8 +311,8 @@ def set_user_config(user_config):
     secret = user_config.get('secret')
     if not secret or len(secret) < 32:
         secret = require_input("What secret would you like to use to create " +
-                "user accounts? (32 character minimum) ",
-                lambda answer: len(answer) >= 32)
+                               "user accounts? (32 character minimum) ",
+                               lambda answer: len(answer) >= 32)
     user_config.update({
         'admin_role_name': admin_role_name,
         'user_role_name': user_role_name,
@@ -509,11 +509,11 @@ def validate_new_provider(new_provider, new_identity):
     acct_driver = get_account_driver(new_provider)
     if not acct_driver:
         print "Could not create an account driver for the new Provider"\
-                " %s - %s. Check your credentials and try again. "\
-                "If you believe you are receiving this message in error, "\
-                "AND you are able to use external CLI tools on this machine "\
-                "to contact your cloud, please report the issue to a developer!"\
-                % (new_provider, new_identity)
+            " %s - %s. Check your credentials and try again. "\
+            "If you believe you are receiving this message in error, "\
+            "AND you are able to use external CLI tools on this machine "\
+            "to contact your cloud, please report the issue to a developer!"\
+            % (new_provider, new_identity)
         return False
     return True
 

@@ -38,7 +38,7 @@ def create_request_uri(uuid, params):
 
     #: Check for default resolution
     if (params.get("res", DEFAULT_RESOLUTION) != DEFAULT_RESOLUTION and
-        params.get("field") != "*"):
+            params.get("field") != "*"):
         res = '"{}min"'.format(params["res"])
 
         target = summarize.format(metric=metric, resolution=res)

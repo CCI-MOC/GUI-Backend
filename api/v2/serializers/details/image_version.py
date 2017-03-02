@@ -69,9 +69,9 @@ class ImageVersionSerializer(serializers.HyperlinkedModelSerializer):
         elif not user.is_staff:
             filtered = obj.machines.filter(Q(instance_source__provider_id__in=user.provider_ids()))
         serializer = ProviderMachineSummarySerializer(
-           filtered,
-           context=self.context,
-           many=True)
+            filtered,
+            context=self.context,
+            many=True)
         return serializer.data
 
     class Meta:

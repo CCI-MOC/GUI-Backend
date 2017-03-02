@@ -110,8 +110,8 @@ class MachineRequestList(AuthAPIView):
             serializer.validated_data['parent_machine'] = parent_machine
             user = serializer.validated_data['new_machine_owner']
             identity_member = IdentityMembership.objects.get(
-                    identity__provider=serializer.validated_data['new_machine_provider'],
-                    identity__created_by=user)
+                identity__provider=serializer.validated_data['new_machine_provider'],
+                identity__created_by=user)
             serializer.validated_data['membership'] = identity_member
             serializer.validated_data['created_by'] = user
             self._permission_to_image(identity_uuid, instance)

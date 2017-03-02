@@ -12,7 +12,7 @@ from core.models.quota import (
     has_storage_quota,
     has_storage_count_quota,
     has_snapshot_count_quota
-    )
+)
 from service.cache import get_cached_driver
 from service.driver import get_account_driver
 

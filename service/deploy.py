@@ -29,9 +29,9 @@ from service.exceptions import AnsibleDeployException
 
 
 def ansible_deployment(
-    instance_ip, username, instance_id, playbooks_dir,
-    limit_playbooks=[], limit_hosts={}, extra_vars={},
-    raise_exception=True):
+        instance_ip, username, instance_id, playbooks_dir,
+        limit_playbooks=[], limit_hosts={}, extra_vars={},
+        raise_exception=True):
     """
     Use service.ansible to deploy to an instance.
     """
@@ -163,19 +163,19 @@ def _one_runner_all_playbook_execution(
         playbook_dir, host_file, extra_vars, my_limit,
         logger=None, limit_playbooks=None, **runner_opts):
     runner = Runner.factory(
-            host_file,
-            playbook_dir,
-            run_data=extra_vars,
-            limit_hosts=my_limit,
-            logger=logger,
-            limit_playbooks=limit_playbooks,
-            # Use atmosphere settings
-            group_vars_map={
-                filename: os.path.join(
-                    settings.ANSIBLE_GROUP_VARS_DIR, filename)
-                for filename in os.listdir(settings.ANSIBLE_GROUP_VARS_DIR)},
-            private_key_file=settings.ATMOSPHERE_PRIVATE_KEYFILE,
-            **runner_opts)
+        host_file,
+        playbook_dir,
+        run_data=extra_vars,
+        limit_hosts=my_limit,
+        logger=logger,
+        limit_playbooks=limit_playbooks,
+        # Use atmosphere settings
+        group_vars_map={
+            filename: os.path.join(
+                settings.ANSIBLE_GROUP_VARS_DIR, filename)
+            for filename in os.listdir(settings.ANSIBLE_GROUP_VARS_DIR)},
+        private_key_file=settings.ATMOSPHERE_PRIVATE_KEYFILE,
+        **runner_opts)
     if runner.playbooks == []:
         msg = "Playbook directory has no playbooks: %s" \
             % (playbook_dir, )
@@ -192,19 +192,19 @@ def _one_runner_one_playbook_execution(
         playbook_dir, host_file, extra_vars, my_limit,
         logger=None, limit_playbooks=None, **runner_opts):
     runners = [Runner.factory(
-            host_file,
-            os.path.join(playbook_dir, playbook_path),
-            run_data=extra_vars,
-            limit_hosts=my_limit,
-            logger=logger,
-            limit_playbooks=limit_playbooks,
-            # Use atmosphere settings
-            group_vars_map={
-                filename: os.path.join(
-                    settings.ANSIBLE_GROUP_VARS_DIR, filename)
-                for filename in os.listdir(settings.ANSIBLE_GROUP_VARS_DIR)},
-            private_key_file=settings.ATMOSPHERE_PRIVATE_KEYFILE,
-            **runner_opts)
+        host_file,
+        os.path.join(playbook_dir, playbook_path),
+        run_data=extra_vars,
+        limit_hosts=my_limit,
+        logger=logger,
+        limit_playbooks=limit_playbooks,
+        # Use atmosphere settings
+        group_vars_map={
+            filename: os.path.join(
+                settings.ANSIBLE_GROUP_VARS_DIR, filename)
+            for filename in os.listdir(settings.ANSIBLE_GROUP_VARS_DIR)},
+        private_key_file=settings.ATMOSPHERE_PRIVATE_KEYFILE,
+        **runner_opts)
         for playbook_path in os.listdir(playbook_dir)
         if not limit_playbooks or playbook_path in limit_playbooks]
     [runner.run() for runner in runners]
@@ -286,7 +286,7 @@ def create_hostnaming_map(ip):
             'three': three,
             'four': four,
             'domain': domain
-            }
+        }
         return hostname_map
     except Exception:
         raise Exception(
@@ -312,11 +312,10 @@ def get_playbook_filename(filename):
 
 
 def playbook_error_message(runner_details, error_name):
-    return ("%s with PlayBook(s) => %s|"
-            % (
-               error_name,
-               runner_details
-              ))
+    return (
+        "%s with PlayBook(s) => %s|"
+        % (error_name, runner_details)
+    )
 
 
 def execution_has_unreachable(pbs, hostname):

@@ -34,24 +34,24 @@ def remove_empty_networks_for(provider_id):
             identity = Identity.objects.filter(provider_id=provider_id, credential__key='ex_project_name', credential__value=project).filter(credential__key='key', credential__value=user).first()
             if not identity:
                 celery_logger.warn("NOT Removing project network for User:%s, Project:%s -- No Valid Identity found!"
-                             % (user, project))
+                                   % (user, project))
                 continue
             try:
                 celery_logger.debug("Removing project network for User:%s, Project:%s"
-                             % (user, project))
+                                    % (user, project))
                 os_driver.delete_user_network(identity)
             except NeutronClientException:
                 celery_logger.exception("Neutron unable to remove project"
-                                 "network for %s-%s" % (user, project))
+                                        "network for %s-%s" % (user, project))
             except NeutronException:
                 celery_logger.exception("Neutron unable to remove project"
-                                 "network for %s-%s" % (user, project))
+                                        "network for %s-%s" % (user, project))
 
 
 @task(name="remove_empty_networks")
 def remove_empty_networks():
     celery_logger.debug("remove_empty_networks task started at %s." %
-                 datetime.now())
+                        datetime.now())
     for provider in Provider.get_active(type_name='openstack'):
         remove_empty_networks_for.apply_async(args=[provider.id])
 
@@ -61,7 +61,7 @@ def running_instances(network_name, all_instances):
         if network_name in instance.extra['addresses'].keys():
             #    #If not build/active, the network is assumed to be NOT in use
             celery_logger.debug("Network %s is in use, Active Instance:%s"
-                         % (network_name, instance.id))
+                                % (network_name, instance.id))
             return True
     celery_logger.debug("Network %s is NOT in use" % network_name)
     return False

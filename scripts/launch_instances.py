@@ -104,7 +104,7 @@ def launch_instance_for_user(args, machines, size, provider, username):
     else:
         name = None
     instances = launch(user, name, provider, machines, size,
-           host, args.skip_deploy, args.count)
+                       host, args.skip_deploy, args.count)
     print "Launched %d instances." % len(instances)
 
 
@@ -123,10 +123,10 @@ def handle_provider(args):
 def sort_most_used_machines(provider, limit=0, offset=0):
     results = ProviderMachine.objects.none()
     query = InstanceSource.objects.filter(provider__id=4)\
-           .filter(providermachine__isnull=False)\
-           .filter(instances__instancestatushistory__status__name='active').distinct()\
-           .annotate(instance_count=Count('instances'))\
-           .order_by('-instance_count')
+        .filter(providermachine__isnull=False)\
+        .filter(instances__instancestatushistory__status__name='active').distinct()\
+        .annotate(instance_count=Count('instances'))\
+        .order_by('-instance_count')
     if limit != 0:
         query = query[offset:offset+limit]
     for source in query:
@@ -150,7 +150,7 @@ def handle_machine(args, provider):
         return ProviderMachine.objects.filter(
             only_current_source(),
             instance_source__provider_id=provider.id,
-            ).distinct()
+        ).distinct()
     elif args.machine_alias == 'most_used':
         return sort_most_used_machines(provider, limit=20)
     elif ',' not in args.machine_alias:

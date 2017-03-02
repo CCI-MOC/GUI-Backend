@@ -280,19 +280,19 @@ def update_db_membership_for_group(provider_machine, group):
         application=provider_machine.application)
     if created:
         logger.info("Created new ApplicationMembership: %s" \
-            % (obj,))
+                    % (obj,))
     obj, created = models.ApplicationVersionMembership.objects.get_or_create(
         group=group,
         image_version=provider_machine.application_version)
     if created:
         logger.info("Created new ApplicationVersionMembership: %s" \
-            % (obj,))
+                    % (obj,))
     obj, created = models.ProviderMachineMembership.objects.get_or_create(
         group=group,
         provider_machine=provider_machine)
     if created:
         logger.info("Created new ProviderMachineMembership: %s" \
-            % (obj,))
+                    % (obj,))
 
 
 def remove_membership(image_version, group):
@@ -316,7 +316,7 @@ def remove_membership(image_version, group):
                 continue
             # Get project name from the identity's credential-list
             project_name = identity_membership.identity.get_credential(
-                    'ex_project_name')
+                'ex_project_name')
             project = accounts.get_project(project_name)
             if project and project not in projects:
                 continue

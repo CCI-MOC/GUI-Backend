@@ -95,9 +95,9 @@ class MachineRequest(BaseRequest):
     def save(self, *args, **kwargs):
         if not self.pk and self.is_active(self.instance):
             raise RequestLimitExceeded(
-                    "The number of open requests for "
-                    "instance %s has been exceeded."
-                    % self.instance.provider_alias)
+                "The number of open requests for "
+                "instance %s has been exceeded."
+                % self.instance.provider_alias)
         Model.save(self, *args, **kwargs)
 
     @classmethod
@@ -105,7 +105,7 @@ class MachineRequest(BaseRequest):
         """
         """
         return cls.objects.filter(instance=instance,
-                status__name__in=UNRESOLVED_STATES).count() > 0
+                                  status__name__in=UNRESOLVED_STATES).count() > 0
 
     def clean(self):
         """

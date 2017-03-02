@@ -13,9 +13,9 @@ from core.models import IdentityMembership, CloudAdministrator
 from core.models.status_type import StatusType
 
 from api.permissions import (
-        ApiAuthOptional, ApiAuthRequired, EnabledUserRequired,
-        InMaintenance, CloudAdminRequired
-    )
+    ApiAuthOptional, ApiAuthRequired, EnabledUserRequired,
+    InMaintenance, CloudAdminRequired
+)
 from api.v2.views.mixins import MultipleFieldLookup
 
 

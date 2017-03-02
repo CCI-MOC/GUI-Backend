@@ -87,7 +87,7 @@ class AccountDriver(BaseAccountDriver):
 
     def clear_cache(self):
         self.admin_driver.provider.machineCls.invalidate_provider_cache(
-                self.admin_driver.provider)
+            self.admin_driver.provider)
         return self.admin_driver
 
     def _init_by_provider(self, provider, *args, **kwargs):
@@ -393,8 +393,8 @@ class AccountDriver(BaseAccountDriver):
         if self.identity_version == 2:
             nova = clients["nova"]
             keypair = nova.keypairs.create(
-                    keyname,
-                    public_key=public_key)
+                keyname,
+                public_key=public_key)
         else:
             osdk = clients["openstack_sdk"]
             keypair = osdk.compute.create_keypair(
@@ -598,7 +598,7 @@ class AccountDriver(BaseAccountDriver):
         interface = None
         if router and subnet:
             interface = self.network_manager.find_router_interface(
-            router[0], subnet[0])
+                router[0], subnet[0])
         network_resources = {
             'network': network,
             'subnet': subnet,
@@ -679,7 +679,7 @@ class AccountDriver(BaseAccountDriver):
     def sha_v2_hashpass(self, username, cloud_pass):
         if not cloud_pass or len(cloud_pass) < 32:
             raise ValueError("Cloud config ['user']['secret'] is required and " +
-                    "must be of length 32 or more")
+                             "must be of length 32 or more")
 
         if not username:
             raise ValueError("Missing username, cannot create hash")
@@ -973,7 +973,7 @@ class AccountDriver(BaseAccountDriver):
         """
         """
         server_resp = self.admin_driver._connection.connection.request('/os-quota-sets/%s?user_id=%s'
-                                             % (tenant_id, user_id))
+                                                                       % (tenant_id, user_id))
         quota_obj = server_resp.object
         return quota_obj
         

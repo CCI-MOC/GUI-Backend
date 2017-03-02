@@ -825,7 +825,7 @@ def _pre_launch_validation(
 
     # May raise OverQuotaError or OverAllocationError
     check_quota(username, identity_uuid, size,
-            include_networking=True)
+                include_networking=True)
 
     # May raise UnderThresholdError
     check_application_threshold(username, identity_uuid, size, boot_source)
@@ -1232,7 +1232,7 @@ def check_application_threshold(
 
     if not threshold:
         return
-    
+
     # NOTE: Should be MB to MB test
     if esh_size.ram < threshold.memory_min:
         raise UnderThresholdError("This application requires >=%s GB of RAM."
@@ -1271,7 +1271,7 @@ def _test_for_licensing(esh_machine, identity):
 
 
 def check_quota(username, identity_uuid, esh_size,
-        include_networking=False):
+                include_networking=False):
     from service.monitoring import check_over_allocation
     from service.quota import check_over_instance_quota
     try:
@@ -1368,7 +1368,7 @@ def get_or_create_security_group(lc_driver, security_group_name):
         security_group = lc_driver.ex_create_security_group(security_group_name,'Security Group created by Atmosphere')
 
     if security_group is None:
-       raise Exception("Could not find or create security group")
+        raise Exception("Could not find or create security group")
     return security_group
 
 def admin_security_group_init(core_identity, max_attempts=3):
@@ -1791,12 +1791,12 @@ def run_instance_volume_action(user, identity, esh_driver, esh_instance, action_
                 'Retry request when instance is active.'
                 % (instance_id, instance_status))
         result = task.attach_volume_task(
-                esh_driver, esh_instance.alias,
-                volume_id, device, mount_location)
+            esh_driver, esh_instance.alias,
+            volume_id, device, mount_location)
     elif 'mount_volume' == action_type:
         result = task.mount_volume_task(
-                esh_driver, esh_instance.alias,
-                volume_id, device, mount_location)
+            esh_driver, esh_instance.alias,
+            volume_id, device, mount_location)
     elif 'unmount_volume' == action_type:
         (result, error_msg) =\
             task.unmount_volume_task(esh_driver,

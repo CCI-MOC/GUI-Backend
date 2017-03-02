@@ -246,19 +246,19 @@ def listen_for_user_snapshot_changes(sender, instance, created, **kwargs):
 
     try:
         snapshot = UserAllocationSnapshot.objects.get(
-                allocation_source=allocation_source,
-                user=user,
-            )
+            allocation_source=allocation_source,
+            user=user,
+        )
         snapshot.burn_rate = burn_rate
         snapshot.compute_used = compute_used
         snapshot.save()
     except UserAllocationSnapshot.DoesNotExist:
         snapshot = UserAllocationSnapshot.objects.create(
-                allocation_source=allocation_source,
-                user=user,
-                burn_rate=burn_rate,
-                compute_used=compute_used
-            )
+            allocation_source=allocation_source,
+            user=user,
+            burn_rate=burn_rate,
+            compute_used=compute_used
+        )
     return snapshot
 
 

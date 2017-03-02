@@ -98,12 +98,12 @@ class UUIDHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
             raise Exception("UUID Field '%s' is missing - Check Field constructor" % obj_uuid)
 
         return self.reverse(view_name,
-            kwargs={
-                'pk': obj_uuid,
-            },
-            request=request,
-            format=format,
-        )
+                            kwargs={
+                                'pk': obj_uuid,
+                            },
+                            request=request,
+                            format=format,
+                            )
 class InstanceSourceHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, view_name=None, **kwargs):
         super(InstanceSourceHyperlinkedIdentityField, self).__init__(view_name, **kwargs)
@@ -119,9 +119,9 @@ class InstanceSourceHyperlinkedIdentityField(serializers.HyperlinkedIdentityFiel
             raise Exception("UUID Field '%s' is missing - Check Field constructor" % obj_uuid)
 
         return self.reverse(view_name,
-            kwargs={
-                'pk': obj_uuid,
-            },
-            request=request,
-            format=format,
-        )
+                            kwargs={
+                                'pk': obj_uuid,
+                            },
+                            request=request,
+                            format=format,
+                            )

@@ -58,7 +58,7 @@ class VolumeSupportEmailViewSet(EmailViewSet):
         """
         subject = "Volume Instance Report from %s" % user.username;
         volume = Volume.objects \
-                .filter(id=data["volume"])[0]
+            .filter(id=data["volume"])[0]
 
         context = {
             "problems": data.get("problems", []),
@@ -73,7 +73,7 @@ class VolumeSupportEmailViewSet(EmailViewSet):
 
         message = render_to_string("volume_report.html", context=context)
         email_success = email_admin(self.request, subject, message, 
-                request_tracker=True)
+                                    request_tracker=True)
         email_response = {"email_sent": email_success}
         if not email_success:
             return Response(email_response, status=status.HTTP_400_BAD_REQUEST)
@@ -108,7 +108,7 @@ class InstanceSupportEmailViewSet(EmailViewSet):
 
         message = render_to_string("instance_report.html", context=context)
         email_success = email_admin(self.request, subject, message,
-                request_tracker=True) 
+                                    request_tracker=True) 
         email_response = {"email_sent": email_success}
         if not email_success:
             return Response(email_response, status=status.HTTP_400_BAD_REQUEST)
@@ -147,21 +147,21 @@ class FeedbackEmailViewSet(EmailViewSet):
 
         body = render_to_string("feedback.html", context=context)
         email_success = email_admin(self.request, subject, body, 
-                request_tracker=True)
+                                    request_tracker=True)
         if email_success:
             resp_status = status.HTTP_200_OK
             email_response = {'result':
-                    {'code': 'success',
-                        'meta': '',
-                        'value': (
-                            'Thank you for your feedback! '
-                            'Support has been notified.')}}
+                              {'code': 'success',
+                               'meta': '',
+                               'value': (
+                                   'Thank you for your feedback! '
+                                   'Support has been notified.')}}
         else:
             resp_status = status.HTTP_400_BAD_REQUEST
             email_response = {'result':
-                    {'code': 'failed',
-                     'meta': '',
-                     'value': 'Failed to send feedback!'}}
+                              {'code': 'failed',
+                               'meta': '',
+                               'value': 'Failed to send feedback!'}}
         return Response(email_response, status=resp_status)
 
 

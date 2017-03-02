@@ -122,11 +122,11 @@ class MachineRequestSerializer(serializers.HyperlinkedModelSerializer):
     # This is a *STAFF EXCLUSIVE* serializer. These are the values that make it that way:
     admin_message = serializers.CharField(read_only=True)
     parent_machine = ModelRelatedField(
-       required=False,
-       lookup_field="uuid",
-       queryset=ProviderMachine.objects.all(),
-       serializer_class=ProviderMachineSummarySerializer,
-       style={'base_template': 'input.html'})
+        required=False,
+        lookup_field="uuid",
+        queryset=ProviderMachine.objects.all(),
+        serializer_class=ProviderMachineSummarySerializer,
+        style={'base_template': 'input.html'})
 
     instance = ModelRelatedField(
         queryset=Instance.objects.all(),

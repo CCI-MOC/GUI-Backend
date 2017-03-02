@@ -52,7 +52,7 @@ class ApplicationVersion(models.Model):
     installed_software = models.TextField(default='', null=True, blank=True)
     excluded_files = models.TextField(default='', null=True, blank=True)
     licenses = models.ManyToManyField(License,
-            blank=True, related_name='application_versions')
+                                      blank=True, related_name='application_versions')
     boot_scripts = models.ManyToManyField(
         "BootScript",
         blank=True,
@@ -70,8 +70,8 @@ class ApplicationVersion(models.Model):
     # NOTE: Created_by, created_by_ident will be == Application (EVERY TIME!)
     def __unicode__(self):
         return "%s - %s - %s" % (self.application.name,
-                               self.name,
-                               self.start_date if not self.end_date else "END-DATED")
+                                 self.name,
+                                 self.start_date if not self.end_date else "END-DATED")
 
     def get_threshold(self):
         #TODO: except ObjectDoesNotExist to avoid core import loop
@@ -137,9 +137,9 @@ class ApplicationVersion(models.Model):
             }
             provider_map[key] = metrics
         return {
-                'domains' : user_domain_map,
-                'providers': provider_map
-                }
+            'domains' : user_domain_map,
+            'providers': provider_map
+        }
 
     @classmethod
     def get_admin_image_versions(cls, user):
@@ -213,7 +213,7 @@ class ApplicationVersion(models.Model):
         self.created_by_identity = identity
         self.save()
         if propagate:
-           [m.instance_source.change_owner(identity, user) for m in self.machines.all()]
+            [m.instance_source.change_owner(identity, user) for m in self.machines.all()]
 
 
 class ApplicationVersionMembership(models.Model):

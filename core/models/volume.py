@@ -255,8 +255,7 @@ class VolumeStatusHistory(models.Model):
     def __unicode__(self):
         return "Volume:%s Status:%s Attachment:%s Start:%s End:%s" % (
             self.volume, self.status,
-            "N/A" if not self.instance_alias else "Attached to %s(%s)" %
-                (self.instance_alias, self.device),
+            "N/A" if not self.instance_alias else "Attached to %s(%s)" % (self.instance_alias, self.device),
             self.start_date,
             "" if not self.end_date else self.end_date)
 

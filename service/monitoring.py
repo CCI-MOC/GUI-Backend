@@ -518,7 +518,7 @@ def apply_strategy(identity, core_allocation, limit_instances=[], limit_history=
     strategy = _get_strategy(identity)
     if not strategy:
         return Allocation(credits=[], rules=[], instances=[],
-            start_date=start_date, end_date=end_date)
+                          start_date=start_date, end_date=end_date)
     return strategy.apply(
         identity, core_allocation,
         limit_instances=limit_instances, limit_history=limit_history,
@@ -538,7 +538,7 @@ def allocation_source_overage_enforcement(allocation_source):
         all_user_instances[user.username] = []
         for identity in user.current_identities:
             affected_instances = allocation_source_overage_enforcement_for(
-                    allocation_source, user, identity)
+                allocation_source, user, identity)
             user_instances = all_user_instances[user.username]
             user_instances.extend(affected_instances)
             all_user_instances[user.username] = user_instances

@@ -28,7 +28,7 @@ from service.exceptions import (
     UnderThresholdError, ActionNotAllowed, Unauthorized,
     # Technically owned by another
     socket_error, ConnectionFailure, LibcloudInvalidCredsError, LibcloudBadResponseError
-    )
+)
 from service.instance import (
     run_instance_action,
     launch_instance)

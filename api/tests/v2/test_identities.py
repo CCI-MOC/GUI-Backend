@@ -18,7 +18,7 @@ class GetListTests(APITestCase):
         self.leadership = LeadershipFactory.create(
             user=self.user,
             group=self.group
-            )
+        )
         self.staff_user = UserFactory.create(is_staff=True)
 
         self.provider = ProviderFactory.create()
@@ -79,7 +79,7 @@ class GetDetailTests(APITestCase):
         self.leadership = LeadershipFactory.create(
             user=self.user,
             group=self.group
-            )
+        )
         self.staff_user = UserFactory.create(is_staff=True)
 
         self.provider = ProviderFactory.create()

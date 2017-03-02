@@ -115,8 +115,8 @@ def prune_machines_for(
         cloud_machines = account_driver.list_all_images()
     else:
         db_machines = ProviderMachine.objects.filter(
-                source_in_range(),  # like 'only_current..' w/o active_provider
-                instance_source__provider=provider)
+            source_in_range(),  # like 'only_current..' w/o active_provider
+            instance_source__provider=provider)
         cloud_machines = []
 
     # Don't do anything if cloud machines == [None,[]]
@@ -349,7 +349,7 @@ def remove_machine(db_machine, now_time=None, dry_run=False):
             # Look and see if all machines are end-dated.
             Q(instance_source__end_date__isnull=True) |
             Q(instance_source__end_date__gt=now_time)
-            ).count() != 0:
+    ).count() != 0:
         # Other machines exist.. No cascade necessary.
         return True
     # Version also completely end-dated. End date this version.
@@ -362,7 +362,7 @@ def remove_machine(db_machine, now_time=None, dry_run=False):
     if db_application.versions.filter(
             # If all versions are end-dated
             only_current(now_time)
-            ).count() != 0:
+    ).count() != 0:
         # Other versions exist.. No cascade necessary..
         return True
     db_application.end_date = now_time
@@ -385,7 +385,7 @@ def make_machines_private(application, identities, account_drivers={}, provider_
             account_driver = memoized_driver(machine, account_drivers)
             tenant_name_mapping = memoized_tenant_name_map(account_driver, provider_tenant_mapping)
             current_tenants = get_current_members(
-                    account_driver, machine, tenant_name_mapping)
+                account_driver, machine, tenant_name_mapping)
             provider = machine.instance_source.provider
             cloud_machine = memoized_image(account_driver, machine, image_maps)
             for identity in identities:
@@ -431,7 +431,7 @@ def memoized_tenant_name_map(account_driver, tenant_list_maps={}):
 
 def get_current_members(account_driver, machine, tenant_id_name_map):
     current_membership = account_driver.image_manager.shared_images_for(
-            image_id=machine.identifier)
+        image_id=machine.identifier)
 
     current_tenants = []
     for membership in current_membership:
@@ -472,11 +472,11 @@ def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
             continue
         # Find matching 'tenantName' credential and add all matching identities w/ that tenantName.
         matching_creds = Credential.objects.filter(
-                key='ex_tenant_name',  # TODO: ex_project_name on next OStack update.
-                value=tenant_name,
-                # NOTE: re-add this line when not replicating clouds!
+            key='ex_tenant_name',  # TODO: ex_project_name on next OStack update.
+            value=tenant_name,
+            # NOTE: re-add this line when not replicating clouds!
                 #identity__provider=account_driver.core_provider)
-                )
+        )
         identity_ids = matching_creds.values_list('identity', flat=True)
         if not all_identities:
             all_identities = identity_ids
@@ -756,7 +756,7 @@ def reset_provider_allocation(provider_id, default_allocation_id):
     default_allocation = Allocation.objects.get(id=default_allocation_id)
     this_provider = Q(identity__provider_id=provider_id)
     no_privilege = (Q(identity__created_by__is_staff=False) &
-                   Q(identity__created_by__is_superuser=False))
+                    Q(identity__created_by__is_superuser=False))
     expiring_allocation = ~Q(allocation__delta=-1)
     members = IdentityMembership.objects.filter(
         this_provider,

@@ -28,11 +28,11 @@ class TokenEmulateViewSet(ViewSet):
         username = kwargs.get('username')
         expireDate = timezone.now() + secrets.TOKEN_EXPIRY_TIME
         new_token = create_token(
-                username,
-                token_key='EMULATED-'+str(uuid4()),
-                remote_ip=self.request.META['REMOTE_ADDR'],
-                token_expire=expireDate,
-                issuer="DRF-EmulatedToken-%s" % user.username)
+            username,
+            token_key='EMULATED-'+str(uuid4()),
+            remote_ip=self.request.META['REMOTE_ADDR'],
+            token_expire=expireDate,
+            issuer="DRF-EmulatedToken-%s" % user.username)
         serialized_data = TokenSerializer(new_token, context={'request':self.request}).data
         return Response(serialized_data, status=status.HTTP_201_CREATED)
 

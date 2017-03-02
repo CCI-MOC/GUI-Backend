@@ -102,5 +102,5 @@ class CloudRouter(PredeclareRouter):
             return {"queue": "ssh_deploy", "routing_key": "long.deployment"}
         else:
             logger.info("ROUTE: Could not place a routing key for TASK:%s"
-                    % task_name)
+                        % task_name)
             return {"queue": "default", "routing_key": "default"}

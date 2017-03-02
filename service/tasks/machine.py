@@ -198,7 +198,7 @@ def set_machine_request_metadata(machine_request, image_id):
     if machine_request.new_version_tags:
         metadata['tags'] = machine_request.new_version_tags
     celery_logger.info("LC Driver:%s - Machine:%s - Metadata:%s"
-                % (lc_driver, machine.id, metadata))
+                       % (lc_driver, machine.id, metadata))
     lc_driver.ex_set_image_metadata(machine, metadata)
     return machine
 

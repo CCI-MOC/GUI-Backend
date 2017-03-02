@@ -201,7 +201,7 @@ def request_info(request):
     return (user_agent, remote_ip, location, resolution)
 
 def email_admin(request, subject, message,
-        cc_user=True, request_tracker=False, html=False):
+                cc_user=True, request_tracker=False, html=False):
     """ Use request, subject and message to build and send a standard
         Atmosphere user request email. From an atmosphere user to admins.
         Returns True on success and False on failure.
@@ -249,10 +249,10 @@ def email_to_admin(
     else:
         cc = [email_address_str(username, user_email)]
     celery_task = send_email.si(subject, body,
-               from_email=email_address_str(username, user_email),
-               to=[email_address_str(sendto, sendto_email)],
-               cc=cc,
-               html=html)
+                                from_email=email_address_str(username, user_email),
+                                to=[email_address_str(sendto, sendto_email)],
+                                cc=cc,
+                                html=html)
     celery_task.delay() # Task executes here
     return True
 
@@ -267,10 +267,10 @@ def email_from_admin(username, subject, message, html=False):
     if not user_email:
         user_email = "%s@%s" % (username, settings.DEFAULT_EMAIL_DOMAIN)
     celery_task = send_email.si(subject, message,
-               from_email=email_address_str(from_name, from_email),
-               to=[email_address_str(username, user_email)],
-               cc=[email_address_str(from_name, from_email)],
-               html=html)
+                                from_email=email_address_str(from_name, from_email),
+                                to=[email_address_str(username, user_email)],
+                                cc=[email_address_str(from_name, from_email)],
+                                html=html)
     celery_task.delay() # Task executes here
     return True
 

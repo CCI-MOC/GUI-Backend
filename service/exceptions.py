@@ -137,7 +137,7 @@ class VolumeAttachConflict(ServiceException):
     def __init__(self, instance_id=None, volume_id=None, message=None):
         if not message:
             message = "Volume %s is still attached to instance %s"\
-            % (volume_id, instance_id)
+                % (volume_id, instance_id)
         self.message = message
         super(VolumeAttachConflict, self).__init__()
 

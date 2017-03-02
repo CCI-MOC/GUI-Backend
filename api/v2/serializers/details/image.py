@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from api.v2.serializers.summaries import UserSummarySerializer
 from api.v2.serializers.fields import (
-        ImageVersionRelatedField, TagRelatedField)
+    ImageVersionRelatedField, TagRelatedField)
 from api.v2.serializers.fields.base import UUIDHyperlinkedIdentityField
 
 

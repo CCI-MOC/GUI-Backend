@@ -94,7 +94,7 @@ class Application(models.Model):
         self.created_by_identity = identity
         self.save()
         if propagate:
-           [v.change_owner(identity, user, propagate=propagate) for v in self.versions.all()]
+            [v.change_owner(identity, user, propagate=propagate) for v in self.versions.all()]
 
     @classmethod
     def public_apps(cls):
@@ -142,10 +142,10 @@ class Application(models.Model):
             # Include all images created by the user or active images in the
             # users providers that are either shared with the user or public
             queryset = Application.objects.filter(
-                    query.created_by_user(user) |
-                    (query.only_current_apps() &
-                     query.in_users_providers(user) &
-                     (query.images_shared_with_user(user) | is_public)))
+                query.created_by_user(user) |
+                (query.only_current_apps() &
+                 query.in_users_providers(user) &
+                 (query.images_shared_with_user(user) | is_public)))
         return queryset.distinct()
 
     def get_metrics(self):
@@ -173,7 +173,7 @@ class Application(models.Model):
         return {'versions': {
             'avg_time': all_avg, 'total': all_total,
             'count': all_count,'domains':all_user_domain_map
-            }
+        }
         }
 
     def _current_machines(self, request_user=None):
@@ -202,7 +202,7 @@ class Application(models.Model):
         providermachine_set = self.all_machines
         first = providermachine_set.filter(
             query.only_current_source()
-            ).order_by('instance_source__start_date').first()
+        ).order_by('instance_source__start_date').first()
         return first
 
     def last_machine(self):
@@ -210,7 +210,7 @@ class Application(models.Model):
         # Out of all non-end dated machines in this application
         last = providermachine_set.filter(
             query.only_current_source()
-            ).order_by('instance_source__start_date').last()
+        ).order_by('instance_source__start_date').last()
         return last
 
     def get_projects(self, user):
@@ -611,8 +611,8 @@ class ApplicationThreshold(models.Model):
 
     def __unicode__(self):
         return "%s requires >%s MB memory, >%s CPU" % (self.application_version,
-                                                           self.memory_min,
-                                                           self.cpu_min)
+                                                       self.memory_min,
+                                                       self.cpu_min)
 
     class Meta:
         db_table = 'application_threshold'

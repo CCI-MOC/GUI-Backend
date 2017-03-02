@@ -54,7 +54,7 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
                     "Token returned from keystone could not create an rtwo driver")
         except Exception as exc:
                 raise serializers.ValidationError(
-                        "Driver could not be created: %s" % exc)
+                    "Driver could not be created: %s" % exc)
 
     def _create_identity(self, provider_uuid, username, project_name, token):
         try:

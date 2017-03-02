@@ -167,7 +167,7 @@ class ApplicationVersionMembershipAdmin(admin.ModelAdmin):
 
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['application_version'].queryset = \
-                models.ApplicationVersion.objects.order_by('application__name')
+            models.ApplicationVersion.objects.order_by('application__name')
         context['adminform'].form.fields[
             'group'].queryset = models.Group.objects.order_by('name')
         return super(
@@ -433,7 +433,7 @@ class MachineRequestAdmin(admin.ModelAdmin):
         parent_machine = models.ProviderMachine.objects.filter(
             instance_source__identifier=instance.source.identifier)
         new_machine = models.ProviderMachine.objects.filter(
-                instance_source__provider=provider)
+            instance_source__provider=provider)
 
         admin_fields = context['adminform'].form.fields
         admin_fields['new_machine_owner'].queryset = provider.list_users()

@@ -139,7 +139,7 @@ class GenericNetworkTopology(object):
         network_name = "%s-net" % self.prefix
         if self.network_driver:
             return self.network_driver.create_network(
-                    self.user_neutron, network_name)
+                self.user_neutron, network_name)
         else:
             return self.user_neutron.create_network(
                 {'network': {'name': network_name}})
@@ -168,9 +168,9 @@ class GenericNetworkTopology(object):
                 cidr_match = any(sn for sn in self.network_driver.list_subnets() if sn['cidr'] == new_cidr)
                 if new_cidr and not cidr_match:
                     return self.network_driver.create_subnet(
-                            self.user_neutron, subnet_name,
-                            network_id, ip_version,
-                            new_cidr, dns_nameservers)
+                        self.user_neutron, subnet_name,
+                        network_id, ip_version,
+                        new_cidr, dns_nameservers)
                 elif cidr_match:
                     logger.warn("Unable to create new_cidr for subnet "
                                 "for user: %s (CIDR already used)" % username)
@@ -186,7 +186,7 @@ class GenericNetworkTopology(object):
                     inc += 1
                 else:
                     logger.exception(
-                            "Unable to create subnet for user: %s" % username)
+                        "Unable to create subnet for user: %s" % username)
                     inc += 1
                 if not get_unique_number:
                     logger.warn("No get_unique_number method "

@@ -154,7 +154,7 @@ class Provider(models.Model):
     def get_total_hours(self, identity):
         if identity.provider != self:
             raise Exception("Provider Mismatch - %s != %s"
-                % (self, identity.provider))
+                            % (self, identity.provider))
         return self.get_total_hours()
 
     def get_platform_name(self):
