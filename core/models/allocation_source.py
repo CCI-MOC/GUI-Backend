@@ -124,7 +124,7 @@ class AllocationSourceSnapshot(models.Model):
         app_label = 'core'
 
 def total_usage(username, start_date, allocation_source_name=None, end_date=None, burn_rate=False, email=None):
-    """ 
+    """
         This function outputs the total allocation usage in hours
     """
     from service.allocation_logic import create_report

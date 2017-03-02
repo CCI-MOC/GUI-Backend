@@ -1342,7 +1342,7 @@ def set_security_group_rules(lc_driver, security_group, rules):
             raise Exception("Invalid DEFAULT_RULES contain a rule, %s, which does not match the expected format" % rule_tuple)
 
         try:
-            # attempt to find 
+            # attempt to find
             rule_found = any(
                 sg_rule for sg_rule in security_group.rules
                 if sg_rule.ip_protocol == ip_protocol.lower() and

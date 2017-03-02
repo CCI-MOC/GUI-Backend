@@ -33,4 +33,3 @@ class SizeRelatedField(serializers.PrimaryKeyRelatedField):
             size,
             context=self.context)
         return serializer.data
-

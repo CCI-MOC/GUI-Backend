@@ -287,4 +287,3 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
                              "Returning 409-CONFLICT")
             return failure_response(status.HTTP_409_CONFLICT,
                                     str(exc.message))
-

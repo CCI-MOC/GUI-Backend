@@ -94,7 +94,7 @@ class InstanceSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """
-        As of DRF 3.2.4 This is the *ONLY* way to 'limit_choices_to' 
+        As of DRF 3.2.4 This is the *ONLY* way to 'limit_choices_to'
         or to dynamically assign a queryset based on the data passed to the serializer.
         See https://github.com/tomchristie/django-rest-framework/issues/1811
         AND https://github.com/tomchristie/django-rest-framework/issues/1985
@@ -140,4 +140,3 @@ class InstanceSerializer(serializers.ModelSerializer):
             'extra',
             'allocation_source_id'
         )
-

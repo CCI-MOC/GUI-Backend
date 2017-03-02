@@ -98,7 +98,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
         identity_id = serializer.initial_data.get("identity")
         parent_machine = serializer.validated_data['instance'].provider_machine
         access_list = serializer.initial_data.get("access_list") or []
-        visibility = serializer.initial_data.get("new_application_visibility") 
+        visibility = serializer.initial_data.get("new_application_visibility")
         new_provider = self._get_new_provider()
         if visibility in ["select", "private"]:
             share_with_admins(access_list, parent_machine.provider.uuid)

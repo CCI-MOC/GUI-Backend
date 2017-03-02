@@ -98,7 +98,7 @@ def start_machine_imaging(machine_request, delay=False):
     new_status, _ = StatusType.objects.get_or_create(name="started")
     machine_request.status = new_status
     machine_request.save()
-    
+
     original_status = machine_request.old_status
     last_run_error, original_status = _recover_from_error(original_status)
 

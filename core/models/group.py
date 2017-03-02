@@ -259,5 +259,3 @@ class InstanceMembership(models.Model):
         db_table = 'instance_membership'
         app_label = 'core'
         unique_together = ('instance', 'owner')
-
-

@@ -368,5 +368,3 @@ def _validate_tas_data(data):
             % (data['status'], data)
         )
     return True
-
-

@@ -103,7 +103,7 @@ class ApplicationVersion(models.Model):
 
     def get_metrics(self, now_time=None):
         """
-        # TODO: Consider how this question could be answered 
+        # TODO: Consider how this question could be answered
         # with 'allocation' and the engine/routines used inside it..
         """
         if not now_time:
@@ -394,6 +394,3 @@ def transfer_membership(parent_version, new_version):
                 image_version=new_version,
                 group=old_membership.group,
                 can_share=old_membership.can_share)
-
-
-

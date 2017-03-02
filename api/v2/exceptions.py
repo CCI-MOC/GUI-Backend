@@ -36,5 +36,3 @@ def connection_failure(identity):
         status.HTTP_504_GATEWAY_TIMEOUT,
         'Multiple connection attempts to the provider %s have failed. Please'
         ' try again later.' % provider_id)
-
-

@@ -50,4 +50,3 @@ class ImageVersionMembershipViewSet(AuthViewSet):
         group = serializer.validated_data['group']
         add_membership(image_version, group)
         serializer.save()
-

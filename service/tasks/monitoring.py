@@ -189,7 +189,7 @@ def monitor_machines_for(provider_id, print_logs=False, dry_run=False):
         # STEP 3: if ENFORCING -- occasionally 're-distribute' any ACLs that are *listed on DB but not on cloud* -- removals should be done explicitly, outside of this function
         if settings.ENFORCING:
             distribute_image_membership(account_driver, cloud_machine, provider)
-        # ASSERTIONS about this method: 
+        # ASSERTIONS about this method:
         # 1) We will never 'remove' membership,
         # 2) We will never 'remove' a public or private flag as listed in application.
         # 2b) Future: Individual versions/machines as described by relationships above dictate whats shown in the application.

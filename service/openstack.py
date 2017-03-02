@@ -54,7 +54,7 @@ def glance_write_machine(provider_machine):
         accounts.image_manager.glance.images.update(
             g_image.id, **overrides)
     return True
-    
+
 
 
 def _make_safe(unsafe_str):

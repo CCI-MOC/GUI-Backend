@@ -76,7 +76,7 @@ class MachineRequest(BaseRequest):
 
     new_machine_provider = models.ForeignKey(Provider)
     new_machine_owner = models.ForeignKey(User, related_name="new_image_owner")
-    
+
     # Filled in when completed.
     # NOTE: ProviderMachine and 'new_machine' might be phased out
     # along with 'new_machine_provider' as Versions become replicated

@@ -153,7 +153,7 @@ def listen_for_allocation_threshold_met(sender, instance, created, **kwargs):
     if not source:
         return None
     users = AtmosphereUser.for_allocation_source(source.source_id)
-    
+
     for user in users:
         send_usage_email_to(user, source, threshold, actual_value)
 

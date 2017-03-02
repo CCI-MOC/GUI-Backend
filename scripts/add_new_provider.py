@@ -482,7 +482,7 @@ def main():
         (provider_info,
          admin_info,
          provider_credentials) = read_openrc_file(arguments.openrc)
-    
+
     while True:
         get_provider_info(provider_info)
         get_admin_info(admin_info)

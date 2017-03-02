@@ -28,7 +28,7 @@ class AccountSerializer(serializers.Serializer):
         """
         Validation will:
         - Ensure that user/group exists (Or create it)
-        - 
+        -
         """
         validated_data = data
         self.validate_user(data['provider'])

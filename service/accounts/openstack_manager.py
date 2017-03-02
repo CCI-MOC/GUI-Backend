@@ -446,7 +446,7 @@ class AccountDriver(BaseAccountDriver):
             project.id,
             'accepted')
 
-        
+
 
     def rebuild_security_groups(self, core_identity, rules_list=None):
         creds = self.parse_identity(core_identity)
@@ -934,7 +934,7 @@ class AccountDriver(BaseAccountDriver):
             limits['ram'] = absolute_limits['maxTotalRAMSize']
         except:
             logger.exception("The method for 'reading' absolute limits has changed!")
-            
+
         return limits
 
     def get_user_limits(self, username, project_name):
@@ -974,7 +974,7 @@ class AccountDriver(BaseAccountDriver):
                                                                        % (tenant_id, user_id))
         quota_obj = server_resp.object
         return quota_obj
-        
+
 
 
 
@@ -1074,7 +1074,7 @@ class AccountDriver(BaseAccountDriver):
             tenant_name = self.get_project_name_for(username)
         if not password:
             password = self.hashpass(tenant_name)
-        version = self.user_manager.keystone_version() 
+        version = self.user_manager.keystone_version()
         if version == 2:
             ex_version = '2.0_password'
         elif version == 3:
