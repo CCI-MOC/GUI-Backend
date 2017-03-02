@@ -220,7 +220,7 @@ class GenericNetworkTopology(object):
             interface = self.network_driver.remove_router_interface(
                 self.network_driver.neutron, router_name, subnet_name)
         except NeutronNotFound:
-            #This is OKAY!
+            # This is OKAY!
             return None
         except:
             raise
@@ -286,7 +286,7 @@ class ExternalNetwork(GenericNetworkTopology):
         self.delete_subnet()
 
     def create(self, username=None, dns_nameservers=None):
-        network = self.get_or_create_network()  #NOTE: This also might be wrong.
+        network = self.get_or_create_network()  # NOTE: This also might be wrong.
         subnet = self.get_or_create_user_subnet(
             network['id'], username,
             dns_nameservers=dns_nameservers)

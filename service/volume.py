@@ -89,7 +89,7 @@ def create_volume_or_fail(name, size, user, provider, identity,
         "or an `image` not both.")
 
     #: Create the volume or raise an exception
-    #NOTE: username can be removed when 'quota' is not linked to IdentityMembership
+    # NOTE: username can be removed when 'quota' is not linked to IdentityMembership
     _, esh_volume = create_esh_volume(driver, user.username, identity.uuid, name, size,
                                       description=description,
                                       snapshot=snapshot, image=image,

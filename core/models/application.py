@@ -479,10 +479,10 @@ def create_application(
         tags = []
     elif isinstance(tags, basestring):
         if "[" in tags:
-            #Format expected -- ["CentOS", "development", "test1"]
+            # Format expected -- ["CentOS", "development", "test1"]
             tags = json.loads(tags)
         elif "," in tags:
-            #Format expected -- CentOS, development, test1,test2,test3
+            # Format expected -- CentOS, development, test1,test2,test3
             tags = [t.strip() for t in tags.split(',')]
         else:
             tags = [tags]
@@ -505,7 +505,7 @@ def create_application(
         updateTags(new_app, tags, created_by_identity.created_by)
     return new_app
 
-#FIXME: This class marked for removal
+# FIXME: This class marked for removal
 class ApplicationScore(models.Model):
     """
     Users can Cast their "Score" -1/0/+1 on a specific Application.

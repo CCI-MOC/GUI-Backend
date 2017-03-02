@@ -16,7 +16,7 @@ def bad_request(errors, prefix="", status_code=None):
         raise Exception("Passed status '%s' is *NOT* an int!" % status_code)
 
     error_str = ''.join(["%s%s:%s" % (prefix, key, val[0]) for (key, val) in errors.items()])
-    error_map = {"errors": [{"code": status_code, "message": error_str}]} # This is an expected format by atmo-airport.
+    error_map = {"errors": [{"code": status_code, "message": error_str}]}  # This is an expected format by atmo-airport.
     return Response(error_map,
                     status=status_code)
 

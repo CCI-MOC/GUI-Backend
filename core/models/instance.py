@@ -53,7 +53,7 @@ class Instance(models.Model):
     provider_alias = models.CharField(max_length=256, unique=True)
     ip_address = models.GenericIPAddressField(null=True, unpack_ipv4=True)
     created_by = models.ForeignKey('AtmosphereUser')
-    #FIXME: Why is null=True okay here?
+    # FIXME: Why is null=True okay here?
     created_by_identity = models.ForeignKey(Identity, null=True)
     shell = models.BooleanField(default=False)
     vnc = models.BooleanField(default=False)
@@ -123,7 +123,7 @@ class Instance(models.Model):
         # TODO: Profile Option
         # except InstanceStatusHistory.DoesNotExist:
         # TODO: Profile current choice
-        #FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
+        # FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
         last_history = self.instancestatushistory_set.order_by(
             '-start_date').first()
         if last_history:
@@ -140,7 +140,7 @@ class Instance(models.Model):
 
     def _build_first_history(self, status_name, size,
                              start_date, end_date=None, first_update=False, activity=None):
-        #FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
+        # FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
         from core.models import InstanceStatusHistory
         if not first_update and status_name not in [
                 'build',
@@ -171,7 +171,7 @@ class Instance(models.Model):
         else: end date previous history object, start new history object.
               return (True, new_history)
         """
-        #FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
+        # FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
         from core.models import InstanceStatusHistory
         import traceback
         # 1. Get status name
@@ -461,7 +461,7 @@ class Instance(models.Model):
 
     @property
     def allocation_source(self):
-        #FIXME: look up the current allocation source by "Scanning the event table" on this instance.
+        # FIXME: look up the current allocation source by "Scanning the event table" on this instance.
         from core.models.allocation_source import \
             InstanceAllocationSourceSnapshot as Snapshot
         snapshot = Snapshot.objects.filter(instance=self).first()
@@ -476,7 +476,7 @@ class Instance(models.Model):
         from core.models.event_table import EventTable
         if not user:
             user = self.created_by
-        #FIXME: comment out this line for AllocationSource
+        # FIXME: comment out this line for AllocationSource
         if not allocation_source:
             raise Exception("Allocation source must not be null")
         payload = {
@@ -563,7 +563,7 @@ def _get_openstack_name_map(status_name, task_name, tmp_status):
     elif tmp_status:
         # ASSERT: task_name = None
         if 'running_boot_script' in tmp_status:
-            tmp_status = 'running_boot_script' # Avoid problems due to keeping track of scripts executed 1/2, 2/3, etc.
+            tmp_status = 'running_boot_script'  # Avoid problems due to keeping track of scripts executed 1/2, 2/3, etc.
         new_status = OPENSTACK_TASK_STATUS_MAP.get(tmp_status)
         logger.debug(
             "Tmp_status provided:%s, Status maps to %s" %

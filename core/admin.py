@@ -567,7 +567,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(models.EmailTemplate)
 class EmailTemplateAdmin(admin.ModelAdmin):
-    actions = None # disable the `delete selected` action
+    actions = None  # disable the `delete selected` action
 
     def has_add_permission(self, request):
         return False
@@ -578,11 +578,11 @@ class EmailTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(models.HelpLink)
 class HelpLinkAdmin(admin.ModelAdmin):
-    actions = None # disable the `delete selected` action
+    actions = None  # disable the `delete selected` action
     list_display = ["link_key", "topic", "context", "href"]
 
     def get_readonly_fields(self, request, obj=None):
-        if obj: # editing an existing object
+        if obj:  # editing an existing object
             return self.readonly_fields + ("link_key", )
         return self.readonly_fields
 

@@ -253,7 +253,7 @@ def email_to_admin(
                                 to=[email_address_str(sendto, sendto_email)],
                                 cc=cc,
                                 html=html)
-    celery_task.delay() # Task executes here
+    celery_task.delay()  # Task executes here
     return True
 
 
@@ -271,7 +271,7 @@ def email_from_admin(username, subject, message, html=False):
                                 to=[email_address_str(username, user_email)],
                                 cc=[email_address_str(from_name, from_email)],
                                 html=html)
-    celery_task.delay() # Task executes here
+    celery_task.delay()  # Task executes here
     return True
 
 

@@ -21,7 +21,7 @@ class SizeSummarySerializer(serializers.HyperlinkedModelSerializer):
             'active',
             'start_date',
             'end_date')
-#TODO: Move to fields?
+# TODO: Move to fields?
 class SizeRelatedField(serializers.PrimaryKeyRelatedField):
 
     def get_queryset(self):

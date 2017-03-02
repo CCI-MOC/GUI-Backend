@@ -22,7 +22,7 @@ class AccountSerializer(serializers.Serializer):
     credentials = CredentialSerializer(many=True, write_only=True)
     # Optional fields
     quota = serializers.UUIDField(required=False, allow_null=True)
-    #allocation_source_id = serializers.CharField(required=False, allow_null=True)  NOTE: Uncomment when feature is completed
+    # allocation_source_id = serializers.CharField(required=False, allow_null=True)  NOTE: Uncomment when feature is completed
 
     def validate(self, data):
         """
@@ -265,4 +265,4 @@ def validate_identity(new_identity):
         driver.list_sizes()
     except:
         new_identity.delete()
-        raise # Exception("The driver created by this identity was invalid")
+        raise  # Exception("The driver created by this identity was invalid")

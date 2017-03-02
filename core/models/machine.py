@@ -125,7 +125,7 @@ class ProviderMachine(BaseSource):
 
     def esh_ownerid(self):
         username = self.instance_source.created_by.username
-        #NOTE: Reaching deep -- Don't do this in the new API.
+        # NOTE: Reaching deep -- Don't do this in the new API.
         if self.esh and self.esh._image\
            and self.esh._image.extra\
            and 'application_owner' in self.esh._image.extra.get('metadata', {}):
@@ -202,7 +202,7 @@ def collect_image_metadata(glance_image):
         app_kwargs['private'] = glance_image.visibility.lower() != 'public'
         if verify_app_uuid(glance_image.get('application_uuid'), glance_image.id):
             app_kwargs['uuid'] = glance_image.get('application_uuid')
-            app_kwargs['description'] = glance_image.get('application_description')#TODO: Verify that _LINE_BREAK_ is fixed
+            app_kwargs['description'] = glance_image.get('application_description')  # TODO: Verify that _LINE_BREAK_ is fixed
             app_kwargs['tags'] = glance_image.get('application_tags')
         elif is_replicated_version(glance_image.id):
             app_kwargs = replicate_app_kwargs(glance_image.id)
@@ -280,7 +280,7 @@ def convert_glance_image(glance_image, provider_uuid, owner=None):
             'provider_machine_id': image_id
         }
         version = create_app_version(app, **version_kwargs)
-    #TODO: fuzzy=True returns a list, but call comes through as a .get()?
+    # TODO: fuzzy=True returns a list, but call comes through as a .get()?
     #      this line will cover that edge-case.
     if type(version) in [models.QuerySet, list]:
         version = version[0]
@@ -320,7 +320,7 @@ def get_or_create_provider_machine(image_id, machine_name,
         version = get_version_for_machine(provider_uuid, image_id, fuzzy=True)
     if not version:
         version = create_app_version(app, "1.0", provider_machine_id=image_id)
-    #TODO: fuzzy=True returns a list, but call comes through as a .get()?
+    # TODO: fuzzy=True returns a list, but call comes through as a .get()?
     #      this line will cover that edge-case.
     if type(version) in [models.QuerySet, list]:
         version = version[0]

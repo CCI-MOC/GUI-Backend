@@ -101,7 +101,7 @@ class CoreStatusHistoryHelper(object):
 
     def _init_sizes(self, provider):
         size_params = [
-            #name, alias, CPU, MEM, DISK/ROOT
+            # name, alias, CPU, MEM, DISK/ROOT
             ('1', 'tiny', 1, 1024 * 2, 0),
             ('2', 'small', 2, 1024 * 4, 0),
             ('3', 'medium', 4, 1024 * 8, 0),

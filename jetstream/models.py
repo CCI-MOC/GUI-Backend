@@ -11,8 +11,8 @@ def update_user_allocation_sources(sender, instance, created, **kwargs):
     driver = TASAPIDriver()
     fill_user_allocation_source_for(driver, user)
 
-#FIXME: Re-add this when you have access to the XSede API
-#post_save.connect(update_user_allocation_sources, sender=AUTH_USER_MODEL)
+# FIXME: Re-add this when you have access to the XSede API
+# post_save.connect(update_user_allocation_sources, sender=AUTH_USER_MODEL)
 
 # Create your models here.
 class TASAllocationReport(models.Model):

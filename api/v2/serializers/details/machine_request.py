@@ -282,7 +282,7 @@ class UserMachineRequestSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:machinerequest-detail',
     )
-    #FIXME: tags are missing here.
+    # FIXME: tags are missing here.
     # version change log is missing
     # 
     class Meta:

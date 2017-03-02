@@ -74,7 +74,7 @@ class ApplicationVersion(models.Model):
                                  self.start_date if not self.end_date else "END-DATED")
 
     def get_threshold(self):
-        #TODO: except ObjectDoesNotExist to avoid core import loop
+        # TODO: except ObjectDoesNotExist to avoid core import loop
         from core.models.application import ApplicationThreshold
         try:
             return self.threshold

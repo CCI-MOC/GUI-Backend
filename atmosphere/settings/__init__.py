@@ -76,8 +76,8 @@ INSTALLED_APPS = (
 
     'corsheaders',
     # 3rd party apps (Development Only)
-    #'django_jenkins',
-    #'sslserver',
+    # 'django_jenkins',
+    # 'sslserver',
 
     # Cyverse libraries
     'django_cyverse_auth',
@@ -130,8 +130,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-    #For profile/debugging
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # For profile/debugging
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -249,7 +249,7 @@ def check_and_touch(file_path):
     parent_dir = os.path.dirname(file_path)
     if not os.path.isdir(parent_dir):
         os.makedirs(parent_dir)
-    #'touch' the file.
+    # 'touch' the file.
     with open(file_path, 'a'):
         os.utime(file_path, None)
     return
@@ -374,15 +374,15 @@ REST_FRAMEWORK = {
         'api.renderers.PNGRenderer',
         'api.renderers.JPEGRenderer',
         # Easily enabled if/when support is desired
-        #'rest_framework.renderers.AdminRenderer',
-        #'rest_framework_yaml.renderers.YAMLRenderer',
-        #'rest_framework_xml.renderers.XMLRenderer',
+        # 'rest_framework.renderers.AdminRenderer',
+        # 'rest_framework_yaml.renderers.YAMLRenderer',
+        # 'rest_framework_xml.renderers.XMLRenderer',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'django_cyverse_auth.token.TokenAuthentication', # Generic Tokens
+        'django_cyverse_auth.token.TokenAuthentication',  # Generic Tokens
         # 'django_cyverse_auth.token.JWTTokenAuthentication',  # WSO2+JWT
         'django_cyverse_auth.token.OAuthTokenAuthentication',  # CAS
-        #'django_cyverse_auth.token.GlobusOAuthTokenAuthentication',  # Globus
+        # 'django_cyverse_auth.token.GlobusOAuthTokenAuthentication',  # Globus
         # 'django_cyverse_auth.token.TokenAuthentication',  # Generic Tokens
         'rest_framework.authentication.SessionAuthentication',  # Session
     ),
@@ -472,7 +472,7 @@ CELERYBEAT_SCHEDULE = {
     "monitor_machines": {
         "task": "monitor_machines",
         # Every day of the week @ 1am
-        #"schedule": crontab(hour="1", minute="0", day_of_week="*"),
+        # "schedule": crontab(hour="1", minute="0", day_of_week="*"),
         "schedule": timedelta(minutes=30),
         "options": {"expires": 10 * 60, "time_limit": 10 * 60}
     },

@@ -71,7 +71,7 @@ def only_current_instances(now_time=None):
 
     if not now_time:
         now_time = timezone.now()
-    #NOTE: Purposefully absent: 'source_in_range'
+    # NOTE: Purposefully absent: 'source_in_range'
     return only_current() & _active_source()
 
 

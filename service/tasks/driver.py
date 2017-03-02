@@ -16,7 +16,7 @@ from celery.result import allow_join_result
 
 from rtwo.exceptions import LibcloudDeploymentError
 
-#TODO: Internalize exception into RTwo
+# TODO: Internalize exception into RTwo
 from rtwo.exceptions import NonZeroDeploymentException, NeutronBadRequest
 from neutronclient.common.exceptions import IpAddressGenerationFailureClient
 
@@ -326,7 +326,7 @@ def _send_instance_email(driverCls, provider, identity, instance_id):
         if not instance:
             celery_logger.debug("Instance has been teminated: %s." % instance_id)
             return
-        #FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
+        # FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
         username = identity.user.username
         profile = UserProfile.objects.get(user__username=username)
         if profile.send_emails:
@@ -358,7 +358,7 @@ def _send_instance_email_with_failure(driverCls, provider, identity, instance_id
     if not instance:
         celery_logger.debug("Instance has been teminated: %s." % instance_id)
         return
-    #FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
+    # FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
     send_instance_email(username,
                         instance.id,
                         instance.name,
@@ -619,13 +619,13 @@ def get_chain_from_build(
 
 
 def print_chain(start_task, idx=0):
-    #FINAL case
+    # FINAL case
     count = idx + 1
     signature = "\n%s Task %s: %s(args=%s) " % ("  " * (idx), count, start_task.task, start_task.args)
     if not start_task.options.get('link'):
         mystr = '%s\n%s(FINAL TASK)' % (signature, "  " * (idx + 1))
         return mystr
-    #Recursive Case
+    # Recursive Case
     mystr = "%s" % signature
     next_tasks = start_task.options['link']
     for task in next_tasks:
@@ -1185,7 +1185,7 @@ def check_web_desktop_task(driverCls, provider, identity,
         username = identity.user.username
         hostname = build_host_name(instance.id, instance.ip)
         playbooks = run_utility_playbooks(instance.ip, username, instance_alias, ["atmo_check_novnc.yml"], raise_exception=False)
-        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname)  else True
+        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname) else True
 
         # NOTE: Throws Instance.DoesNotExist
         core_instance = Instance.objects.get(provider_alias=instance_alias)
@@ -1224,7 +1224,7 @@ def check_process_task(driverCls, provider, identity,
         # USE ANSIBLE
         username = identity.user.username
         playbooks = run_utility_playbooks(instance.ip, username, instance_alias, ["atmo_check_vnc.yml"], raise_exception=False)
-        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname)  else True
+        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname) else True
 
         # NOTE: Throws Instance.DoesNotExist
         core_instance = Instance.objects.get(provider_alias=instance_alias)
@@ -1301,14 +1301,14 @@ def add_floating_ip(driverCls, provider, identity, core_identity_uuid,
             celery_logger.debug("Created new floating_ip_address - %s" % floating_ip)
         _update_status_log(instance, "Networking Complete")
         # TODO: Implement this as its own task, with the result from
-        #'floating_ip' passed in. Add it to the deploy_chain before deploy_to
+        #       'floating_ip' passed in. Add it to the deploy_chain before deploy_to
         hostname = build_host_name(instance.id, floating_ip)
         metadata_update = {
             'public-hostname': hostname,
             'public-ip': floating_ip
         }
         # NOTE: This is part of the temp change, should be removed when moving
-        # to vxlan
+        #       to vxlan
         instance_ports = network_driver.list_ports(
             device_id=instance.id)
         network = network_driver.tenant_networks()
@@ -1489,7 +1489,7 @@ def update_membership_for(provider_uuid):
             image_members = acct_driver.image_manager.shared_images_for(
                 image_id=img.id)
             # add machine to each member
-            #(Who owns the cred:ex_project_name) in MachineMembership
+            # (Who owns the cred:ex_project_name) in MachineMembership
             # for member in image_members:
         else:
             members = app_manager.all()

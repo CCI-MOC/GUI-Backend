@@ -5,7 +5,7 @@ from django.utils import timezone
 from dateutil.parser import parse
 
 from .exceptions import TASAPIException
-#FIXME: Next iteration, move this into the driver.
+# FIXME: Next iteration, move this into the driver.
 from .api import tacc_api_post, tacc_api_get
 from core.models.allocation_source import AllocationSource, UserAllocationSource
 
@@ -268,7 +268,7 @@ def get_or_create_allocation_source(api_allocation, update_source=False):
         )
         if update_source:
             if compute_allowed != source.compute_allowed:
-                #FIXME: Here would be a *great* place to create a new event to "ignore" all previous allocation_source_`threshold_met/threshold_enforced`
+                # FIXME: Here would be a *great* place to create a new event to "ignore" all previous allocation_source_`threshold_met/threshold_enforced`
                 source.compute_allowed = compute_allowed
             source.name = source_name
             source.save()

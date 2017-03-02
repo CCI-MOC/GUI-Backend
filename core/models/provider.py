@@ -314,7 +314,7 @@ class ProviderConfiguration(models.Model):
     certain requests.
     """
     provider = models.OneToOneField(Provider, primary_key=True, related_name="configuration")
-    #TODO: These variables could be migrated from Provider:
+    # TODO: These variables could be migrated from Provider:
     # allow_imaging = models.BooleanField(default=False) # NEW! rather than abusing 'public'
     # auto_imaging = models.BooleanField(default=False)
     # over_allocation_action = models.ForeignKey(
@@ -331,7 +331,7 @@ class ProviderConfiguration(models.Model):
 class ProviderInstanceAction(models.Model):
     provider = models.ForeignKey(Provider, related_name='provider_actions')
     instance_action = models.ForeignKey("InstanceAction", related_name='provider_actions')
-    #FIXME: enabled could *always* be 'true' when present, and 'false' when not present..
+    # FIXME: enabled could *always* be 'true' when present, and 'false' when not present..
     enabled = models.BooleanField(default=True)
 
     def __unicode__(self):

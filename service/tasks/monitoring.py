@@ -180,13 +180,13 @@ def monitor_machines_for(provider_id, print_logs=False, dry_run=False):
         if not machine_is_valid(cloud_machine, account_driver):
             continue
         owner_project = _get_owner(account_driver, cloud_machine)
-        #STEP 1: Get the application, version, and provider_machine registered in Atmosphere
+        # STEP 1: Get the application, version, and provider_machine registered in Atmosphere
         (db_machine, created) = convert_glance_image(cloud_machine, provider.uuid, owner_project)
-        #STEP 2: For any private cloud_machine, convert the 'shared users' as known by cloud
+        # STEP 2: For any private cloud_machine, convert the 'shared users' as known by cloud
         update_image_membership(account_driver, cloud_machine, db_machine)
 
         # into DB relationships: ApplicationVersionMembership, ProviderMachineMembership
-        #STEP 3: if ENFORCING -- occasionally 're-distribute' any ACLs that are *listed on DB but not on cloud* -- removals should be done explicitly, outside of this function
+        # STEP 3: if ENFORCING -- occasionally 're-distribute' any ACLs that are *listed on DB but not on cloud* -- removals should be done explicitly, outside of this function
         if settings.ENFORCING:
             distribute_image_membership(account_driver, cloud_machine, provider)
         # ASSERTIONS about this method: 
@@ -252,7 +252,7 @@ def machine_is_valid(cloud_machine, accounts):
     config_domain = accounts.get_config('user', 'domain', 'default')
     owner_domain = accounts.openstack_sdk.identity.get_domain(domain_id)
     account_domain = accounts.openstack_sdk.identity.get_domain(config_domain)
-    if owner_domain.id != account_domain.id: # and if FLAG FOR DOMAIN-SPECIFIC ATMOSPHERE
+    if owner_domain.id != account_domain.id:  # and if FLAG FOR DOMAIN-SPECIFIC ATMOSPHERE
         celery_logger.info("Skipping private machine %s - The owner belongs to a different domain (%s)" % (cloud_machine, owner_domain))
         return False
     return True
@@ -279,7 +279,7 @@ def update_image_membership(account_driver, cloud_machine, db_machine):
     if image_visibility.lower() == 'public':
         return
     image_owner = cloud_machine.get('application_owner', '')
-    #TODO: In a future update to 'imaging' we might image 'as the user' rather than 'as the admin user', in this case we should just use 'owner' metadata
+    # TODO: In a future update to 'imaging' we might image 'as the user' rather than 'as the admin user', in this case we should just use 'owner' metadata
     shared_group_names = [image_owner]
     shared_projects = account_driver.shared_images_for(cloud_machine.id)
     shared_group_names.extend(p.name for p in shared_projects if p)
@@ -308,9 +308,9 @@ def get_public_and_private_apps(provider):
     # ASSERT: All non-end-dated machines in the DB can be found in the cloud
     # if you do not believe this is the case, you should call 'prune_machines_for'
     for cloud_machine in cloud_machines:
-        #Filter out: ChromoSnapShot, eri-, eki-, ... (Or dont..)
+        # Filter out: ChromoSnapShot, eri-, eki-, ... (Or dont..)
         if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-', 'eki-', 'ChromoSnapShot']):
-            #celery_logger.debug("Skipping cloud machine %s" % cloud_machine)
+            # celery_logger.debug("Skipping cloud machine %s" % cloud_machine)
             continue
         db_machine = get_or_create_provider_machine(cloud_machine.id, cloud_machine.name, provider.uuid)
         db_version = db_machine.application_version
@@ -318,14 +318,14 @@ def get_public_and_private_apps(provider):
 
         if cloud_machine.get('visibility') == 'public':
             if db_application.private and db_application not in new_public_apps:
-                new_public_apps.append(db_application) #Distinct list..
-            #Else the db app is public and no changes are necessary.
+                new_public_apps.append(db_application)  # Distinct list..
+            # Else the db app is public and no changes are necessary.
         else:
             # cloud machine is private
             membership = get_shared_identities(account_driver, cloud_machine, all_projects_map)
             all_members = private_apps.get(db_application, [])
             all_members.extend(membership)
-            #Distinct list..
+            # Distinct list..
             private_apps[db_application] = all_members
     return new_public_apps, private_apps
 
@@ -451,7 +451,7 @@ def add_application_membership(application, identity, dry_run=False):
             if not dry_run:
                 ApplicationMembership.objects.create(application=application, group=group)
         else:
-            #celery_logger.debug("SKIPPED _ Group %s already ApplicationMember for %s" % (group.name, application.name))
+            # celery_logger.debug("SKIPPED _ Group %s already ApplicationMember for %s" % (group.name, application.name))
             pass
 
 def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
@@ -475,7 +475,7 @@ def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
             key='ex_tenant_name',  # TODO: ex_project_name on next OStack update.
             value=tenant_name,
             # NOTE: re-add this line when not replicating clouds!
-                #identity__provider=account_driver.core_provider)
+                # identity__provider=account_driver.core_provider)
         )
         identity_ids = matching_creds.values_list('identity', flat=True)
         if not all_identities:
@@ -827,7 +827,7 @@ def _share_image(account_driver, cloud_machine, identity, members, dry_run=False
     # Skip tenant-names who are NOT in the DB, and tenants who are already included
     missing_tenant = identity.credential_set.filter(~Q(value__in=members), key='ex_tenant_name')
     if missing_tenant.count() == 0:
-        #celery_logger.debug("SKIPPED _ Image %s already shared with %s" % (cloud_machine.id, identity))
+        # celery_logger.debug("SKIPPED _ Image %s already shared with %s" % (cloud_machine.id, identity))
         return
     elif missing_tenant.count() > 1:
         raise Exception("Safety Check -- You should not be here")

@@ -252,7 +252,7 @@ def get_default_identity(username, provider=None):
             if not default_identity:
                 logger.error("User %s has no identities on Provider %s" % (username, default_provider))
                 raise Exception("No Identities on Provider %s for %s" % (default_provider, username))
-            #Passing
+            # Passing
             default_identity = default_identity[0]
             logger.debug(
                 "default_identity set to %s " %

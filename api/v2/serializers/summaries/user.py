@@ -14,10 +14,4 @@ class UserSummarySerializer(serializers.HyperlinkedModelSerializer):
             'uuid',
             'url',
             'username',
-            #'first_name',
-            #'last_name',
-            #'email',
-            #'is_staff',
-            #'is_superuser',
-            #'date_joined'
         )

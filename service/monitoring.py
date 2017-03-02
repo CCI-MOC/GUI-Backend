@@ -115,11 +115,11 @@ def get_allocation_result_for(
     * Create 'Allocation' using core representation
     * Calculate the 'AllocationResult' and return both
     """
-    #FIXME: Remove this after debug testing is complete
+    # FIXME: Remove this after debug testing is complete
     if print_logs:
         from service.tasks.monitoring import _init_stdout_logging, _exit_stdout_logging
         console_handler = _init_stdout_logging(logger)
-    #ENDFIXME: Remove this after debug testing is complete
+    # ENDFIXME: Remove this after debug testing is complete
 
     identity = _get_identity_from_tenant_name(provider, username)
     # Attempt to run through the allocation engine
@@ -140,11 +140,11 @@ def get_allocation_result_for(
         logger.exception("Unable to monitor Identity:%s"
                          % (identity,))
         raise
-    #FIXME: Remove this after debug testing is complete
+    # FIXME: Remove this after debug testing is complete
     else:
         if print_logs:
             _exit_stdout_logging(console_handler)
-    #ENDFIXME: Remove this after debug testing is complete
+    # ENDFIXME: Remove this after debug testing is complete
 
 
 def user_over_allocation_enforcement(
@@ -409,7 +409,6 @@ def _get_instance_owner_map(provider, users=None):
 
 
     all_instances = get_cached_instances(provider=provider, identity=account_identity, force=True)
-    #all_tenants = admin_driver._connection._keystone_list_tenants()
     all_tenants = accounts.list_projects()
     # Convert instance.owner from tenant-id to tenant-name all at once
     all_instances = _convert_tenant_id_to_names(all_instances, all_tenants)
@@ -546,7 +545,7 @@ def allocation_source_overage_enforcement(allocation_source):
 
 
 def filter_allocation_source_instances(allocation_source, esh_instances):
-    #Circ Dep
+    # Circ Dep
     from core.models.allocation_strategy import InstanceAllocationSourceSnapshot
     as_instances = []
     for inst in esh_instances:

@@ -86,7 +86,7 @@ class VolumeViewSet(MultipleFieldLookup, AuthViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        #NOTE: This work normally happens in 'perform_create()'
+        # NOTE: This work normally happens in 'perform_create()'
         data = serializer.validated_data
         name = data.get('name')
         size = data.get('size')
@@ -104,7 +104,7 @@ class VolumeViewSet(MultipleFieldLookup, AuthViewSet):
                 project=project,
                 image_id=image_id,
                 snapshot_id=snapshot_id)
-            #NOTE: This is normally where 'perform_create()' would end
+            # NOTE: This is normally where 'perform_create()' would end
             # but we swap out the VolumeSerializer Class at this point.
             serialized_volume = VolumeSerializer(
                 core_volume, context={'request': self.request},

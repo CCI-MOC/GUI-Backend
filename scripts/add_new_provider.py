@@ -67,8 +67,6 @@ def review_information(provider_info, admin_info, provider_credentials, cloud_co
     pprint.pprint(admin_info)
     print "3. Provider Credentials"
     pprint.pprint(provider_credentials)
-    #jsonfile_text = json.dumps({'provider':provider_info, 'admin': admin_info, 'credentials': provider_credentials})
-    #print jsonfile_text
     review_completed = raw_input("Does everything above look correct? [Yes]/No")
     if not review_completed or review_completed.lower() == 'yes':
         return
@@ -255,7 +253,7 @@ def get_cloud_config(cloud_config={}):
 
 
 def set_deploy_config(deploy_config):
-    #get/set deploy_format
+    # get/set deploy_format
     hostname_format = deploy_config.get('hostname_format')
     if not hostname_format:
         print "What is the hostname format for the instances deployed by your provider? (Default selection will use IP address as hostname)"
@@ -265,7 +263,7 @@ def set_deploy_config(deploy_config):
 
 
 def set_network_config(net_config):
-    #FIXME/TODO: This is probably not an effective way of collecting data..
+    # FIXME/TODO: This is probably not an effective way of collecting data..
     if not net_config.get('default_security_rules'):
         print "What is the list of security rules for the provider? (Default: Uses the setting `DEFAULT_RULES`)"
         net_config['default_security_rules'] = require_input("default_security_rules for provider: (Should be a list)", default=settings.DEFAULT_RULES)
@@ -290,19 +288,19 @@ def set_network_config(net_config):
 
 
 def set_user_config(user_config):
-    #get/set admin_role_name
+    # get/set admin_role_name
     admin_role_name = user_config.get('admin_role_name')
     if not admin_role_name:
         print "What is the role name for 'admin' in your provider? (Default: admin)"
         admin_role_name = require_input("admin role_name for the provider: ", default='admin')
 
-    #get/set user_role_name
+    # get/set user_role_name
     user_role_name = user_config.get('user_role_name')
     if not user_role_name:
         print "What is the role name for default membership in your provider? (Default: _member_)"
         user_role_name = require_input("user_role_name for the provider: ", default='_member_')
 
-    #get/set domain
+    # get/set domain
     domain = user_config.get('domain')
     if not domain:
         print "What is the domain name for your provider? (Default: default)"

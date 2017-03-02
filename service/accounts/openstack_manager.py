@@ -67,7 +67,6 @@ class AccountDriver(BaseAccountDriver):
         is_v2 = '2' in keystone_auth_version
         is_v3 = '3' in keystone_auth_version
         version_prefix = "/v2.0" if is_v2 else '/v3'
-        #auth_url = all_creds.get('auth_url', '<AUTH URL MISSING>') + version_prefix
         admin_url = all_creds.get('admin_url', '<ADMIN URL MISSING>').replace('/v2.0/tokens', '') + version_prefix
         export_data = {
             "OS_REGION_NAME": region_name,
@@ -603,7 +602,7 @@ class AccountDriver(BaseAccountDriver):
             'network': network,
             'subnet': subnet,
             'router': router,
-            #'gateway': gateway,
+            # 'gateway': gateway,
             'interface': interface,
         }
         return network_resources
@@ -622,7 +621,6 @@ class AccountDriver(BaseAccountDriver):
         #       when we already have "non-prefixed" resources might be tough.
         #       to avoid conflicts with production boxes, we will not implement
         #       the prefixing portion now.
-        #prefix_name = "atmo_%s" % (identity_creds["tenant_name"],)
         prefix_name = "%s" % (identity_creds["tenant_name"],)
         neutron = self.get_openstack_client(identity, 'neutron')
         dns_nameservers = self.dns_nameservers_for(identity)
@@ -665,7 +663,7 @@ class AccountDriver(BaseAccountDriver):
         """
         Create a unique password using 'username'
         """
-        #FIXME: Remove these lines when crypt_hashpass is no longer used.
+        # FIXME: Remove these lines when crypt_hashpass is no longer used.
         strategy = self.get_config('user', 'strategy', '')
         cloud_pass = self.get_config('user', 'secret', '')
 
@@ -898,7 +896,7 @@ class AccountDriver(BaseAccountDriver):
                 kwargs.pop(domain_key)
             return kwargs
         if domain_key not in kwargs:
-            kwargs[domain_key] = default_domain # Set to default domain
+            kwargs[domain_key] = default_domain  # Set to default domain
 
         domain_name_or_id = kwargs.get(domain_key)
         domain = self.openstack_sdk.identity.find_domain(domain_name_or_id)
@@ -1267,7 +1265,7 @@ class AccountDriver(BaseAccountDriver):
         if 'user_domain_name' not in os_args:
             os_args['user_domain_name'] = 'default'
         if 'identity_api_version' not in os_args:
-            os_args['identity_api_version'] = 3 #NOTE: this is what we use to determine whether or not to make openstack_sdk
+            os_args['identity_api_version'] = 3  # NOTE: this is what we use to determine whether or not to make openstack_sdk
         # Removable args:
         os_args.pop("ex_force_auth_version", None)
         os_args.pop("admin_url", None)

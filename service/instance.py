@@ -678,7 +678,7 @@ def end_date_instance(user, esh_instance, core_identity_uuid):
                                              identity.provider.uuid,
                                              identity.uuid,
                                              user)
-        #NOTE: We may want to ensure instances are *actually* terminated prior to end dating them.
+        # NOTE: We may want to ensure instances are *actually* terminated prior to end dating them.
         if core_instance:
             core_instance.end_date_all()
         return core_instance
@@ -1026,7 +1026,7 @@ def _launch_machine(driver, identity, machine, size,
                     password=None, token=None, **kwargs):
     if isinstance(driver.provider, OSProvider):
         deploy = True
-        #ex_metadata, ex_keyname
+        # ex_metadata, ex_keyname
         extra_args = _extra_openstack_args(identity)
         kwargs.update(extra_args)
         conn_kwargs = {'max_attempts': 1}
@@ -1631,7 +1631,7 @@ def _update_instance_metadata(esh_driver, esh_instance, data={}, replace=True):
         raise Exception("Metadata cannot be applied while EshInstance %s is in"
                         " the build state." % (esh_instance,))
 
-    #if data.get('tmp_status') == '':
+    # if data.get('tmp_status') == '':
     #    raise Exception("There is a problem, houston")
     # ASSERT: We are ready to update the metadata
     if data.get('name'):
@@ -1724,7 +1724,7 @@ def _repair_instance_networking(
     esh_driver.reboot_instance(esh_instance, 'HARD')
 
     # Custom task-chain.. Wait for active then redeploy scripts
-    #(Adding IP is done).. Then remove metadata
+    # (Adding IP is done).. Then remove metadata
     init_task = wait_for_instance.s(
         esh_instance.id, esh_driver.__class__, esh_driver.provider,
         esh_driver.identity, "active")

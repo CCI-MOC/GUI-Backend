@@ -14,7 +14,6 @@ from django.utils import timezone
 time_start = timezone.now()
 inst_list = Instance.objects.filter(created_by_identity__provider__id__in=[4, 5, 6])
 count = inst_list.count()
-#inst_list = Instance.objects.filter(source__providermachine__application_version__application__tags__name__icontains='featured')
 print >> sys.stderr, "%s Begin processing %s records" % (timezone.now(), count)
 print CSV_HEADER
 content = ""
@@ -50,7 +49,7 @@ for idx, inst in enumerate(inst_list.order_by('id')):
     if not hit_active and not hit_error and not hit_deploy_error:
         hit_aborted = True
     featured_image = 1 if featured_image else 0
-    #Magic goes here.
+    # Magic goes here.
     if hit_active:
         hit_error = 0
         hit_deploy_error = 0

@@ -27,8 +27,8 @@ class InstanceSerializer(serializers.ModelSerializer):
     scripts = serializers.SlugRelatedField(
         slug_field="uuid", queryset=BootScript.objects.all(),
         many=True, required=False)
-    #NOTE: These 'alias' point to the 'cloud/native IDs' NOT the db-UUID!
-    #NOTE: source_alias should belong to volume.identifier or providermachine.identifier
+    # NOTE: These 'alias' point to the 'cloud/native IDs' NOT the db-UUID!
+    # NOTE: source_alias should belong to volume.identifier or providermachine.identifier
     source_alias = serializers.SlugRelatedField(source="source", slug_field="identifier", queryset=InstanceSource.objects.all())
     size_alias = serializers.SlugRelatedField(source="instancestatushistory_set.size", slug_field="alias", queryset=Size.objects.all())
     # Optional kwargs to be inluded
@@ -57,7 +57,7 @@ class InstanceSerializer(serializers.ModelSerializer):
         source_queryset = self.fields['source_alias'].queryset
 
         allocation_source_id = data.get('allocation_source_id')
-        #NOTE: When CyVerse uses the allocation_source feature, remove 'and 'jetstream' in settings.INSTALLED_APPS'
+        # NOTE: When CyVerse uses the allocation_source feature, remove 'and 'jetstream' in settings.INSTALLED_APPS'
         if not allocation_source_id and 'jetstream' in settings.INSTALLED_APPS:
             raise ValidationError({
                 'allocation_source_id': 'This field is required.'
@@ -105,7 +105,6 @@ class InstanceSerializer(serializers.ModelSerializer):
         if not identity_uuid:
             super(InstanceSerializer, self).__init__(*args, **kwargs)
             return
-        #request_user = self.context['request'].user
         # These fields have querysets that are *dynamic* based on provider (uuid)
         project_f = self.fields['project']
         provider_f = self.fields['provider_uuid']
@@ -119,7 +118,7 @@ class InstanceSerializer(serializers.ModelSerializer):
         elif len(provider_queryset) > 1:
             raise Exception("Implementation Error -- Only ever expected one value here! Fix this line!")
         else:
-            #ASSERT: Queryset is EXACTLY ONE value.
+            # ASSERT: Queryset is EXACTLY ONE value.
             provider_f.queryset = provider_queryset
             provider_uuid = provider_queryset.first().uuid
             source_f.queryset = source_f.queryset.filter(provider__uuid=provider_uuid)

@@ -671,7 +671,7 @@ class Instance(AuthAPIView):
         identity = Identity.objects.get(uuid=identity_uuid)
         if serializer.is_valid():
             logger.info('metadata = %s' % data)
-            #NOTE: We shouldn't allow 'full replacement' of metadata..
+            # NOTE: We shouldn't allow 'full replacement' of metadata..
             # We should also validate against potentional updating of 'atmo-used metadata'
             update_metadata.s(esh_driver.__class__, esh_driver.provider, esh_driver.identity, esh_instance.id,
                               data, replace_metadata=False).apply()

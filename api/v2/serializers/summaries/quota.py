@@ -11,7 +11,7 @@ class QuotaSummarySerializer(serializers.HyperlinkedModelSerializer):
         model = Quota
         fields = (
             'id', 'uuid', 'url',
-            #general
+            # general
             'cpu', 'memory', 'storage',
             # compute
             'instance_count',

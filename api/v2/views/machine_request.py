@@ -100,7 +100,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
         access_list = serializer.initial_data.get("access_list") or []
         visibility = serializer.initial_data.get("new_application_visibility") 
         new_provider = self._get_new_provider()
-        if  visibility in ["select", "private"]:
+        if visibility in ["select", "private"]:
             share_with_admins(access_list, parent_machine.provider.uuid)
             share_with_self(access_list, request_user.username)
             access_list = remove_duplicate_users(access_list)
@@ -167,7 +167,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
         """
         Submits a resource request email
         """
-        #NOTE/FIXME: This should be considered when locking down "Imaging Strategy" for a "Provider Grouping"
+        # NOTE/FIXME: This should be considered when locking down "Imaging Strategy" for a "Provider Grouping"
         new_provider = self._get_new_provider()
         pre_approved = new_provider.auto_imaging
         requestImaging(self.request, instance.id, auto_approve=pre_approved)

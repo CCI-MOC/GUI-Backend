@@ -20,7 +20,7 @@ class InstanceStatusHistoryFilter(django_filters.FilterSet):
                 Q(instance__provider_alias=int_val)
                 | Q(instance_id=int_val))
         except ValueError:
-            #Dealing with a UUID
+            # Dealing with a UUID
             return queryset.filter(instance__provider_alias=value)
 
     class Meta:
