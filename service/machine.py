@@ -280,19 +280,19 @@ def update_db_membership_for_group(provider_machine, group):
         group=group,
         application=provider_machine.application)
     if created:
-        logger.info("Created new ApplicationMembership: %s" \
+        logger.info("Created new ApplicationMembership: %s"
                     % (obj,))
     obj, created = models.ApplicationVersionMembership.objects.get_or_create(
         group=group,
         image_version=provider_machine.application_version)
     if created:
-        logger.info("Created new ApplicationVersionMembership: %s" \
+        logger.info("Created new ApplicationVersionMembership: %s"
                     % (obj,))
     obj, created = models.ProviderMachineMembership.objects.get_or_create(
         group=group,
         provider_machine=provider_machine)
     if created:
-        logger.info("Created new ProviderMachineMembership: %s" \
+        logger.info("Created new ProviderMachineMembership: %s"
                     % (obj,))
 
 

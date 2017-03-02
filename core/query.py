@@ -81,12 +81,12 @@ def only_current_machines(now_time=None):
     """
     def _active_provider():
         return (
-            Q(providermachine__instance_source__provider__end_date__isnull=True) | \
+            Q(providermachine__instance_source__provider__end_date__isnull=True) |
             Q(providermachine__instance_source__provider__end_date__gt=now_time)) & \
             Q(providermachine__instance_source__provider__active=True)
 
     def _in_range():
-        return (Q(providermachine__instance_source__end_date__isnull=True) | \
+        return (Q(providermachine__instance_source__end_date__isnull=True) |
                 Q(providermachine__instance_source__end_date__gt=now_time)) &\
             Q(providermachine__instance_source__start_date__lt=now_time)
 
@@ -97,7 +97,7 @@ def only_current_machines(now_time=None):
 
 def only_current_apps(now_time=None):
     def _active_provider():
-        return (Q(versions__machines__instance_source__provider__end_date__isnull=True) | \
+        return (Q(versions__machines__instance_source__provider__end_date__isnull=True) |
                 Q(versions__machines__instance_source__provider__end_date__gt=now_time)) & \
             Q(versions__machines__instance_source__provider__active=True)
 
@@ -109,7 +109,7 @@ def only_current_apps(now_time=None):
         AND
         * whose start date is in the past.
         """
-        return (Q(end_date__isnull=True) | \
+        return (Q(end_date__isnull=True) |
                 Q(end_date__gt=now_time)) & \
             Q(start_date__lt=now_time)
 
@@ -121,7 +121,7 @@ def only_current_apps(now_time=None):
         AND
         * have versions whose start date is in the past.
         """
-        return (Q(versions__end_date__isnull=True) | \
+        return (Q(versions__end_date__isnull=True) |
                 Q(versions__end_date__gt=now_time)) & \
             Q(versions__start_date__lt=now_time)
 
@@ -133,7 +133,7 @@ def only_current_apps(now_time=None):
         AND
         * have machines whose start date is in the past.
         """
-        return (Q(versions__machines__instance_source__end_date__isnull=True) | \
+        return (Q(versions__machines__instance_source__end_date__isnull=True) |
                 Q(versions__machines__instance_source__end_date__gt=now_time)) & \
             Q(versions__machines__instance_source__start_date__lt=now_time)
 
@@ -159,12 +159,12 @@ def only_current_apps(now_time=None):
 
 def only_current_machines_in_version(now_time=None):
     def _active_provider():
-        return (Q(machines__instance_source__provider__end_date__isnull=True) | \
+        return (Q(machines__instance_source__provider__end_date__isnull=True) |
                 Q(machines__instance_source__provider__end_date__gt=now_time)) &\
             Q(machines__instance_source__provider__active=True)
 
     def _in_range():
-        return (Q(machines__instance_source__end_date__isnull=True) | \
+        return (Q(machines__instance_source__end_date__isnull=True) |
                 Q(machines__instance_source__end_date__gt=now_time)) & \
             Q(machines__instance_source__start_date__lt=now_time)
     if not now_time:
