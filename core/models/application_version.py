@@ -15,6 +15,7 @@ from core.models.license import License
 from core.models.identity import Identity
 from core.query import only_current_source, only_current, only_current_machines_in_version
 
+
 class ApplicationVersion(models.Model):
 
     """
@@ -273,6 +274,7 @@ def get_app_version(app, version, created_by=None, created_by_identity=None):
             created_by_identity)
         return app_version
 
+
 def test_machine_in_version(app, version_name, new_machine_id):
     """
     Returns 'app_version' IF:
@@ -289,6 +291,7 @@ def test_machine_in_version(app, version_name, new_machine_id):
             return app_version
     except DoesNotExist:
         return None
+
 
 def create_unique_version(app, version, created_by, created_by_identity):
     while True:

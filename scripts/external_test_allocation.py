@@ -13,9 +13,11 @@ if len(sys.argv) < 3:
     print "All times assumed to be in utc"
     sys.exit(1)
 
+
 def utc_parse(date_str):
     dt = parse(date_str)
     return pytz.utc.localize(dt)
+
 
 username = sys.argv[1]
 start = utc_parse(sys.argv[2])

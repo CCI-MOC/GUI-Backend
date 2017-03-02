@@ -18,6 +18,8 @@ from core.models import Application as Image
 #   https://code.djangoproject.com/ticket/27303#comment:26
 #
 from django.utils import six; from django.db import models; import operator
+
+
 def filter_queryset(self, request, queryset, view):
     search_fields = getattr(view, 'search_fields', None)
     search_terms = self.get_search_terms(request)
@@ -40,7 +42,9 @@ def filter_queryset(self, request, queryset, view):
 
     return queryset.filter(reduce(operator.and_, conditions)).distinct()
 
+
 filters.SearchFilter.filter_queryset = filter_queryset
+
 
 class ImageFilter(filters.FilterSet):
     created_by = django_filters.CharFilter('created_by__username')
@@ -55,6 +59,7 @@ class ImageFilter(filters.FilterSet):
         model = Image
         fields = ['tag_name', 'project_id', 'created_by',
                   'created_by__username', 'tags__name', 'projects__id']
+
 
 class BookmarkedFilterBackend(filters.BaseFilterBackend):
     """

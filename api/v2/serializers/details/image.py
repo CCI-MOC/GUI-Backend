@@ -28,6 +28,7 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:application-detail',
     )
+
     class Meta:
         model = Image
         fields = (

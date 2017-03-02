@@ -104,7 +104,6 @@ class TASAPIDriver(object):
         except ValueError as exc:
             raise TASAPIException("JSON Decode error -- %s" % exc)
 
-
     def report_project_allocation(self, report_id, username, project_name, su_total, start_date, end_date, queue_name, scheduler_id):
         """
         Send back a report
@@ -226,8 +225,6 @@ class TASAPIDriver(object):
             logger.info(exc)
         return user_names
 
-
-
     def get_user_allocations(self, username, raise_exception=True):
         path = '/v1/projects/username/%s' % username
         url_match = self.tacc_api + path
@@ -251,7 +248,6 @@ class TASAPIDriver(object):
                 raise
             logger.info(exc)
         return None
-
 
 
 def get_or_create_allocation_source(api_allocation, update_source=False):
@@ -324,6 +320,7 @@ def fill_user_allocation_sources():
         allocation_resources[user.username] = resources
     return allocation_resources
 
+
 def fill_user_allocation_source_for(driver, user, force_update=True):
     allocation_list = find_user_allocation_source_for(driver, user)
     allocation_resources = []
@@ -335,6 +332,7 @@ def fill_user_allocation_source_for(driver, user, force_update=True):
             user=user)
         allocation_resources.append(allocation_source)
     return allocation_resources
+
 
 def select_valid_allocation(allocation_list):
     now = timezone.now()

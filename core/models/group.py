@@ -25,6 +25,7 @@ from core.query import (
     only_active_memberships, only_active_provider, only_current_provider
 )
 
+
 class Group(DjangoGroup):
 
     """

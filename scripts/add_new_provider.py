@@ -91,6 +91,7 @@ def yes_no_truth(raw_text):
     else:
         return False
 
+
 def get_comma_list(raw_text):
     """
     Return a list from comma separated string.
@@ -363,7 +364,6 @@ def get_provider_credentials(credential_info={}):
         print "Note: Adding '/v2.0/tokens' to the end of the auth_url path (Required for 2.0_password)"
         credential_info['auth_url'] = urljoin(auth_url, '/v2.0/tokens')
 
-
     return credential_info
 
 
@@ -460,7 +460,6 @@ def create_provider_credentials(provider, credential_info):
 def main():
     parser = argparse.ArgumentParser(
         description="Add a new cloud provider and adminstrator")
-
 
     parser.add_argument("--from-openrc", dest="openrc",
                         help="Add a new provider from an openrc file.")

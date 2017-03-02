@@ -32,6 +32,7 @@ from core.models.tag import Tag
 from core.models.managers import ActiveInstancesManager
 from atmosphere import settings
 
+
 class Instance(models.Model):
     """
     When a user launches a machine, an Instance is created.
@@ -607,8 +608,6 @@ def strfdate(datetime_o, fmt=None):
     if not datetime_o:
         datetime_o = timezone.now()
     return datetime_o.strftime(fmt)
-
-
 
 
 def find_instance(instance_id):

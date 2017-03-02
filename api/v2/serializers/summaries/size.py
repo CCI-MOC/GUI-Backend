@@ -7,6 +7,7 @@ class SizeSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:size-detail',
     )
+
     class Meta:
         model = Size
         fields = (
@@ -22,6 +23,8 @@ class SizeSummarySerializer(serializers.HyperlinkedModelSerializer):
             'start_date',
             'end_date')
 # TODO: Move to fields?
+
+
 class SizeRelatedField(serializers.PrimaryKeyRelatedField):
 
     def get_queryset(self):

@@ -27,6 +27,7 @@ def _generate_ssh_kwargs(timeout=120):
     kwargs.update({'timeout': timeout})
     return kwargs
 
+
 def _get_unique_id(userid):
     if 'django_cyverse_auth.authBackends.LDAPLoginBackend' in \
             settings.AUTHENTICATION_BACKENDS:
@@ -379,7 +380,6 @@ class ExternalRouter(GenericNetworkTopology):
         if not public_router:
             raise Exception("Default public router %s was not found." % self.external_router_name)
         return public_router[0]
-
 
     def get_or_create_router_gateway(self, router, network):
         return None

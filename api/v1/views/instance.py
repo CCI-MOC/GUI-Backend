@@ -373,8 +373,6 @@ class InstanceStatusHistoryDetail(AuthAPIView):
         return response
 
 
-
-
 def _further_process_result(request, action, result):
     """
     Provide additional serialization if the `action` has a

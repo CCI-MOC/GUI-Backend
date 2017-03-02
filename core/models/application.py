@@ -18,6 +18,7 @@ from core.models.application_version import ApplicationVersion
 
 import json
 
+
 class Application(models.Model):
 
     """
@@ -399,6 +400,7 @@ def verify_app_uuid(app_uuid, identifier):
     valid_uuid = _generate_app_uuid(identifier)
     return valid_uuid == app_uuid
 
+
 def _get_app_by_uuid(identifier, app_uuid):
     """
     Last-ditch placement effort. Hash the identifier and use that as the lookup
@@ -506,6 +508,8 @@ def create_application(
     return new_app
 
 # FIXME: This class marked for removal
+
+
 class ApplicationScore(models.Model):
     """
     Users can Cast their "Score" -1/0/+1 on a specific Application.

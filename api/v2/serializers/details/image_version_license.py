@@ -25,6 +25,7 @@ class ImageVersionLicenseSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='api:v2:imageversion_license-detail',
     )
+
     class Meta:
         model = ImageVersionLicense
         validators = [

@@ -4,6 +4,7 @@ from django.utils import timezone
 from threepio import logger
 from pprint import pprint
 
+
 class AllocationSource(models.Model):
     name = models.CharField(max_length=255)
     source_id = models.CharField(max_length=255)
@@ -47,10 +48,10 @@ class AllocationSource(models.Model):
             (self.name, self.source_id,
              self.compute_allowed)
 
-
     class Meta:
         db_table = 'allocation_source'
         app_label = 'core'
+
 
 class UserAllocationSource(models.Model):
     """
@@ -103,6 +104,7 @@ class InstanceAllocationSourceSnapshot(models.Model):
     def __unicode__(self):
         return "%s is using allocation %s" %\
             (self.instance, self.allocation_source)
+
     class Meta:
         db_table = 'instance_allocation_source_snapshot'
         app_label = 'core'
@@ -119,9 +121,11 @@ class AllocationSourceSnapshot(models.Model):
         return "%s (Used:%s, Burn Rate:%s Updated on:%s)" %\
             (self.allocation_source, self.compute_used,
              self.global_burn_rate, self.updated)
+
     class Meta:
         db_table = 'allocation_source_snapshot'
         app_label = 'core'
+
 
 def total_usage(username, start_date, allocation_source_name=None, end_date=None, burn_rate=False, email=None):
     """

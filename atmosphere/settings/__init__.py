@@ -254,6 +254,7 @@ def check_and_touch(file_path):
         os.utime(file_path, None)
     return
 
+
 # logging
 LOGGING_LEVEL = logging.DEBUG
 DEP_LOGGING_LEVEL = logging.INFO  # Logging level for dependencies.
@@ -268,6 +269,7 @@ def create_log_path(filename):
             '..',
             'logs',
             filename))
+
 
 LOG_FILENAME = create_log_path("atmosphere.log")
 API_LOG_FILENAME = create_log_path("atmosphere_api.log")
@@ -533,6 +535,7 @@ def generate_secret_key(secret_key_path):
     with open(secret_key_path, "w") as key_file:
         key_file.write(comment_block)
         key_file.write("SECRET_KEY=\"%s\"\n" % secret_value)
+
 
 # This import will Use an existing SECRET_KEY, or Generate your SECRET_KEY
 # if it doesn't exist yet.

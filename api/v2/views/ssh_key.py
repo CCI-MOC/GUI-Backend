@@ -10,6 +10,7 @@ class SSHKeyViewSet(AuthViewSet):
     API endpoint that allows providers to be viewed or edited.
     """
     serializer_class = SSHKeySerializer
+
     def get_queryset(self):
         """
         Filter projects by current user

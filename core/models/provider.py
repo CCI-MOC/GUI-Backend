@@ -15,6 +15,7 @@ from core.validators import validate_timezone
 from uuid import uuid4
 from threepio import logger
 
+
 class PlatformType(models.Model):
 
     """
@@ -406,6 +407,7 @@ def get_or_create_provider_configuration(sender, provider_instance=None, created
     prof = ProviderConfiguration.objects.get_or_create(provider=provider_instance)
     if prof[1] is True:
         logger.debug("Creating Provider Configuration for %s" % provider_instance)
+
 
 # Instantiate the hooks:
 post_save.connect(get_or_create_provider_configuration, sender=Provider)

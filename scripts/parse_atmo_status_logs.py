@@ -64,5 +64,7 @@ def _parse_logs(filename):
 
 def get_time(time_str):
     return datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
+
+
 if __name__ == "__main__":
     _parse_logs("logs/atmosphere_status.log")

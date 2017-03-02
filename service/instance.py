@@ -734,6 +734,7 @@ def os_cleanup_networking(core_identity_uuid):
         destroy_chain.apply_async()
     return
 
+
 def _destroy_instance(identity_uuid, instance_alias):
     """
     Responsible for actually destroying the instance
@@ -1297,9 +1298,11 @@ def delete_security_group(core_identity):
         return admin_delete_security_group(core_identity)
     return user_delete_security_group(core_identity)
 
+
 def admin_delete_security_group(core_identity):
     os_acct_driver = get_account_driver(core_identity.provider)
     os_acct_driver.delete_security_group(core_identity)
+
 
 def user_delete_security_group(core_identity):
     network_driver = _to_network_driver(core_identity)
@@ -1359,6 +1362,7 @@ def set_security_group_rules(lc_driver, security_group, rules):
             raise
     return security_group
 
+
 def get_or_create_security_group(lc_driver, security_group_name):
     sgroup_list = lc_driver.ex_list_security_groups()
     security_group = [sgroup for sgroup in sgroup_list if sgroup.name == security_group_name]
@@ -1370,6 +1374,7 @@ def get_or_create_security_group(lc_driver, security_group_name):
     if security_group is None:
         raise Exception("Could not find or create security group")
     return security_group
+
 
 def admin_security_group_init(core_identity, max_attempts=3):
     os_driver = OSAccountDriver(core_identity.provider)
@@ -1511,6 +1516,7 @@ def admin_destroy_network(core_identity, options):
     return os_acct_driver.delete_user_network(
         core_identity, options)
 
+
 def user_destroy_network(core_identity, options):
     topology_name = core_identity.provider.get_config('network', 'topology', None)
     if not topology_name:
@@ -1606,12 +1612,14 @@ arg = '{
     init_script_contents += instance_config + "\nmain(arg)"
     return init_script_contents
 
+
 def update_instance_metadata(core_instance, data={}, replace=False):
     identity = core_instance.created_by_identity
     instance_id = core_instance.provider_alias
     esh_driver = get_cached_driver(identity=identity)
     esh_instance = esh_driver.get_instance(instance_id)
     return _update_instance_metadata(esh_driver, esh_instance, data, replace)
+
 
 def _update_instance_metadata(esh_driver, esh_instance, data={}, replace=True):
     """
@@ -1825,6 +1833,7 @@ def run_instance_volume_action(user, identity, esh_driver, esh_instance, action_
                                      identity_uuid,
                                      user)
     return core_volume
+
 
 def run_instance_action(user, identity, instance_id, action_type, action_params):
     """

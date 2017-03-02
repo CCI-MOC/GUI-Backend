@@ -6,6 +6,7 @@ from core.models import AtmosphereUser
 
 from uuid import uuid4
 
+
 class SSHKey(models.Model):
 
     name = models.CharField(max_length=256)
@@ -20,6 +21,7 @@ class SSHKey(models.Model):
     class Meta:
         db_table = "ssh_key"
         app_label = "core"
+
 
 def get_user_ssh_keys(username):
     user = AtmosphereUser.objects.get(username=username)

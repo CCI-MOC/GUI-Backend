@@ -229,6 +229,7 @@ def create_bootable_volume(
 
     return core_instance
 
+
 def attach_volume(driver, instance_id, volume_id, device_choice=None):
     instance = driver.get_instance(instance_id)
     volume = driver.get_volume(volume_id)

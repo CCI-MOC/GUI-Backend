@@ -13,6 +13,7 @@ from uuid import uuid5, uuid4
 from core.query import only_active_memberships, contains_credential
 from core.models.quota import Quota
 
+
 class Identity(models.Model):
 
     """
@@ -386,8 +387,6 @@ class Identity(models.Model):
             "remaining": hourly_difference,
             "ttz": zero_time,  # Time Til Zero
         }
-
-
 
     def get_allocation_dict(self):
         id_member = self.identity_memberships.all()[0]

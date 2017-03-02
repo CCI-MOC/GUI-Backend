@@ -20,6 +20,7 @@ from core.models.machine import (
 )
 from django.db.models import Q
 
+
 def _get_owner(new_provider, user):
     try:
         return models.Identity.objects.get(provider=new_provider,
@@ -342,6 +343,7 @@ def remove_membership(image_version, group):
                         % (img, project_name))
     return
 
+
 def sync_machine_membership(accounts, glance_image, new_machine, tenant_list):
     """
     This function will check that *all* tenants in 'tenant_list'
@@ -366,6 +368,7 @@ def share_with_self(private_userlist, username):
     # TODO: Optionally, Lookup username and get the Projectname
     private_userlist.append(str(username))
     return private_userlist
+
 
 def sync_cloud_access(accounts, img, names=None):
     shared_with = accounts.image_manager.shared_images_for(

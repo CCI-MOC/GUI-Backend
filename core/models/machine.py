@@ -196,6 +196,7 @@ def get_cached_machine(provider_alias, provider_id):
                     % (provider_alias, provider_id))
     return cached_mach
 
+
 def collect_image_metadata(glance_image):
     app_kwargs = {}
     try:
@@ -495,6 +496,7 @@ def update_provider_machine_metadata(provider_machine_id, metadata={}):
     provider_machine = find_provider_machine(provider_machine_id)
     return update_machine_metadata(provider_machine, metadata)
 
+
 def find_provider_machine(identifier):
     try:
         if type(identifier) == int:
@@ -506,6 +508,7 @@ def find_provider_machine(identifier):
         return None
     except MultipleObjectsReturned:
         raise MultipleObjectsReturned("Identifier %s is ambiguous. Use the 'pk' value")
+
 
 def get_provider_machine(identifier, provider_uuid):
     try:

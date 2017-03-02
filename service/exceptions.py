@@ -20,14 +20,13 @@ class Unauthorized(ServiceException):
         self.status_code = 401
         super(Unauthorized, self).__init__()
 
+
 class ActionNotAllowed(ServiceException):
 
     def __init__(self, message):
         self.message = message
         self.status_code = 409
         super(ActionNotAllowed, self).__init__()
-
-
 
 
 class InstanceDoesNotExist(ServiceException):

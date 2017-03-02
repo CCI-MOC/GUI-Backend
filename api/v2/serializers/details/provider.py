@@ -3,6 +3,7 @@ from rest_framework import serializers
 from api.v2.serializers.summaries import SizeSummarySerializer
 from api.v2.serializers.fields.base import DebugHyperlinkedIdentityField, UUIDHyperlinkedIdentityField
 
+
 class ProviderTypeSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='api:v2:providertype-detail',

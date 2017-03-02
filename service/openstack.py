@@ -56,7 +56,6 @@ def glance_write_machine(provider_machine):
     return True
 
 
-
 def _make_safe(unsafe_str):
     return unsafe_str.replace("\r\n", "\n").replace("\n", "_LINE_BREAK_")
 
@@ -102,7 +101,6 @@ def glance_update_machine_metadata(provider_machine, metadata={}):
         accounts.image_manager.glance.images.update(
             g_image.id, **overrides)
     return True
-
 
 
 def glance_update_machine(new_machine):
@@ -191,6 +189,7 @@ def glance_image_owner(provider_uuid, identifier, glance_image=None):
             (project.name, provider_uuid))
         image_owner = None
     return image_owner
+
 
 def glance_timestamp(iso_8601_stamp):
     if not isinstance(iso_8601_stamp, basestring):

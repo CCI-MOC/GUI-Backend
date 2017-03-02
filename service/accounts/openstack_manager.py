@@ -446,8 +446,6 @@ class AccountDriver(BaseAccountDriver):
             project.id,
             'accepted')
 
-
-
     def rebuild_security_groups(self, core_identity, rules_list=None):
         creds = self.parse_identity(core_identity)
         if not rules_list:
@@ -975,9 +973,6 @@ class AccountDriver(BaseAccountDriver):
         quota_obj = server_resp.object
         return quota_obj
 
-
-
-
     def list_usergroup_names(self):
         return [user.name for (user, project) in self.list_usergroups()]
 
@@ -997,7 +992,6 @@ class AccountDriver(BaseAccountDriver):
                     usergroups.append((user, group))
                     break
         return usergroups
-
 
     def _get_horizon_url(self, tenant_id):
         parsed_url = urlparse(self.provider_creds["auth_url"])
@@ -1063,6 +1057,7 @@ class AccountDriver(BaseAccountDriver):
             "nova": nova,
             "swift": swift
         }
+
     def get_openstack_sdk_client(self, all_creds):
         sdk_creds = self._build_sdk_creds(all_creds)
         openstack_sdk = _connect_to_openstack_sdk(**sdk_creds)

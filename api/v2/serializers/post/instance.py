@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from api.v2.serializers.fields.base import ReprSlugRelatedField
 
+
 class InstanceSerializer(serializers.ModelSerializer):
     """
     This is a 'utility serializer' it should be used for preparing a v2 POST *ONLY*

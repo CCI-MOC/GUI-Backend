@@ -67,6 +67,7 @@ def main():
     f.close()
     return
 
+
 usage = "usage: %prog [command] filename"
 parser = OptionParser(usage=usage)
 parser.add_option(

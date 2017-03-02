@@ -65,7 +65,6 @@ class MachineRequestViewSet(BaseRequestViewSet):
         except:
             raise Exception("settings.REPLICATION_PROVIDER_LOCATION could not be set. Contact a developer.")
 
-
     def filter_tags(self, user, tag_names):
         new_tag_names = []
         for tag in sorted(tag_names.split(", ")):

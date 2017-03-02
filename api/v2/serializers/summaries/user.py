@@ -7,6 +7,7 @@ class UserSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:atmosphereuser-detail',
     )
+
     class Meta:
         model = AtmosphereUser
         fields = (

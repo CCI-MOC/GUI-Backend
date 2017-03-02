@@ -7,6 +7,7 @@ class QuotaSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:quota-detail',
     )
+
     class Meta:
         model = Quota
         fields = (

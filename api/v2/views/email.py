@@ -17,6 +17,7 @@ from core.email import lookupEmail, resource_request_email, support_email, email
 from core.models import AtmosphereUser as User
 from core.models import Instance, Volume
 
+
 class EmailViewSet(ViewSet):
     permission_classes = (permissions.ApiAuthRequired,)
     required_keys = []
@@ -79,6 +80,7 @@ class VolumeSupportEmailViewSet(EmailViewSet):
             return Response(email_response, status=status.HTTP_400_BAD_REQUEST)
         return Response(email_response, status=status.HTTP_200_OK)
 
+
 class InstanceSupportEmailViewSet(EmailViewSet):
     required_keys = ["message", "instance"]
 
@@ -113,6 +115,7 @@ class InstanceSupportEmailViewSet(EmailViewSet):
         if not email_success:
             return Response(email_response, status=status.HTTP_400_BAD_REQUEST)
         return Response(email_response, status=status.HTTP_200_OK)
+
 
 class FeedbackEmailViewSet(EmailViewSet):
     required_keys = ["message"]

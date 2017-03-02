@@ -1,6 +1,7 @@
 from django.contrib import admin
 from jetstream import models
 
+
 @admin.register(models.TASAllocationReport)
 class TASReportAdmin(admin.ModelAdmin):
     search_fields = ["project_name", "username", ]

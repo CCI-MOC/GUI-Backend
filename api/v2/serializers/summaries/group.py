@@ -7,6 +7,7 @@ class GroupSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:group-detail',
     )
+
     class Meta:
         model = Group
         fields = (

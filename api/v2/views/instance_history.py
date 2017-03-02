@@ -9,6 +9,7 @@ from api.v2.serializers.details import InstanceStatusHistorySerializer
 from api.v2.views.base import AuthReadOnlyViewSet
 from api.v2.views.mixins import MultipleFieldLookup
 
+
 class InstanceStatusHistoryFilter(django_filters.FilterSet):
     instance = django_filters.MethodFilter(action='filter_instance_id')
     created_by = django_filters.CharFilter('instance__created_by__username')
@@ -26,7 +27,6 @@ class InstanceStatusHistoryFilter(django_filters.FilterSet):
     class Meta:
         model = InstanceStatusHistory
         fields = ['instance', 'created_by']
-
 
 
 class InstanceStatusHistoryViewSet(MultipleFieldLookup, AuthReadOnlyViewSet):

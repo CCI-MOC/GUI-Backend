@@ -120,6 +120,7 @@ def handle_provider(args):
             " use --provider-list."
         sys.exit(1)
 
+
 def sort_most_used_machines(provider, limit=0, offset=0):
     results = ProviderMachine.objects.none()
     query = InstanceSource.objects.filter(provider__id=4)\
@@ -136,11 +137,13 @@ def sort_most_used_machines(provider, limit=0, offset=0):
             instance_source__provider_id=provider.id).annotate(instance_count=Count('instance_source__instances'))
     return results
 
+
 def print_most_used(provider):
     machines = sort_most_used_machines(provider, limit=16)
     machines = machines.annotate(inst_count=Count('instance_source__instances'))
     for result in machines:
         print "Instances Launched: %s - %s" % (result.inst_count, result)
+
 
 def handle_machine(args, provider):
     if not args.machine_alias:

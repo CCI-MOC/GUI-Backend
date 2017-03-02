@@ -4,6 +4,7 @@ from rest_framework import exceptions as rest_exceptions
 from django.utils.translation import ugettext_lazy as _
 from threepio import logger, api_logger
 
+
 def bad_request(errors, prefix="", status_code=None):
     """
     Expects the output of 'serializer.errors':
@@ -19,6 +20,7 @@ def bad_request(errors, prefix="", status_code=None):
     error_map = {"errors": [{"code": status_code, "message": error_str}]}  # This is an expected format by atmo-airport.
     return Response(error_map,
                     status=status_code)
+
 
 def failure_response(status, message):
     """
@@ -45,6 +47,7 @@ def malformed_response(provider_id, identity_id):
         status.HTTP_500_INTERNAL_SERVER_ERROR,
         "Cloud Communications Error --"
         " Contact your Cloud Administrator OR try again later!")
+
 
 def invalid_provider(provider_id):
     log_message = 'Provider %s is inactive, disabled, or does not exist.'\

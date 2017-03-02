@@ -20,6 +20,8 @@ class PredeclareRouter(object):
             channel = conn.default_channel
             for queue in queues.itervalues():
                 queue(channel).declare()
+
+
 DEPLOY_TASKS = [
     "_deploy_init_to", "service.tasks.driver._deploy_init_to",
     "deploy_ready_test", "service.tasks.driver.deploy_ready_test",

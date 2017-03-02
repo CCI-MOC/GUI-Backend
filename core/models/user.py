@@ -191,6 +191,7 @@ def get_or_create_user_profile(sender, instance, created, **kwargs):
     if prof[1] is True:
         logger.debug("Creating User Profile for %s" % instance)
 
+
 # Instantiate the hooks:
 post_save.connect(get_or_create_user_profile, sender=AtmosphereUser)
 

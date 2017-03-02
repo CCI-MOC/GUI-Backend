@@ -75,7 +75,6 @@ def only_current_instances(now_time=None):
     return only_current() & _active_source()
 
 
-
 def only_current_machines(now_time=None):
     """
     Filters the current provider_machines.
@@ -113,6 +112,7 @@ def only_current_apps(now_time=None):
         return (Q(end_date__isnull=True) | \
                 Q(end_date__gt=now_time)) & \
             Q(start_date__lt=now_time)
+
     def _versions_in_range():
         """
         Return all applications that:
@@ -124,6 +124,7 @@ def only_current_apps(now_time=None):
         return (Q(versions__end_date__isnull=True) | \
                 Q(versions__end_date__gt=now_time)) & \
             Q(versions__start_date__lt=now_time)
+
     def _machines_in_range():
         """
         Return all applications that:
@@ -135,6 +136,7 @@ def only_current_apps(now_time=None):
         return (Q(versions__machines__instance_source__end_date__isnull=True) | \
                 Q(versions__machines__instance_source__end_date__gt=now_time)) & \
             Q(versions__machines__instance_source__start_date__lt=now_time)
+
     def _active_machines():
         """
         This method should eliminate any application such-that:
@@ -142,12 +144,14 @@ def only_current_apps(now_time=None):
         * ALL machines (in all versions) of the app have an inactive provider
         """
         pass
+
     def _active_versions():
         """
         This method should eliminate any application such-that:
         * ALL versions of this application have been end dated.
         """
         pass
+
     if not now_time:
         now_time = timezone.now()
     return _in_range() & _versions_in_range() & _machines_in_range() & _active_provider()
@@ -158,6 +162,7 @@ def only_current_machines_in_version(now_time=None):
         return (Q(machines__instance_source__provider__end_date__isnull=True) | \
                 Q(machines__instance_source__provider__end_date__gt=now_time)) &\
             Q(machines__instance_source__provider__active=True)
+
     def _in_range():
         return (Q(machines__instance_source__end_date__isnull=True) | \
                 Q(machines__instance_source__end_date__gt=now_time)) & \
@@ -201,6 +206,7 @@ def source_in_range(now_time=None):
     if not now_time:
         now_time = timezone.now()
     return _in_range()
+
 
 def only_current(now_time=None):
     """
@@ -270,6 +276,7 @@ def _query_membership_for_user(user):
         return None
     return Q(group__id__in=user.group_set.values('id'))
 
+
 def images_shared_with_user(user):
     """
     Images with versions or machines belonging to the user's groups
@@ -278,11 +285,13 @@ def images_shared_with_user(user):
     return (Q(versions__machines__members__id__in=group_ids) |
             Q(versions__membership__id__in=group_ids))
 
+
 def created_by_user(user):
     """
     Images created by a username
     """
     return Q(created_by__username__exact=user.username)
+
 
 def in_users_providers(user):
     """
@@ -290,12 +299,14 @@ def in_users_providers(user):
     """
     return Q(versions__machines__instance_source__provider__in=user.current_providers)
 
+
 def contains_credential(key, value):
     """
     Use this query to determine if `Identity` contains credential key/value
     """
     return (Q(credential__key=key) &
             Q(credential__value=value))
+
 
 def provider_credential(key, value):
     """

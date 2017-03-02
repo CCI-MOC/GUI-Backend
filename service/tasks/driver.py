@@ -349,6 +349,7 @@ def _send_instance_email(driverCls, provider, identity, instance_id):
         celery_logger.warn(exc)
         _send_instance_email.retry(exc=exc)
 
+
 def _send_instance_email_with_failure(driverCls, provider, identity, instance_id, username, error_message):
     driver = get_driver(driverCls, provider, identity)
     instance = driver.get_instance(instance_id)
@@ -369,6 +370,8 @@ def _send_instance_email_with_failure(driverCls, provider, identity, instance_id
                         user_failure_message=error_message)
 
 # Deploy and Destroy tasks
+
+
 @task(name="user_deploy_failed")
 def user_deploy_failed(
         task_uuid,
@@ -632,6 +635,7 @@ def print_chain(start_task, idx=0):
         mystr += print_chain(task, idx + 1)
     return mystr
 
+
 def get_chain_from_active_no_ip(
         driverCls, provider, identity, instance, core_identity,
         username=None, password=None, redeploy=False, deploy=True):
@@ -727,7 +731,6 @@ def get_chain_from_active_with_ip(
     # JUST before we finish, check for boot_scripts_chain
     boot_chain_start, boot_chain_end = _get_boot_script_chain(
         driverCls, provider, identity, instance.id, core_identity)
-
 
     # (SUCCESS_)LINKS and ERROR_LINKS
     deploy_task.link_error(
@@ -1090,8 +1093,6 @@ def _deploy_instance_for_user(driverCls, provider, identity, instance_id,
     except (BaseException, Exception) as exc:
         celery_logger.exception(exc)
         _deploy_instance_for_user.retry(exc=exc)
-
-
 
 
 @task(name="_deploy_instance",

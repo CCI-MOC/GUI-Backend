@@ -11,6 +11,7 @@ class BootScriptSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:bootscript-detail',
     )
+
     class Meta:
         model = BootScript
         fields = ('id', 'url', 'uuid', 'title', 'type')

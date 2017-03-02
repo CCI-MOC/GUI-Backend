@@ -25,6 +25,8 @@ from django.conf import settings
 from rtwo.exceptions import LibcloudInvalidCredsError
 
 # Private
+
+
 def _include_all_idents(identities, owner_map):
     # Include all identities with 0 instances to the monitoring
     identity_owners = [ident.get_credential('ex_tenant_name')
@@ -407,7 +409,6 @@ def _get_instance_owner_map(provider, users=None):
     else:
         account_identity = None
 
-
     all_instances = get_cached_instances(provider=provider, identity=account_identity, force=True)
     all_tenants = accounts.list_projects()
     # Convert instance.owner from tenant-id to tenant-name all at once
@@ -579,6 +580,7 @@ def allocation_source_overage_enforcement_for(allocation_source, user, identity)
         core_instance = execute_provider_action(user, driver, identity, instance, action)
         instances.append(core_instance)
     return instances
+
 
 def execute_provider_action(user, driver, identity, instance, action):
     try:

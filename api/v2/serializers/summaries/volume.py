@@ -17,6 +17,7 @@ class VolumeSummarySerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:v2:volume-detail',
         uuid_field='identifier',
     )
+
     class Meta:
         model = Volume
         fields = (

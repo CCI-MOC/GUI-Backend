@@ -13,9 +13,11 @@ class IdentityMembershipFilter(django_filters.FilterSet):
     provider_id = django_filters.CharFilter('identity__provider__id')
     username = django_filters.CharFilter(
         'identity__created_by__username', lookup_type='icontains')
+
     class Meta:
         model = IdentityMembership
         fields = ['provider_id', 'username']
+
 
 class IdentityMembershipViewSet(AdminAuthViewSet):
 

@@ -26,6 +26,7 @@ DEFAULT_RESOLUTION = 1
 #: Maximum time period is only two weeks
 MAXIMUM_TIME_PERIOD = 1209600
 
+
 def create_request_uri(uuid, params):
     endpoint = "{server}/render/?target={target}&format={format}"
     query = "stats.*.{uuid}.{field}"
@@ -63,12 +64,14 @@ def create_request_uri(uuid, params):
     logger.info("metrics endpoint: " + request_uri)
     return request_uri
 
+
 def get_metrics(self, uuid, params):
     uri = create_request_uri(uuid, params)
     r = requests.get(uri)
     if r.status_code != 200:
         raise NotFound()
     return r.json()
+
 
 def get_valid_params(params):
     fields = {
@@ -102,6 +105,7 @@ def get_valid_params(params):
         pass
 
     return fields
+
 
 class MetricViewSet(GenericViewSet):
 

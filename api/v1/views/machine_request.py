@@ -29,6 +29,7 @@ from api.v1.views.base import AuthAPIView
 
 from django.conf import settings
 
+
 class MachineRequestList(AuthAPIView):
 
     """

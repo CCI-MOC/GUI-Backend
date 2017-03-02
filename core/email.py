@@ -31,6 +31,7 @@ def get_email_template():
     email_template = EmailTemplate.get_instance()
     return email_template
 
+
 def send_email_template(subject, template, recipients, sender,
                         context=None, cc=None, html=True, silent=False):
     """
@@ -142,8 +143,6 @@ def ldap_get_email_info(username):
     return (username, user_email, user_name)
 
 
-
-
 def lookupEmail(username):
     """
     Given a username, return the email address
@@ -154,6 +153,7 @@ def lookupEmail(username):
     lookup_fn = settings._get_method_for_string(lookup_fn_str, the_globals=globals())
     # Known function and args..
     return lookup_fn(username)
+
 
 def user_email_info(username):
     """
@@ -181,6 +181,7 @@ def request_data(request):
         "user_agent": user_agent,
     }
 
+
 def request_info(request):
     """ Return commonly used information from a django request object.
         user_agent, remote_ip, location, resolution.
@@ -199,6 +200,7 @@ def request_info(request):
             ", height: " + \
             request.POST.get('resolution[screen][height]', '') + ")"
     return (user_agent, remote_ip, location, resolution)
+
 
 def email_admin(request, subject, message,
                 cc_user=True, request_tracker=False, html=False):
@@ -566,6 +568,7 @@ def requestImaging(request, machine_request_id, auto_approve=False):
 
     return email_from_admin(user.username, subject, body)
 
+
 def resource_request_email(request, username, quota, reason, options={}):
     """
     Processes Resource request. Sends email to the admins
@@ -595,6 +598,7 @@ def resource_request_email(request, username, quota, reason, options={}):
     body = render_to_string("resource_request.html", context=context)
     success = email_admin(request, subject, body, cc_user=False, request_tracker=True)
     return {"email_sent": success}
+
 
 def support_email(request, subject, message):
     """

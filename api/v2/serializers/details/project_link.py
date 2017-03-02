@@ -5,6 +5,7 @@ from api.v2.serializers.fields import ModelRelatedField
 from api.v2.serializers.summaries import (
     ProjectSummarySerializer, ExternalLinkSummarySerializer)
 
+
 class ProjectExternalLinkSerializer(serializers.HyperlinkedModelSerializer):
     project = ModelRelatedField(
         queryset=Project.objects.all(),

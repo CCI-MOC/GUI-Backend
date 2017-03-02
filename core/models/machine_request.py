@@ -28,13 +28,13 @@ from functools import reduce
 
 UNRESOLVED_STATES = ["pending", "processing", "validated", "failed"]
 
+
 class MachineRequest(BaseRequest):
 
     """
     Storage container for the MachineRequestThread to start/restart the Queue
     Provides a Parent-Child relationship between the new image and ancestor(s)
     """
-
 
     # The instance to image.
     instance = models.ForeignKey("Instance")

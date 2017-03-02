@@ -29,6 +29,7 @@ from api.v2.serializers.fields import (
 from api.v2.serializers.fields.base import UUIDHyperlinkedIdentityField
 from api.validators import NoSpecialCharacters
 
+
 class UserRelatedField(serializers.PrimaryKeyRelatedField):
 
     def get_queryset(self):
@@ -38,6 +39,7 @@ class UserRelatedField(serializers.PrimaryKeyRelatedField):
         user = User.objects.get(pk=value.pk)
         serializer = UserSummarySerializer(user, context=self.context)
         return serializer.data
+
 
 class InstanceRelatedField(serializers.RelatedField):
 
@@ -285,6 +287,7 @@ class UserMachineRequestSerializer(serializers.HyperlinkedModelSerializer):
     # FIXME: tags are missing here.
     # version change log is missing
     #
+
     class Meta:
         model = MachineRequest
         fields = (

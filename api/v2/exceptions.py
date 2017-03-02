@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from threepio import logger, api_logger
 
+
 def failure_response(status, message):
     """
     Return a djangorestframework Response object given an error

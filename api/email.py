@@ -23,6 +23,7 @@ from api import failure_response, invalid_creds
 
 from web.emails import feedback_email, quota_request_email, support_email
 
+
 class Feedback(APIView):
     """
     Post feedback via RESTful API

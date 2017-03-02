@@ -198,6 +198,7 @@ def monitor_machines_for(provider_id, print_logs=False, dry_run=False):
         _exit_stdout_logging(console_handler)
     return
 
+
 def _get_owner(accounts, cloud_machine):
     """
     For a given cloud machine, attempt to find the owners username
@@ -211,6 +212,7 @@ def _get_owner(accounts, cloud_machine):
         owner = cloud_machine.get('application_owner')
         owner_project = accounts.get_project(owner)
     return owner_project
+
 
 def machine_is_valid(cloud_machine, accounts):
     """
@@ -288,7 +290,6 @@ def update_image_membership(account_driver, cloud_machine, db_machine):
         return
     for group in groups:
         update_db_membership_for_group(db_machine, group)
-
 
 
 def get_public_and_private_apps(provider):
@@ -399,6 +400,7 @@ def make_machines_private(application, identities, account_drivers={}, provider_
         if not dry_run:
             application.save()
 
+
 def memoized_image(account_driver, db_machine, image_maps={}):
     provider = db_machine.instance_source.provider
     identifier = db_machine.instance_source.identifier
@@ -411,6 +413,7 @@ def memoized_image(account_driver, db_machine, image_maps={}):
     image_maps[(provider, identifier)] = cloud_machine
     return cloud_machine
 
+
 def memoized_driver(machine, account_drivers={}):
     provider = machine.instance_source.provider
     account_driver = account_drivers.get(provider)
@@ -421,6 +424,7 @@ def memoized_driver(machine, account_drivers={}):
         account_drivers[provider] = account_driver
     return account_driver
 
+
 def memoized_tenant_name_map(account_driver, tenant_list_maps={}):
     tenant_id_name_map = tenant_list_maps.get(account_driver.core_provider)
     if not tenant_id_name_map:
@@ -428,6 +432,7 @@ def memoized_tenant_name_map(account_driver, tenant_list_maps={}):
         tenant_list_maps[account_driver.core_provider] = tenant_id_name_map
 
     return tenant_id_name_map
+
 
 def get_current_members(account_driver, machine, tenant_id_name_map):
     current_membership = account_driver.image_manager.shared_images_for(
@@ -441,6 +446,7 @@ def get_current_members(account_driver, machine, tenant_id_name_map):
             current_tenants.append(tenant_name)
     return current_tenants
 
+
 def add_application_membership(application, identity, dry_run=False):
     for membership_obj in identity.identity_memberships.all():
         # For every 'member' of this identity:
@@ -453,6 +459,7 @@ def add_application_membership(application, identity, dry_run=False):
         else:
             # celery_logger.debug("SKIPPED _ Group %s already ApplicationMember for %s" % (group.name, application.name))
             pass
+
 
 def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
     """
@@ -484,6 +491,7 @@ def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
             all_identities = all_identities | identity_ids
     identity_list = Identity.objects.filter(id__in=all_identities)
     return identity_list
+
 
 def update_membership(application, shared_identities):
     """
@@ -552,6 +560,7 @@ def enforce_allocation_overage(allocation_source_id):
         entity_id=source.source_id,
         payload=new_payload)
     return user_instances_enforced
+
 
 @task(name="monitor_instance_allocations")
 def monitor_instance_allocations():
@@ -632,6 +641,7 @@ def monitor_volumes():
     """
     for p in Provider.get_active():
         monitor_volumes_for.apply_async(args=[p.id])
+
 
 @task(name="monitor_volumes_for")
 def monitor_volumes_for(provider_id, print_logs=False):
@@ -765,6 +775,7 @@ def reset_provider_allocation(provider_id, default_allocation_id):
     num_reset = members.update(allocation=default_allocation)
     return num_reset
 
+
 def _end_date_missing_database_machines(db_machines, cloud_machines, now=None, dry_run=False):
     if not now:
         now = timezone.now()
@@ -850,8 +861,10 @@ def _share_image(account_driver, cloud_machine, identity, members, dry_run=False
                 pass
     return
 
+
 def _exit_stdout_logging(consolehandler):
     celery_logger.removeHandler(consolehandler)
+
 
 def _init_stdout_logging(logger=None):
     if not logger:

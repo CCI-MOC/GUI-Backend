@@ -157,6 +157,7 @@ def listen_for_allocation_threshold_met(sender, instance, created, **kwargs):
     for user in users:
         send_usage_email_to(user, source, threshold, actual_value)
 
+
 def send_usage_email_to(user, source, threshold, actual_value=None):
     from core.email import send_allocation_usage_email
     user_snapshot = UserAllocationSnapshot.objects.filter(

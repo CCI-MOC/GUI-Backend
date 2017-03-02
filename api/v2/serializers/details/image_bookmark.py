@@ -22,6 +22,7 @@ class ImageBookmarkSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:applicationbookmark-detail',
     )
+
     def validate_image(self, value):
         """
         Check that the image has not already been bookmarked

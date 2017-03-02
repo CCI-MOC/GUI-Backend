@@ -297,7 +297,6 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
             logger.exception(e)
             raise exceptions.ParseError(detail=message)
 
-
     @unresolved_requests_only
     def update(self, request, *args, **kwargs):
         """

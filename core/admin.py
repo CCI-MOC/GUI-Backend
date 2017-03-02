@@ -16,16 +16,21 @@ from service.tasks import admin as admin_task
 
 def private_object(modeladmin, request, queryset):
     queryset.update(private=True)
+
+
 private_object.short_description = 'Make objects private True'
 
 
 def end_date_object(modeladmin, request, queryset):
     queryset.update(end_date=timezone.now())
+
+
 end_date_object.short_description = 'Add end-date to objects'
 
 
 # For removing 'standard' registrations
 admin.site.unregister(DjangoGroup)
+
 
 @admin.register(models.NodeController)
 class NodeControllerAdmin(admin.ModelAdmin):
@@ -58,6 +63,7 @@ class ImageVersionAdmin(admin.ModelAdmin):
         "end_date",
     )
 
+
 @admin.register(models.Quota)
 class QuotaAdmin(admin.ModelAdmin):
     list_display = (
@@ -83,6 +89,7 @@ class AllocationSourceAdmin(admin.ModelAdmin):
         "compute_used",
         "compute_allowed",
     )
+
 
 @admin.register(models.AllocationStrategy)
 class AllocationStrategyAdmin(admin.ModelAdmin):
@@ -208,6 +215,7 @@ class ProviderMachineMembershipAdmin(admin.ModelAdmin):
 class ProviderCredentialInline(admin.TabularInline):
     model = models.ProviderCredential
     extra = 1
+
 
 @admin.register(models.EventTable)
 class EventTableAdmin(admin.ModelAdmin):
@@ -564,6 +572,7 @@ class GroupAdmin(admin.ModelAdmin):
     readonly_fields = ('uuid',)
     list_display = ('name', 'uuid',)
     list_filter = ['name', ]
+
 
 @admin.register(models.EmailTemplate)
 class EmailTemplateAdmin(admin.ModelAdmin):

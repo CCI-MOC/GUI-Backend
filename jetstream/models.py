@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from .allocation import TASAPIDriver, fill_user_allocation_source_for
 AUTH_USER_MODEL = getattr(settings, "AUTH_USER_MODEL", 'auth.User')
 
+
 def update_user_allocation_sources(sender, instance, created, **kwargs):
     user = instance
     driver = TASAPIDriver()
@@ -15,6 +16,8 @@ def update_user_allocation_sources(sender, instance, created, **kwargs):
 # post_save.connect(update_user_allocation_sources, sender=AUTH_USER_MODEL)
 
 # Create your models here.
+
+
 class TASAllocationReport(models.Model):
     """
     Keep track of each Allocation Report that is sent to TACC.API

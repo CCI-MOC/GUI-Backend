@@ -26,6 +26,7 @@ def create_report(report_start_date, report_end_date, user_id=None, allocation_s
 
     return data
 
+
 def generate_data(report_start_date, report_end_date, username=None):
     # filter events and instancs)
     filtered_items = filter_events_and_instances(report_start_date, report_end_date, username=username)
@@ -96,6 +97,7 @@ def map_events_to_histories(filtered_instance_histories, event_instance_dict):
             if inst_history:
                 out_dic.setdefault(inst_history[-1], []).append(info)
     return out_dic
+
 
 def get_allocation_source_name_from_event(username, report_start_date, instance_id):
     events = EventTable.objects.filter(Q(timestamp__lt=report_start_date) & Q(name__exact="instance_allocation_source_changed") & Q(Q(payload__username__exact=username) | Q(entity_id=username)) & Q(payload__instance_id__exact=instance_id)).order_by('timestamp')

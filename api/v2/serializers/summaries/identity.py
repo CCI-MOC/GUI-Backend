@@ -9,6 +9,7 @@ class IdentitySummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:identity-detail',
     )
+
     class Meta:
         model = Identity
         fields = (

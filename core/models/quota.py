@@ -299,7 +299,6 @@ def has_storage_quota(driver, quota, new_size=0, raise_exc=True):
     return False
 
 
-
 def has_snapshot_count_quota(driver, quota, new_size=0, raise_exc=True):
     """
     True if the total number of volumes found on driver are
@@ -355,6 +354,7 @@ def _pre_cache_sizes(driver):
     if not cached_sizes:
         driver.list_sizes()
     return
+
 
 def get_quota(identity_uuid):
     try:

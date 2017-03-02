@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+
 def main():
 
     description = (
@@ -25,7 +26,6 @@ def main():
         ])
         sys.exit(1)
 
-
     # Filter instances
     instances = []
     for inst in Instance.objects.filter(end_date=None):
@@ -39,7 +39,6 @@ def main():
             if not statuses.filter(status__name="active").exists():
                 instances.append(inst)
 
-
     # Print csv
     print "UUID, PROVIDER, START_DATE, LAST_STATUS, USERNAME"
     for inst in instances:
@@ -50,6 +49,7 @@ def main():
         username = inst.created_by.username
 
         print ",".join([uuid, provider, start_date, last_status, username])
+
 
 if __name__ == "__main__":
     main()

@@ -23,6 +23,7 @@ def get_usernames(provider):
     """
     return Identity.objects.filter(provider=provider).values_list('created_by__username', flat=True)
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--provider", type=int,

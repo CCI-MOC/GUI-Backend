@@ -426,6 +426,7 @@ def step_script(step):
         script = "#! /usr/bin/env bash\n" + script
     return ScriptDeployment(script, name="./" + step.get_script_name())
 
+
 def shell_lookup_helper(username):
     zsh_user = False
     ldap_info = ldap._search_ldap(username)
