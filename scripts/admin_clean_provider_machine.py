@@ -5,7 +5,7 @@ import logging
 
 from django.utils.timezone import datetime, utc
 from service.driver import get_account_driver
-from core.models import Provider, ProviderMachine, Identity, MachineRequest, Application, ProviderMachine
+from core.models import Provider, Identity, MachineRequest, Application, ProviderMachine
 from core.models.application import _generate_app_uuid
 
 

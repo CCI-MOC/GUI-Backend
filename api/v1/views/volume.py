@@ -597,17 +597,6 @@ def valid_snapshot_post_data(data):
             (isinstance(data[key], str) and len(data[key]) > 0)]
 
 
-def valid_snapshot_post_data(data):
-    """
-    Return any missing required post key names.
-    """
-    required = ['display_name', 'volume_id', 'size']
-    return [key for key in required
-            # Key must exist and have a non-empty value.
-            if key not in data or
-            (isinstance(data[key], str) and len(data[key]) > 0)]
-
-
 def valid_volume_post_data(data):
     """
     Return any missing required post key names.
