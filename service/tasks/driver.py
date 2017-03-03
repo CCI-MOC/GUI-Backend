@@ -630,9 +630,9 @@ def print_chain(start_task, idx=0):
         return mystr
     # Recursive Case
     mystr = "%s" % signature
-    next_tasks = start_task.options['link']
-    for task in next_tasks:
-        mystr += print_chain(task, idx + 1)
+    task_list = start_task.options['link']
+    for next_task in task_list:
+        mystr += print_chain(next_task, idx + 1)
     return mystr
 
 

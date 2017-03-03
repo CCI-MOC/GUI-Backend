@@ -92,7 +92,7 @@ def valid_post_data(data, required_keys):
     """
     Return any missing required post key names.
     """
-    return [key for key in required_keys if not key in data]
+    return [key for key in required_keys if key not in data]
 
 
 def keys_not_found(missing_keys):

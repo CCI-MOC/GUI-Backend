@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import argparse
-import os, traceback
-import sys, time
+import os
+import traceback
+import sys
+import time
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, root_dir)
 os.environ["DJANGO_SETTINGS_MODULE"] = "atmosphere.settings"
