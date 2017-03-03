@@ -1,1 +1,1 @@
-from api.exceptions import *
+import api.exceptions

@@ -553,7 +553,7 @@ except ImportError:
 """
 Import local settings specific to the server, and secrets not checked into Git.
 """
-from atmosphere.settings.local import *
+import atmosphere.settings.local
 
 
 def _get_method_for_string(method_str, the_globals=None):
