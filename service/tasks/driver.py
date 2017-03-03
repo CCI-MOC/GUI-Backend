@@ -202,12 +202,11 @@ def current_openstack_identities():
     identities = Identity.objects.filter(
         provider__type__name__iexact='openstack',
         provider__active=True)
-    key_sorter = lambda ident: attrgetter(
-        ident.provider.type.name,
-        ident.created_by.username)
     identities = sorted(
         identities,
-        key=key_sorter)
+        key=lambda ident: attrgetter(
+            ident.provider.type.name,
+            ident.created_by.username))
     return identities
 
 

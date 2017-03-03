@@ -333,11 +333,12 @@ class AllocationResult():
         time_periods = []
         current_period = TimePeriodResult(self.window_start, None)
 
-        key_fn = lambda credit: (credit.increase_date,
-                                 AllocationResult._sort_credit_type(credit))
-
         # NOTE: This is sorted! We can guarantee order!
-        for allocation_credit in sorted(self.allocation.credits, key=key_fn):
+        for allocation_credit in sorted(
+            self.allocation.credits,
+            key=lambda credit: (credit.increase_date,
+                                AllocationResult._sort_credit_type(credit))
+        ):
             # Sanity Checks..
             if allocation_credit.increase_date < self.window_start:
                 raise ValueError(
