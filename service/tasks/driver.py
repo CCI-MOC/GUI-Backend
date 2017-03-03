@@ -804,10 +804,9 @@ def deploy_boot_script(driverCls, provider, identity, instance_id,
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "Boot Script reported a NonZeroDeployment:%s"\
-                % full_script_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "Boot Script reported a NonZeroDeployment (%s): %s"
+                % (sys.exec_info()[2]), full_script_output)
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1025,10 +1024,9 @@ def deploy_ready_test(driverCls, provider, identity, instance_id,
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "One or more Script(s) reported a NonZeroDeployment:%s"\
-                % full_deploy_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "One or more Script(s) reported a NonZeroDeployment (%s):%s"
+                % (sys.exc_info()[2]), full_deploy_output)
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1082,10 +1080,10 @@ def _deploy_instance_for_user(driverCls, provider, identity, instance_id,
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "One or more Script(s) reported a NonZeroDeployment:%s"\
-                % full_deploy_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "One or more Script(s) reported a NonZeroDeployment (%s) :%s"
+                % (sys.exc_info()[2], full_deploy_output)
+            )
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1139,10 +1137,10 @@ def _deploy_instance(driverCls, provider, identity, instance_id,
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "One or more Script(s) reported a NonZeroDeployment:%s"\
-                % full_deploy_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "One or more Script(s) reported a NonZeroDeployment(%s):%s"
+                % (sys.exc_info()[2], full_deploy_output)
+            )
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
