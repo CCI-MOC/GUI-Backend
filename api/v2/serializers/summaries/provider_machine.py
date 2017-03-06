@@ -16,6 +16,7 @@ class ProviderMachineSummarySerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:v2:providermachine-detail',
         uuid_field='identifier',
     )
+
     class Meta:
         model = ProviderMachine
         fields = ('id', 'uuid', 'url', 'provider', 'version', 'owner',

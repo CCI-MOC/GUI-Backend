@@ -29,7 +29,7 @@ class LicenseSerializer(serializers.HyperlinkedModelSerializer):
         elif 'url' in raw_type:
             LicenseType.objects.get_or_create(name="URL")
         return super(LicenseSerializer, self).is_valid(
-                raise_exception=raise_exception)
+            raise_exception=raise_exception)
 
     def create(self, validated_data):
 

@@ -77,7 +77,7 @@ def _create_tas_report_for(user, tacc_username, tacc_project_name, end_date):
     last_report = TASAllocationReport.objects.filter(
         project_name=tacc_project_name,
         user=user
-        ).order_by('end_date').last()
+    ).order_by('end_date').last()
     if not last_report:
         start_date = user.date_joined
     else:

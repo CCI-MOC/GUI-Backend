@@ -5,7 +5,7 @@ from django.utils import timezone
 from dateutil.parser import parse
 
 from .exceptions import TASAPIException
-#FIXME: Next iteration, move this into the driver.
+# FIXME: Next iteration, move this into the driver.
 from .api import tacc_api_post, tacc_api_get
 from core.models.allocation_source import AllocationSource, UserAllocationSource
 
@@ -104,7 +104,6 @@ class TASAPIDriver(object):
         except ValueError as exc:
             raise TASAPIException("JSON Decode error -- %s" % exc)
 
-
     def report_project_allocation(self, report_id, username, project_name, su_total, start_date, end_date, queue_name, scheduler_id):
         """
         Send back a report
@@ -137,12 +136,12 @@ class TASAPIDriver(object):
             exc_message = ("Report %s produced an Invalid Response - Expected 'status' in the json response: %s" % (report_id, resp.text,))
             logger.exception(exc_message)
             raise ValueError(exc_message)
-    
+
         if resp_status != 'success' or resp.status_code != 200:
             exc_message = ("Report %s produced an Invalid Response - Expected 200 and 'success' response: %s - %s" % (report_id, resp.status_code, resp_status))
             logger.exception(exc_message)
             raise Exception(exc_message)
-    
+
         return data
 
     def get_allocation_project_id(self, allocation_id):
@@ -219,14 +218,12 @@ class TASAPIDriver(object):
         except ValueError as exc:
             if raise_exception:
                 raise TASAPIException("JSON Decode error -- %s" % exc)
-            logger.info( exc)
+            logger.info(exc)
         except Exception as exc:
             if raise_exception:
                 raise
-            logger.info( exc)
+            logger.info(exc)
         return user_names
-
-    
 
     def get_user_allocations(self, username, raise_exception=True):
         path = '/v1/projects/username/%s' % username
@@ -240,18 +237,17 @@ class TASAPIDriver(object):
                 allocations = project['allocations']
                 for allocation in allocations:
                     if allocation['resource'] == self.resource_name:
-                        user_allocations.append( (project, allocation) )
+                        user_allocations.append((project, allocation))
             return user_allocations
         except ValueError as exc:
             if raise_exception:
                 raise TASAPIException("JSON Decode error -- %s" % exc)
-            logger.info( exc)
+            logger.info(exc)
         except Exception as exc:
             if raise_exception:
                 raise
-            logger.info( exc)
+            logger.info(exc)
         return None
-
 
 
 def get_or_create_allocation_source(api_allocation, update_source=False):
@@ -268,7 +264,7 @@ def get_or_create_allocation_source(api_allocation, update_source=False):
         )
         if update_source:
             if compute_allowed != source.compute_allowed:
-                #FIXME: Here would be a *great* place to create a new event to "ignore" all previous allocation_source_`threshold_met/threshold_enforced`
+                # FIXME: Here would be a *great* place to create a new event to "ignore" all previous allocation_source_`threshold_met/threshold_enforced`
                 source.compute_allowed = compute_allowed
             source.name = source_name
             source.save()
@@ -324,6 +320,7 @@ def fill_user_allocation_sources():
         allocation_resources[user.username] = resources
     return allocation_resources
 
+
 def fill_user_allocation_source_for(driver, user, force_update=True):
     allocation_list = find_user_allocation_source_for(driver, user)
     allocation_resources = []
@@ -336,6 +333,7 @@ def fill_user_allocation_source_for(driver, user, force_update=True):
         allocation_resources.append(allocation_source)
     return allocation_resources
 
+
 def select_valid_allocation(allocation_list):
     now = timezone.now()
     for allocation in allocation_list:
@@ -345,11 +343,11 @@ def select_valid_allocation(allocation_list):
         start_date = parse(start_timestamp)
         end_date = parse(end_timestamp)
         if start_date >= now or end_date <= now:
-           logger.info("Skipping Allocation %s because its dates are outside the range for timezone.now()" % allocation)
-           continue
+            logger.info("Skipping Allocation %s because its dates are outside the range for timezone.now()" % allocation)
+            continue
         if status.lower() != 'active':
-           logger.info("Skipping Allocation %s because its listed status is NOT 'active'" % allocation)
-           continue
+            logger.info("Skipping Allocation %s because its listed status is NOT 'active'" % allocation)
+            continue
         return allocation
     return None
 
@@ -368,5 +366,3 @@ def _validate_tas_data(data):
             % (data['status'], data)
         )
     return True
-
-

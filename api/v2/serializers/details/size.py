@@ -9,6 +9,7 @@ class SizeSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:size-detail',
     )
+
     class Meta:
         model = Size
         fields = (

@@ -20,6 +20,7 @@ from api.v2.views.mixins import MultipleFieldLookup
 
 from threepio import logger
 
+
 def get_admin_machines(user):
     """
     TODO: This 'just works' and is probably very slow... Look for a better way?
@@ -98,7 +99,6 @@ class ProviderMachineViewSet(MultipleFieldLookup, OwnerUpdateViewSet):
         except Exception as exc:
             logger.exception("Error occurred updating v2 provider_machine metadata")
             return Response(exc.message, status=status.HTTP_409_CONFLICT)
-
 
     def get_queryset(self):
         request_user = self.request.user

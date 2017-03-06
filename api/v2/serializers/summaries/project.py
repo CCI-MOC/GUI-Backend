@@ -8,6 +8,7 @@ class ProjectSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:project-detail',
     )
+
     class Meta:
         model = Project
         fields = (

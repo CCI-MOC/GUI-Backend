@@ -9,6 +9,7 @@ from django.core import urlresolvers
 
 from threepio import logger
 
+
 class RemoveCSRFMiddleware(object):
 
     """
@@ -75,5 +76,3 @@ def _is_valid_path(path, urlconf=None):
         return True
     except urlresolvers.Resolver404:
         return False
-
-""" Author contact: sepero 111 @ gmail . com """

@@ -6,15 +6,18 @@ from django.db.models.signals import post_save
 from .allocation import TASAPIDriver, fill_user_allocation_source_for
 AUTH_USER_MODEL = getattr(settings, "AUTH_USER_MODEL", 'auth.User')
 
+
 def update_user_allocation_sources(sender, instance, created, **kwargs):
     user = instance
     driver = TASAPIDriver()
     fill_user_allocation_source_for(driver, user)
 
-#FIXME: Re-add this when you have access to the XSede API
-#post_save.connect(update_user_allocation_sources, sender=AUTH_USER_MODEL)
+# FIXME: Re-add this when you have access to the XSede API
+# post_save.connect(update_user_allocation_sources, sender=AUTH_USER_MODEL)
 
 # Create your models here.
+
+
 class TASAllocationReport(models.Model):
     """
     Keep track of each Allocation Report that is sent to TACC.API
@@ -64,8 +67,8 @@ class TASAllocationReport(models.Model):
         Outputs: 0.999, 3.684, 8.999, etc. etc.
         Expected Outputs: 1, 3, 9, ...
         """
-        hours_between = (self.end_date - self.start_date).total_seconds()/3600.0
-        cpu_count = float(self.compute_used)/hours_between
+        hours_between = (self.end_date - self.start_date).total_seconds() / 3600.0
+        cpu_count = float(self.compute_used) / hours_between
         return cpu_count
 
     def __unicode__(self):

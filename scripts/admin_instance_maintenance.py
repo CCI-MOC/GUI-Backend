@@ -162,5 +162,6 @@ def _execute_action(identity, instance, action, dry_run=False):
                 identity.created_by)
         print "Suspended instanceance %s" % (instance.id)
 
+
 if __name__ == "__main__":
     main()

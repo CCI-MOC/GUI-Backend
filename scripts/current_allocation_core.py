@@ -55,5 +55,6 @@ def main():
     users = args.users.split(",") if args.users else []
     check_usernames(int(args.provider_id), users)
 
+
 if __name__ == "__main__":
     main()

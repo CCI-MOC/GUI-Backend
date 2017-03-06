@@ -51,6 +51,7 @@ def listen_for_changes(sender, instance, created, **kwargs):
     """
     return None
 
+
 # Instantiate the hooks:
 pre_save.connect(listen_before_allocation_snapshot_changes, sender=EventTable)
 post_save.connect(listen_for_allocation_overage, sender=EventTable)

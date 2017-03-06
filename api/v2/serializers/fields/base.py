@@ -3,6 +3,7 @@ from django.db import ProgrammingError
 from rest_framework import exceptions
 from rest_framework import serializers
 
+
 class ModelRelatedField(serializers.RelatedField):
     """
     Related field that renders the representation based on `serializer_class`
@@ -47,6 +48,7 @@ class ModelRelatedField(serializers.RelatedField):
                 % (self.queryset.model.__name__, self.lookup_field, identifier)
             )
 
+
 class ReprSlugRelatedField(serializers.SlugRelatedField):
     def __init__(self, slug_field=None, repr_slug_field=None, **kwargs):
         assert slug_field is not None, 'The `slug_field` argument is required.'
@@ -55,14 +57,13 @@ class ReprSlugRelatedField(serializers.SlugRelatedField):
         self.repr_slug_field = repr_slug_field
         super(ReprSlugRelatedField, self).__init__(slug_field=slug_field, **kwargs)
 
-
     def to_representation(self, obj):
         return getattr(obj, self.repr_slug_field)
+
 
 class DebugHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, view_name=None, **kwargs):
         return super(DebugHyperlinkedIdentityField, self).__init__(view_name=view_name, **kwargs)
-
 
     def get_url(self, obj, view_name, request, format):
         """
@@ -75,11 +76,13 @@ class DebugHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         kwargs = {self.lookup_url_kwarg: lookup_value}
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
+
 class UUIDHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
-    lookup_field ='uuid'
+    lookup_field = 'uuid'
     lookup_url_kwarg = 'uuid'
     #
     uuid_field = None
+
     def __init__(self, view_name=None, uuid_field="uuid", **kwargs):
         assert view_name is not None, 'The `view_name` argument is required.'
         kwargs['read_only'] = True
@@ -98,12 +101,14 @@ class UUIDHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
             raise Exception("UUID Field '%s' is missing - Check Field constructor" % obj_uuid)
 
         return self.reverse(view_name,
-            kwargs={
-                'pk': obj_uuid,
-            },
-            request=request,
-            format=format,
-        )
+                            kwargs={
+                                'pk': obj_uuid,
+                            },
+                            request=request,
+                            format=format,
+                            )
+
+
 class InstanceSourceHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, view_name=None, **kwargs):
         super(InstanceSourceHyperlinkedIdentityField, self).__init__(view_name, **kwargs)
@@ -112,16 +117,16 @@ class InstanceSourceHyperlinkedIdentityField(serializers.HyperlinkedIdentityFiel
         """
         Given an object, return the URL that hyperlinks to the object based on lookup_field. Raises a 'NoReverseMatch' without a 'lookup_field'.
         """
-        if obj.pk is None or not getattr(obj,"instance_source"):
+        if obj.pk is None or not getattr(obj, "instance_source"):
             return None
         obj_uuid = obj.instance_source.identifier
         if obj_uuid is None:
             raise Exception("UUID Field '%s' is missing - Check Field constructor" % obj_uuid)
 
         return self.reverse(view_name,
-            kwargs={
-                'pk': obj_uuid,
-            },
-            request=request,
-            format=format,
-        )
+                            kwargs={
+                                'pk': obj_uuid,
+                            },
+                            request=request,
+                            format=format,
+                            )

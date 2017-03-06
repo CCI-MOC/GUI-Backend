@@ -48,5 +48,6 @@ def main():
     monitor_instances_for(openstack_prov.id, users=users,
                           print_logs=True, end_date=end_date)
 
+
 if __name__ == "__main__":
     main()

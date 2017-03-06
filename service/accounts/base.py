@@ -30,9 +30,9 @@ class BaseAccountDriver(object):
 
     def get_image(self, identifier, force=False, *get_method_args, **get_method_kwargs):
         return self._get_image(
-                identifier,
-                *get_method_args,
-                **get_method_kwargs)
+            identifier,
+            *get_method_args,
+            **get_method_kwargs)
 
 
 class CachedAccountDriver(object):

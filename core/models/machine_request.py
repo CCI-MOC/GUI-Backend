@@ -28,13 +28,13 @@ from functools import reduce
 
 UNRESOLVED_STATES = ["pending", "processing", "validated", "failed"]
 
+
 class MachineRequest(BaseRequest):
 
     """
     Storage container for the MachineRequestThread to start/restart the Queue
     Provides a Parent-Child relationship between the new image and ancestor(s)
     """
-
 
     # The instance to image.
     instance = models.ForeignKey("Instance")
@@ -76,10 +76,6 @@ class MachineRequest(BaseRequest):
 
     new_machine_provider = models.ForeignKey(Provider)
     new_machine_owner = models.ForeignKey(User, related_name="new_image_owner")
-    
-    # Date time stamps
-    #start_date = models.DateTimeField(default=timezone.now)
-    #end_date = models.DateTimeField(null=True, blank=True)
 
     # Filled in when completed.
     # NOTE: ProviderMachine and 'new_machine' might be phased out
@@ -95,9 +91,9 @@ class MachineRequest(BaseRequest):
     def save(self, *args, **kwargs):
         if not self.pk and self.is_active(self.instance):
             raise RequestLimitExceeded(
-                    "The number of open requests for "
-                    "instance %s has been exceeded."
-                    % self.instance.provider_alias)
+                "The number of open requests for "
+                "instance %s has been exceeded."
+                % self.instance.provider_alias)
         Model.save(self, *args, **kwargs)
 
     @classmethod
@@ -105,7 +101,7 @@ class MachineRequest(BaseRequest):
         """
         """
         return cls.objects.filter(instance=instance,
-                status__name__in=UNRESOLVED_STATES).count() > 0
+                                  status__name__in=UNRESOLVED_STATES).count() > 0
 
     def clean(self):
         """
@@ -130,7 +126,7 @@ class MachineRequest(BaseRequest):
                 self.new_version_membership)
 
         # Automatically set 'end date' when completed
-        #TODO: verify this should be 'old_status' or change it to a StatusType
+        # TODO: verify this should be 'old_status' or change it to a StatusType
         if self.old_status == 'completed' and not self.end_date:
             self.end_date = timezone.now()
 
@@ -363,9 +359,9 @@ class MachineRequest(BaseRequest):
         imaging_args = {
             "visibility": self.new_application_visibility,
             "instance_id": self.instance.provider_alias,
-            #NOTE: THERE IS AN ASSUMPTION MADE HERE!
+            # NOTE: THERE IS AN ASSUMPTION MADE HERE!
             # ASSUMPTION: the Creator's username == the LINUX username that was also created for them!
-            #FIXME if the ASSUMPTION above changes!
+            # FIXME if the ASSUMPTION above changes!
             "created_by": self.instance.created_by.username,
             "remove_image": True,
             "remove_local_image": True,
@@ -394,7 +390,7 @@ class MachineRequest(BaseRequest):
             # is the *download* the instance/image
             # and then *clean* the file.
             # Set to False to skip the 'clean' portion and only download the instance/image.
-            #imaging_args['clean_image'] = False
+            # imaging_args['clean_image'] = False
 
         if issubclass(orig_managerCls, OSImageManager):
             download_location = self._extract_file_location(download_dir)

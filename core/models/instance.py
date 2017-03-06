@@ -32,6 +32,7 @@ from core.models.tag import Tag
 from core.models.managers import ActiveInstancesManager
 from atmosphere import settings
 
+
 class Instance(models.Model):
     """
     When a user launches a machine, an Instance is created.
@@ -53,7 +54,7 @@ class Instance(models.Model):
     provider_alias = models.CharField(max_length=256, unique=True)
     ip_address = models.GenericIPAddressField(null=True, unpack_ipv4=True)
     created_by = models.ForeignKey('AtmosphereUser')
-    #FIXME: Why is null=True okay here?
+    # FIXME: Why is null=True okay here?
     created_by_identity = models.ForeignKey(Identity, null=True)
     shell = models.BooleanField(default=False)
     vnc = models.BooleanField(default=False)
@@ -90,7 +91,7 @@ class Instance(models.Model):
         result = _get_allocation_result(
             identity,
             limit_instances=limit_instances)
-        total_hours = result.total_runtime().total_seconds()/3600.0
+        total_hours = result.total_runtime().total_seconds() / 3600.0
         hours = round(total_hours, 2)
         return hours
 
@@ -123,7 +124,7 @@ class Instance(models.Model):
         # TODO: Profile Option
         # except InstanceStatusHistory.DoesNotExist:
         # TODO: Profile current choice
-        #FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
+        # FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
         last_history = self.instancestatushistory_set.order_by(
             '-start_date').first()
         if last_history:
@@ -140,7 +141,7 @@ class Instance(models.Model):
 
     def _build_first_history(self, status_name, size,
                              start_date, end_date=None, first_update=False, activity=None):
-        #FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
+        # FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
         from core.models import InstanceStatusHistory
         if not first_update and status_name not in [
                 'build',
@@ -171,7 +172,7 @@ class Instance(models.Model):
         else: end date previous history object, start new history object.
               return (True, new_history)
         """
-        #FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
+        # FIXME: Move this call so that it happens inside InstanceStatusHistory to avoid circ.dep.
         from core.models import InstanceStatusHistory
         import traceback
         # 1. Get status name
@@ -411,21 +412,21 @@ class Instance(models.Model):
     def application_uuid(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.uuid
+                .application_version.application.uuid
         else:
             return None
 
     def application_name(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.name
+                .application_version.application.name
         else:
             return None
 
     def application_id(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.id
+                .application_version.application.id
         else:
             return None
 
@@ -444,7 +445,7 @@ class Instance(models.Model):
     def esh_source_name(self):
         if self.source.is_machine():
             return self.source.providermachine\
-                    .application_version.application.name
+                .application_version.application.name
         elif self.source.is_volume():
             return self.source.volume.name
         else:
@@ -461,9 +462,9 @@ class Instance(models.Model):
 
     @property
     def allocation_source(self):
-        #FIXME: look up the current allocation source by "Scanning the event table" on this instance.
+        # FIXME: look up the current allocation source by "Scanning the event table" on this instance.
         from core.models.allocation_source import \
-                InstanceAllocationSourceSnapshot as Snapshot
+            InstanceAllocationSourceSnapshot as Snapshot
         snapshot = Snapshot.objects.filter(instance=self).first()
         return snapshot.allocation_source if snapshot else None
 
@@ -476,12 +477,12 @@ class Instance(models.Model):
         from core.models.event_table import EventTable
         if not user:
             user = self.created_by
-        #FIXME: comment out this line for AllocationSource
+        # FIXME: comment out this line for AllocationSource
         if not allocation_source:
             raise Exception("Allocation source must not be null")
         payload = {
-                'allocation_source_id': allocation_source.source_id,
-                'instance_id': self.provider_alias
+            'allocation_source_id': allocation_source.source_id,
+            'instance_id': self.provider_alias
         }
         return EventTable.create_event(
             "instance_allocation_source_changed",
@@ -563,7 +564,7 @@ def _get_openstack_name_map(status_name, task_name, tmp_status):
     elif tmp_status:
         # ASSERT: task_name = None
         if 'running_boot_script' in tmp_status:
-            tmp_status = 'running_boot_script' # Avoid problems due to keeping track of scripts executed 1/2, 2/3, etc.
+            tmp_status = 'running_boot_script'  # Avoid problems due to keeping track of scripts executed 1/2, 2/3, etc.
         new_status = OPENSTACK_TASK_STATUS_MAP.get(tmp_status)
         logger.debug(
             "Tmp_status provided:%s, Status maps to %s" %
@@ -607,8 +608,6 @@ def strfdate(datetime_o, fmt=None):
     if not datetime_o:
         datetime_o = timezone.now()
     return datetime_o.strftime(fmt)
-
-
 
 
 def find_instance(instance_id):

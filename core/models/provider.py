@@ -15,6 +15,7 @@ from core.validators import validate_timezone
 from uuid import uuid4
 from threepio import logger
 
+
 class PlatformType(models.Model):
 
     """
@@ -140,8 +141,8 @@ class Provider(models.Model):
     def get_esh_credentials(self, esh_provider):
         cred_map = self.get_credentials()
         if isinstance(esh_provider, OSProvider):
-            cred_map['ex_force_auth_url'] = cred_map.pop('auth_url','')
-            if cred_map.get('ex_force_auth_version','2.0_password') == '2.0_password'\
+            cred_map['ex_force_auth_url'] = cred_map.pop('auth_url', '')
+            if cred_map.get('ex_force_auth_version', '2.0_password') == '2.0_password'\
                     and cred_map['ex_force_auth_url'] and '/v2.0/tokens' not in cred_map['ex_force_auth_url']:
                 cred_map['ex_force_auth_url'] += '/v2.0/tokens'
 
@@ -154,7 +155,7 @@ class Provider(models.Model):
     def get_total_hours(self, identity):
         if identity.provider != self:
             raise Exception("Provider Mismatch - %s != %s"
-                % (self, identity.provider))
+                            % (self, identity.provider))
         return self.get_total_hours()
 
     def get_platform_name(self):
@@ -253,7 +254,7 @@ class Provider(models.Model):
                 logger.info("Skipping unknown router: %s" % key)
                 del router_count_map[key]
 
-        logger.info( "Current distribution of routers:")
+        logger.info("Current distribution of routers:")
         for entry, count in router_count_map.items():
             logger.info("%s: %s" % (entry, count))
 
@@ -314,7 +315,7 @@ class ProviderConfiguration(models.Model):
     certain requests.
     """
     provider = models.OneToOneField(Provider, primary_key=True, related_name="configuration")
-    #TODO: These variables could be migrated from Provider:
+    # TODO: These variables could be migrated from Provider:
     # allow_imaging = models.BooleanField(default=False) # NEW! rather than abusing 'public'
     # auto_imaging = models.BooleanField(default=False)
     # over_allocation_action = models.ForeignKey(
@@ -331,7 +332,7 @@ class ProviderConfiguration(models.Model):
 class ProviderInstanceAction(models.Model):
     provider = models.ForeignKey(Provider, related_name='provider_actions')
     instance_action = models.ForeignKey("InstanceAction", related_name='provider_actions')
-    #FIXME: enabled could *always* be 'true' when present, and 'false' when not present..
+    # FIXME: enabled could *always* be 'true' when present, and 'false' when not present..
     enabled = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -406,6 +407,7 @@ def get_or_create_provider_configuration(sender, provider_instance=None, created
     prof = ProviderConfiguration.objects.get_or_create(provider=provider_instance)
     if prof[1] is True:
         logger.debug("Creating Provider Configuration for %s" % provider_instance)
+
 
 # Instantiate the hooks:
 post_save.connect(get_or_create_provider_configuration, sender=Provider)

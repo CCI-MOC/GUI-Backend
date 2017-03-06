@@ -58,7 +58,7 @@ class VolumeViewSet(MultipleFieldLookup, AuthViewSet):
         Filter projects by current user
         """
         user = self.request.user
-        identity_ids = user.current_identities.values_list('id',flat=True)
+        identity_ids = user.current_identities.values_list('id', flat=True)
         return Volume.objects.filter(
             only_current_source(),
             instance_source__created_by_identity__in=identity_ids)
@@ -86,7 +86,7 @@ class VolumeViewSet(MultipleFieldLookup, AuthViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        #NOTE: This work normally happens in 'perform_create()'
+        # NOTE: This work normally happens in 'perform_create()'
         data = serializer.validated_data
         name = data.get('name')
         size = data.get('size')
@@ -104,7 +104,7 @@ class VolumeViewSet(MultipleFieldLookup, AuthViewSet):
                 project=project,
                 image_id=image_id,
                 snapshot_id=snapshot_id)
-            #NOTE: This is normally where 'perform_create()' would end
+            # NOTE: This is normally where 'perform_create()' would end
             # but we swap out the VolumeSerializer Class at this point.
             serialized_volume = VolumeSerializer(
                 core_volume, context={'request': self.request},

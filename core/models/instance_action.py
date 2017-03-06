@@ -66,7 +66,7 @@ class InstanceAction(models.Model):
             queryset = cls.objects.all()
         kwargs = {
             'provider_actions__enabled': True
-            }
+        }
         if type(provider_id) == int:
             kwargs['provider_actions__provider__id'] = provider_id
         elif type(provider_id) in [str, uuid.UUID]:

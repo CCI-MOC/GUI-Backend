@@ -50,7 +50,7 @@ class BaseRequest(models.Model):
         """
         if not self.pk and self.is_active(self.membership):
             # temporary workaround to exclude ResourceRequests from the ProviderLimitExceeded check
-            if "ResourceRequest" in str(type(self)): # THIS IS A HACK REMOVE THIS
+            if "ResourceRequest" in str(type(self)):  # THIS IS A HACK REMOVE THIS
                 super(BaseRequest, self).save(*args, **kwargs)
                 return
             raise ProviderLimitExceeded(

@@ -105,7 +105,7 @@ class SupportEmail(AuthAPIView):
 
         Post Support Email via RESTful API
         """
-        required = ["message", "subject","user-interface"]
+        required = ["message", "subject", "user-interface"]
         missing_keys = check_missing_keys(request.data, required)
         if missing_keys:
             return keys_not_found(missing_keys)

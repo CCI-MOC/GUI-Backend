@@ -23,7 +23,7 @@ class PandasExcelRenderer(CSVRenderer):
         table = [r for r in table_gen]
         headers = table.pop(0)
         raw_dataframe = pd.DataFrame(table, columns=headers)
-        #Save to StringIO
+        # Save to StringIO
         sio = StringIO()
         writer = pd.ExcelWriter(sio, engine='xlsxwriter')
         if 'excel_writer_hook' not in renderer_context:
@@ -36,7 +36,7 @@ class PandasExcelRenderer(CSVRenderer):
         sio.seek(0)
         workbook = sio.getvalue()
         response = StreamingHttpResponse(workbook, content_type='application/vnd.ms-excel')
-        #FIXME: This doesn't... actually.. work. Filename == pathname.
+        # FIXME: This doesn't... actually.. work. Filename == pathname.
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         return response
 

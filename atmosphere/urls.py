@@ -41,7 +41,7 @@ if settings.DEBUG and 'debug_toolbar.middleware.DebugToolbarMiddleware' in setti
         import debug_toolbar
         urlpatterns += (
             url(r'^__debug__/', include(debug_toolbar.urls)),
-            )
+        )
     except ImportError:
         pass
 

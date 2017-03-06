@@ -34,6 +34,7 @@ class ImageTagSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='api:v2:applicationtag-detail',
     )
+
     class Meta:
         model = ImageTag
         fields = (

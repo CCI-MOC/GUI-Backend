@@ -98,7 +98,7 @@ def get_cached_instances(provider=None, identity=None, force=False):
     cached_driver = _get_cached_driver(provider=provider, identity=identity,
                                        force=force)
 
-    #NOTE: THIS IS A HACK -- The 'admin' user should be able to see "All the things" -- HOWEVER
+    # NOTE: THIS IS A HACK -- The 'admin' user should be able to see "All the things" -- HOWEVER
     # In the current implementation of liberty on jetstream, a call to 'list_all_tenants'
     # Made by a user with a single tenant will produce *IDENTICAL* results to that same call made by admin.
     # THIS IS CONSIDERED HARMFUL! So we have blocked all users except the admin accounts from making this call.

@@ -35,6 +35,7 @@ class EmailTemplate(SingletonModel):
         db_table = 'email_template'
         app_label = 'core'
 
+
 class HelpLink(models.Model):
     """
     HelpLinks are used in Atmosphere and the Tropo UI (via API call)
