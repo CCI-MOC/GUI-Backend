@@ -550,11 +550,6 @@ except ImportError:
         raise Exception(
             "__init__.py could not generate a SECRET_KEY in secret_key.py")
 
-"""
-Import local settings specific to the server, and secrets not checked into Git.
-"""
-import atmosphere.settings.local
-
 
 def _get_method_for_string(method_str, the_globals=None):
     """
