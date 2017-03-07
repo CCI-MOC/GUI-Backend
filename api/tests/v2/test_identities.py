@@ -18,14 +18,14 @@ class GetListTests(APITestCase):
         self.leadership = LeadershipFactory.create(
             user=self.user,
             group=self.group
-            )
+        )
         self.staff_user = UserFactory.create(is_staff=True)
 
         self.provider = ProviderFactory.create()
         self.quota = QuotaFactory.create()
         self.identity = IdentityFactory.create(
             provider=self.provider,
-	    quota=self.quota,
+            quota=self.quota,
             created_by=self.user)
         self.allocation = AllocationFactory.create()
         IdentityMembershipFactory.create(
@@ -79,7 +79,7 @@ class GetDetailTests(APITestCase):
         self.leadership = LeadershipFactory.create(
             user=self.user,
             group=self.group
-            )
+        )
         self.staff_user = UserFactory.create(is_staff=True)
 
         self.provider = ProviderFactory.create()

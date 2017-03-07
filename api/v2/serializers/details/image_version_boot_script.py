@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator 
+from rest_framework.validators import UniqueTogetherValidator
 from core.models import ApplicationVersionBootScript as ImageVersionBootScript
 from core.models import ApplicationVersion as ImageVersion
 from core.models import BootScript

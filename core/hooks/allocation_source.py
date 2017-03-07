@@ -45,12 +45,12 @@ def listen_for_allocation_overage(sender, instance, raw, **kwargs):
         return
     if source.compute_allowed in [None, 0]:
         return
-    #FIXME: Remove this line when you are ready to start enforcing 100% allocation:
+    # FIXME: Remove this line when you are ready to start enforcing 100% allocation:
     return
-    current_percentage = int(100.0*new_compute_used/source.compute_allowed) if source.compute_allowed != 0 else 0
+    current_percentage = int(100.0 * new_compute_used / source.compute_allowed) if source.compute_allowed != 0 else 0
     if new_compute_used < source.compute_allowed:
         return
-    enforce_allocation_overage.apply_async(args=(source.source_id,) )
+    enforce_allocation_overage.apply_async(args=(source.source_id,))
     new_payload = {
         "allocation_source_id": source.source_id,
         "actual_value": current_percentage
@@ -94,8 +94,8 @@ def listen_before_allocation_snapshot_changes(sender, instance, raw, **kwargs):
         prev_compute_used = 0
     else:
         prev_compute_used = float(prev_snapshot.compute_used)
-    prev_percentage = int(100.0*prev_compute_used/source.compute_allowed)
-    current_percentage = int(100.0*new_compute_used/source.compute_allowed)
+    prev_percentage = int(100.0 * prev_compute_used / source.compute_allowed)
+    current_percentage = int(100.0 * new_compute_used / source.compute_allowed)
     print "Souce: %s (%s) Previous:%s - New:%s" % (source.name, allocation_source_id, prev_percentage, current_percentage)
     percent_event_triggered = None
     # Compare 'Now snapshot' with Previous snapshot. Have we "crossed a threshold?"
@@ -139,7 +139,7 @@ def listen_for_allocation_threshold_met(sender, instance, created, **kwargs):
     }
     The method should fire off emails to the users who should be informed of the new threshold value.
     """
-    #FIXME+TODO: next version: Fire and respond to the `clear_allocation_threshold_met` for a given allocation_source_id (This event should be generated any time you `.save()` and update the `compute_allowed` for an AllocationSource
+    # FIXME+TODO: next version: Fire and respond to the `clear_allocation_threshold_met` for a given allocation_source_id (This event should be generated any time you `.save()` and update the `compute_allowed` for an AllocationSource
     event = instance
     if event.name != 'allocation_source_threshold_met':
         return None
@@ -153,16 +153,17 @@ def listen_for_allocation_threshold_met(sender, instance, created, **kwargs):
     if not source:
         return None
     users = AtmosphereUser.for_allocation_source(source.source_id)
-    
+
     for user in users:
         send_usage_email_to(user, source, threshold, actual_value)
+
 
 def send_usage_email_to(user, source, threshold, actual_value=None):
     from core.email import send_allocation_usage_email
     user_snapshot = UserAllocationSnapshot.objects.filter(
         allocation_source=source, user=user).last()
     if not actual_value:
-        actual_value = int(source.snapshot.compute_used / source.compute_allowed*100)
+        actual_value = int(source.snapshot.compute_used / source.compute_allowed * 100)
     if not user_snapshot:
         compute_used = None
     else:
@@ -246,19 +247,19 @@ def listen_for_user_snapshot_changes(sender, instance, created, **kwargs):
 
     try:
         snapshot = UserAllocationSnapshot.objects.get(
-                allocation_source=allocation_source,
-                user=user,
-            )
+            allocation_source=allocation_source,
+            user=user,
+        )
         snapshot.burn_rate = burn_rate
         snapshot.compute_used = compute_used
         snapshot.save()
     except UserAllocationSnapshot.DoesNotExist:
         snapshot = UserAllocationSnapshot.objects.create(
-                allocation_source=allocation_source,
-                user=user,
-                burn_rate=burn_rate,
-                compute_used=compute_used
-            )
+            allocation_source=allocation_source,
+            user=user,
+            burn_rate=burn_rate,
+            compute_used=compute_used
+        )
     return snapshot
 
 

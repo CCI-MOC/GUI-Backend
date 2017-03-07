@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+
 def main():
 
     description = (
@@ -13,7 +14,8 @@ def main():
 
     # Check environment
     try:
-        import django; django.setup()
+        import django
+        django.setup()
         from core.models import Instance
     except:
         print "\n".join([
@@ -24,7 +26,6 @@ def main():
             "   . /opt/env/atmo/bin/activate"
         ])
         sys.exit(1)
-
 
     # Filter instances
     instances = []
@@ -39,7 +40,6 @@ def main():
             if not statuses.filter(status__name="active").exists():
                 instances.append(inst)
 
-
     # Print csv
     print "UUID, PROVIDER, START_DATE, LAST_STATUS, USERNAME"
     for inst in instances:
@@ -50,6 +50,7 @@ def main():
         username = inst.created_by.username
 
         print ",".join([uuid, provider, start_date, last_status, username])
+
 
 if __name__ == "__main__":
     main()

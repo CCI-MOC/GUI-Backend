@@ -12,4 +12,3 @@ class BootScriptRelatedField(serializers.PrimaryKeyRelatedField):
         script = BootScript.objects.get(pk=value.pk)
         serializer = BootScriptSerializer(script, context=self.context)
         return serializer.data
-

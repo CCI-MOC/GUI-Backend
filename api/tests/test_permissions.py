@@ -18,7 +18,7 @@ class TestCanEditOrReadOnly(unittest.TestCase):
         self.obj = mock.Mock()
         self.obj.created_by = self.creator
         self.request = mock.Mock()
-        self.view= mock.Mock()
+        self.view = mock.Mock()
 
     def test_creator_can_edit(self):
         """

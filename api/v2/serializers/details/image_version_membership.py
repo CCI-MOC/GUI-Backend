@@ -16,7 +16,7 @@ class ImageVersionMembershipSerializer(serializers.HyperlinkedModelSerializer):
         serializer_class=ImageVersionSummarySerializer,
         style={'base_template': 'input.html'},
         required=False)
-    #NOTE: When complete, return here to disambiguate between 'membership'&&'group'
+    # NOTE: When complete, return here to disambiguate between 'membership'&&'group'
     group = ModelRelatedField(
         queryset=Membership.objects.all(),
         serializer_class=GroupSummarySerializer,

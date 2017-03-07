@@ -140,7 +140,7 @@ class AtmosphereUser(AbstractBaseUser, PermissionsMixin):
     @classmethod
     def for_allocation_source(cls, allocation_source_id):
         from core.models import UserAllocationSource
-        user_ids = UserAllocationSource.objects.filter(allocation_source__source_id=allocation_source_id).values_list('user',flat=True)
+        user_ids = UserAllocationSource.objects.filter(allocation_source__source_id=allocation_source_id).values_list('user', flat=True)
         return AtmosphereUser.objects.filter(id__in=user_ids)
 
     def can_use_identity(self, identity_id):
@@ -190,6 +190,7 @@ def get_or_create_user_profile(sender, instance, created, **kwargs):
     prof = UserProfile.objects.get_or_create(user=instance)
     if prof[1] is True:
         logger.debug("Creating User Profile for %s" % instance)
+
 
 # Instantiate the hooks:
 post_save.connect(get_or_create_user_profile, sender=AtmosphereUser)
@@ -252,7 +253,7 @@ def get_default_identity(username, provider=None):
             if not default_identity:
                 logger.error("User %s has no identities on Provider %s" % (username, default_provider))
                 raise Exception("No Identities on Provider %s for %s" % (default_provider, username))
-            #Passing
+            # Passing
             default_identity = default_identity[0]
             logger.debug(
                 "default_identity set to %s " %

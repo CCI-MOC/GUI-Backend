@@ -12,6 +12,7 @@ from threepio import celery_logger, email_logger
 
 from core.models.status_type import get_status_type
 
+
 @task(name="send_email")
 def send_email(subject, body, from_email, to, cc=None,
                fail_silently=False, html=False):

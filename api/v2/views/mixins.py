@@ -40,8 +40,8 @@ class MultipleFieldLookup(object):
                 if '.' not in field_name and '__' not in field_name:
                     field = queryset.model._meta.get_field(field_name)
                 else:
-                    #NOTE: This allows for 'x__y' or 'x.y' support
-                    field_split_list = field_name.replace('__','.').split('.')
+                    # NOTE: This allows for 'x__y' or 'x.y' support
+                    field_split_list = field_name.replace('__', '.').split('.')
                     field = queryset.model._meta.get_field(field_split_list[0])
                     for n_field in field_split_list[1:]:
                         field = field.related_model._meta.get_field(n_field)

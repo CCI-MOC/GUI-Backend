@@ -20,6 +20,7 @@ from core.models.machine import (
 )
 from django.db.models import Q
 
+
 def _get_owner(new_provider, user):
     try:
         return models.Identity.objects.get(provider=new_provider,
@@ -86,7 +87,7 @@ def process_machine_request(machine_request, new_image_id, update_cloud=True):
             machine_request.new_application_name,
             tags,
             machine_request.new_application_description)
-    #FIXME: Either *add* system_files here, or *remove* the entire field.
+    # FIXME: Either *add* system_files here, or *remove* the entire field.
     app_version = create_app_version(
         application, machine_request.new_version_name,
         new_owner, owner_identity, machine_request.new_version_change_log,
@@ -210,7 +211,7 @@ def upload_privacy_data(machine_request, new_machine):
     if hasattr(img, 'visibility'):  # Treated as an obj.
         is_public = img.visibility == 'public'
     elif hasattr(img, 'items'):  # Treated as a dict.
-        is_public = img.get('visibility','N/A') == 'public'
+        is_public = img.get('visibility', 'N/A') == 'public'
 
     if is_public:
         print "Marking image %s private" % img.id
@@ -279,20 +280,20 @@ def update_db_membership_for_group(provider_machine, group):
         group=group,
         application=provider_machine.application)
     if created:
-        logger.info("Created new ApplicationMembership: %s" \
-            % (obj,))
+        logger.info("Created new ApplicationMembership: %s"
+                    % (obj,))
     obj, created = models.ApplicationVersionMembership.objects.get_or_create(
         group=group,
         image_version=provider_machine.application_version)
     if created:
-        logger.info("Created new ApplicationVersionMembership: %s" \
-            % (obj,))
+        logger.info("Created new ApplicationVersionMembership: %s"
+                    % (obj,))
     obj, created = models.ProviderMachineMembership.objects.get_or_create(
         group=group,
         provider_machine=provider_machine)
     if created:
-        logger.info("Created new ProviderMachineMembership: %s" \
-            % (obj,))
+        logger.info("Created new ProviderMachineMembership: %s"
+                    % (obj,))
 
 
 def remove_membership(image_version, group):
@@ -316,7 +317,7 @@ def remove_membership(image_version, group):
                 continue
             # Get project name from the identity's credential-list
             project_name = identity_membership.identity.get_credential(
-                    'ex_project_name')
+                'ex_project_name')
             project = accounts.get_project(project_name)
             if project and project not in projects:
                 continue
@@ -342,6 +343,7 @@ def remove_membership(image_version, group):
                         % (img, project_name))
     return
 
+
 def sync_machine_membership(accounts, glance_image, new_machine, tenant_list):
     """
     This function will check that *all* tenants in 'tenant_list'
@@ -366,6 +368,7 @@ def share_with_self(private_userlist, username):
     # TODO: Optionally, Lookup username and get the Projectname
     private_userlist.append(str(username))
     return private_userlist
+
 
 def sync_cloud_access(accounts, img, names=None):
     shared_with = accounts.image_manager.shared_images_for(

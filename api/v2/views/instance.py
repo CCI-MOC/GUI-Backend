@@ -168,7 +168,7 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
         identity = Identity.objects.get(uuid=identity_uuid)
         try:
             # Test that there is not an attached volume BEFORE we destroy
-            #NOTE: Although this is a task we are calling and waiting for response..
+            # NOTE: Although this is a task we are calling and waiting for response..
             core_instance = destroy_instance(
                 user,
                 identity_uuid,
@@ -287,4 +287,3 @@ class InstanceViewSet(MultipleFieldLookup, AuthViewSet):
                              "Returning 409-CONFLICT")
             return failure_response(status.HTTP_409_CONFLICT,
                                     str(exc.message))
-

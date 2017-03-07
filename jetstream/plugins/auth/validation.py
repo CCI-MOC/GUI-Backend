@@ -4,6 +4,7 @@ from jetstream.exceptions import TASAPIException
 from atmosphere.plugins.auth.validation import ValidationPlugin
 from threepio import logger
 
+
 class XsedeProjectRequired(ValidationPlugin):
     def validate_user(self, user):
         """

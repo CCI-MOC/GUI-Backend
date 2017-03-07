@@ -32,4 +32,3 @@ class ActiveInstancesManager(models.Manager):
         return super(
             ActiveInstancesManager,
             self) .get_queryset().filter(only_current_instances(now_time))
-

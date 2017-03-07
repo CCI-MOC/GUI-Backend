@@ -13,9 +13,9 @@ from core.models import IdentityMembership, CloudAdministrator
 from core.models.status_type import StatusType
 
 from api.permissions import (
-        ApiAuthOptional, ApiAuthRequired, EnabledUserRequired,
-        InMaintenance, CloudAdminRequired
-    )
+    ApiAuthOptional, ApiAuthRequired, EnabledUserRequired,
+    InMaintenance, CloudAdminRequired
+)
 from api.v2.views.mixins import MultipleFieldLookup
 
 
@@ -143,7 +143,7 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
             if serializer.initial_data.get("admin_url"):
                 admin_url = serializer.initial_data.get("admin_url") + str(instance.id)
                 self.submit_action(instance, options={"admin_url": admin_url})
-            else: 
+            else:
                 self.submit_action(instance)
         except (core_exceptions.ProviderLimitExceeded,  # NOTE: DEPRECATED -- REMOVE SOON, USE BELOW.
                 core_exceptions.RequestLimitExceeded):
@@ -296,7 +296,6 @@ class BaseRequestViewSet(MultipleFieldLookup, AuthViewSet):
             }
             logger.exception(e)
             raise exceptions.ParseError(detail=message)
-
 
     @unresolved_requests_only
     def update(self, request, *args, **kwargs):

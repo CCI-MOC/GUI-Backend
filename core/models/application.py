@@ -18,6 +18,7 @@ from core.models.application_version import ApplicationVersion
 
 import json
 
+
 class Application(models.Model):
 
     """
@@ -94,7 +95,7 @@ class Application(models.Model):
         self.created_by_identity = identity
         self.save()
         if propagate:
-           [v.change_owner(identity, user, propagate=propagate) for v in self.versions.all()]
+            [v.change_owner(identity, user, propagate=propagate) for v in self.versions.all()]
 
     @classmethod
     def public_apps(cls):
@@ -142,10 +143,10 @@ class Application(models.Model):
             # Include all images created by the user or active images in the
             # users providers that are either shared with the user or public
             queryset = Application.objects.filter(
-                    query.created_by_user(user) |
-                    (query.only_current_apps() &
-                     query.in_users_providers(user) &
-                     (query.images_shared_with_user(user) | is_public)))
+                query.created_by_user(user) |
+                (query.only_current_apps() &
+                 query.in_users_providers(user) &
+                 (query.images_shared_with_user(user) | is_public)))
         return queryset.distinct()
 
     def get_metrics(self):
@@ -162,8 +163,8 @@ class Application(models.Model):
         for version in versions:
             version_metrics = version.get_metrics()
             provider_metrics = version_metrics['providers']
-            for key,val in version_metrics['domains'].items():
-                count = all_user_domain_map.get(key,0)
+            for key, val in version_metrics['domains'].items():
+                count = all_user_domain_map.get(key, 0)
                 count += val
                 all_user_domain_map[key] = count
             all_avg += sum([prov['avg_time'] for prov in provider_metrics.values()], timezone.timedelta(0))
@@ -172,8 +173,8 @@ class Application(models.Model):
             version_map[version.name] = version_metrics
         return {'versions': {
             'avg_time': all_avg, 'total': all_total,
-            'count': all_count,'domains':all_user_domain_map
-            }
+            'count': all_count, 'domains': all_user_domain_map
+        }
         }
 
     def _current_machines(self, request_user=None):
@@ -202,7 +203,7 @@ class Application(models.Model):
         providermachine_set = self.all_machines
         first = providermachine_set.filter(
             query.only_current_source()
-            ).order_by('instance_source__start_date').first()
+        ).order_by('instance_source__start_date').first()
         return first
 
     def last_machine(self):
@@ -210,7 +211,7 @@ class Application(models.Model):
         # Out of all non-end dated machines in this application
         last = providermachine_set.filter(
             query.only_current_source()
-            ).order_by('instance_source__start_date').last()
+        ).order_by('instance_source__start_date').last()
         return last
 
     def get_projects(self, user):
@@ -399,6 +400,7 @@ def verify_app_uuid(app_uuid, identifier):
     valid_uuid = _generate_app_uuid(identifier)
     return valid_uuid == app_uuid
 
+
 def _get_app_by_uuid(identifier, app_uuid):
     """
     Last-ditch placement effort. Hash the identifier and use that as the lookup
@@ -479,10 +481,10 @@ def create_application(
         tags = []
     elif isinstance(tags, basestring):
         if "[" in tags:
-            #Format expected -- ["CentOS", "development", "test1"]
+            # Format expected -- ["CentOS", "development", "test1"]
             tags = json.loads(tags)
         elif "," in tags:
-            #Format expected -- CentOS, development, test1,test2,test3
+            # Format expected -- CentOS, development, test1,test2,test3
             tags = [t.strip() for t in tags.split(',')]
         else:
             tags = [tags]
@@ -505,7 +507,9 @@ def create_application(
         updateTags(new_app, tags, created_by_identity.created_by)
     return new_app
 
-#FIXME: This class marked for removal
+# FIXME: This class marked for removal
+
+
 class ApplicationScore(models.Model):
     """
     Users can Cast their "Score" -1/0/+1 on a specific Application.
@@ -611,8 +615,8 @@ class ApplicationThreshold(models.Model):
 
     def __unicode__(self):
         return "%s requires >%s MB memory, >%s CPU" % (self.application_version,
-                                                           self.memory_min,
-                                                           self.cpu_min)
+                                                       self.memory_min,
+                                                       self.cpu_min)
 
     class Meta:
         db_table = 'application_threshold'

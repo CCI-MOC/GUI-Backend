@@ -48,11 +48,11 @@ router.register(
     base_name='imageversion_bootscript')
 router.register(r'instances', views.InstanceViewSet, base_name='instance')
 router.register(r'instance_actions',
-    views.InstanceActionViewSet,
-    base_name='instanceaction')
+                views.InstanceActionViewSet,
+                base_name='instanceaction')
 router.register(r'instance_histories',
-    views.InstanceStatusHistoryViewSet,
-    base_name='instancestatushistory')
+                views.InstanceStatusHistoryViewSet,
+                base_name='instancestatushistory')
 router.register(r'instance_tags', views.InstanceTagViewSet)
 router.register(r'licenses', views.LicenseViewSet)
 router.register(r'links', views.ExternalLinkViewSet)

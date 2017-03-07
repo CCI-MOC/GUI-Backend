@@ -23,6 +23,7 @@ from api import failure_response, invalid_creds
 
 from web.emails import feedback_email, quota_request_email, support_email
 
+
 class Feedback(APIView):
     """
     Post feedback via RESTful API
@@ -33,11 +34,11 @@ class Feedback(APIView):
         Creates a new feedback email and sends it to admins
         """
         data = request.data
-        required = ['message',]
+        required = ['message', ]
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)
-        #Pass arguments
+        # Pass arguments
         user = request.user
         message = data['message']
         user_email = lookupEmail(user.username)
@@ -59,7 +60,7 @@ class QuotaEmail(APIView):
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)
-        #Pass arguments
+        # Pass arguments
         username = request.user.username
         quota = data['quota']
         reason = data['reason']
@@ -77,7 +78,7 @@ class SupportEmail(APIView):
         Creates a new support email and sends it to admins
         """
         data = request.data
-        required = ['message','subject']
+        required = ['message', 'subject']
         missing_keys = valid_post_data(data, required)
         if missing_keys:
             return keys_not_found(missing_keys)

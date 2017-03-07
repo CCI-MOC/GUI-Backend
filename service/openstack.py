@@ -54,7 +54,6 @@ def glance_write_machine(provider_machine):
         accounts.image_manager.glance.images.update(
             g_image.id, **overrides)
     return True
-    
 
 
 def _make_safe(unsafe_str):
@@ -95,14 +94,13 @@ def glance_update_machine_metadata(provider_machine, metadata={}):
     overrides.update(metadata)
 
     if update_method == 'v2':
-        extras = { 'properties': overrides }
+        extras = {'properties': overrides}
         props.update(extras)
         g_image.update(name=base_app.name, properties=extras)
     else:
         accounts.image_manager.glance.images.update(
             g_image.id, **overrides)
     return True
-
 
 
 def glance_update_machine(new_machine):
@@ -131,7 +129,7 @@ def glance_update_machine(new_machine):
         base_source.save()
 
     logger.debug("Found glance image for %s" % new_machine)
-    if g_image.get('visibility','public') != 'public':
+    if g_image.get('visibility', 'public') != 'public':
         new_app.private = True
 
     if new_app.first_machine() is new_machine:
@@ -192,8 +190,9 @@ def glance_image_owner(provider_uuid, identifier, glance_image=None):
         image_owner = None
     return image_owner
 
+
 def glance_timestamp(iso_8601_stamp):
-    if not isinstance(iso_8601_stamp,basestring):
+    if not isinstance(iso_8601_stamp, basestring):
         if iso_8601_stamp:
             logger.debug("Stamp %s could not be parsed" % iso_8601_stamp)
         return None
@@ -201,12 +200,12 @@ def glance_timestamp(iso_8601_stamp):
     try:
         datetime_obj = datetime.strptime(
             iso_8601_stamp,
-            '%Y-%m-%dT%H:%M:%S.%f'+append_char)
+            '%Y-%m-%dT%H:%M:%S.%f' + append_char)
     except ValueError:
         try:
             datetime_obj = datetime.strptime(
                 iso_8601_stamp,
-                '%Y-%m-%dT%H:%M:%S'+append_char)
+                '%Y-%m-%dT%H:%M:%S' + append_char)
         except ValueError:
             raise ValueError(
                 "Expected ISO8601 Timestamp in Format:"

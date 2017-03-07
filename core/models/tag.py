@@ -7,6 +7,7 @@ from atmosphere.settings import BLACKLIST_TAGS
 from django.db import models
 import uuid
 
+
 class Tag(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     name = models.SlugField(max_length=128)

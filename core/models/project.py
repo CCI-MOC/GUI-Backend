@@ -34,7 +34,7 @@ class Project(models.Model):
     volumes = models.ManyToManyField(Volume, related_name="projects",
                                      blank=True)
     links = models.ManyToManyField(ExternalLink, related_name="projects",
-                                          blank=True)
+                                   blank=True)
 
     def active_volumes(self):
         return self.volumes.model.active_volumes.filter(

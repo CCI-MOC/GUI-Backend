@@ -40,7 +40,7 @@ class ProjectVolumeSerializer(serializers.HyperlinkedModelSerializer):
             UniqueTogetherValidator(
                 queryset=ProjectVolume.objects.all(),
                 fields=('project', 'volume')
-                ),
+            ),
         ]
         fields = (
             'id',

@@ -20,10 +20,12 @@ class PredeclareRouter(object):
             channel = conn.default_channel
             for queue in queues.itervalues():
                 queue(channel).declare()
+
+
 DEPLOY_TASKS = [
     "_deploy_init_to", "service.tasks.driver._deploy_init_to",
-    "deploy_ready_test", "service.tasks.driver.deploy_ready_test", 
-    "check_process_task", "service.tasks.driver.check_process_task", 
+    "deploy_ready_test", "service.tasks.driver.deploy_ready_test",
+    "check_process_task", "service.tasks.driver.check_process_task",
 ]
 EMAIL_TASKS = [
     "send_email", "core.tasks.email.send_email",
@@ -55,7 +57,7 @@ PERIODIC_TASKS = [
     "remove_empty_networks_for",
     "reset_provider_allocation",
     "monthly_allocation_reset",
-    #JETSTREAM_SPECIFIC PERIODIC TASKS
+    # JETSTREAM_SPECIFIC PERIODIC TASKS
     "report_allocations_to_tas",
     "update_snapshot",
     "monitor_jetstream_allocation_sources"
@@ -102,5 +104,5 @@ class CloudRouter(PredeclareRouter):
             return {"queue": "ssh_deploy", "routing_key": "long.deployment"}
         else:
             logger.info("ROUTE: Could not place a routing key for TASK:%s"
-                    % task_name)
+                        % task_name)
             return {"queue": "default", "routing_key": "default"}

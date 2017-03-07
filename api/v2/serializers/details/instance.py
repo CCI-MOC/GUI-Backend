@@ -49,7 +49,6 @@ class InstanceSerializer(serializers.HyperlinkedModelSerializer):
         serializer = AllocationSourceSerializer(snapshot.allocation_source, context=self.context)
         return serializer.data
 
-
     def get_usage(self, instance):
         return instance.get_total_hours()
 

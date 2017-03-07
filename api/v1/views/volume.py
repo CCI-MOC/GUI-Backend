@@ -142,9 +142,9 @@ class VolumeSnapshot(AuthAPIView):
         # STEP 2 - Create volume from snapshot
         try:
             success, esh_volume = create_esh_volume(esh_driver, identity_uuid,
-                                                display_name, size,
-                                                description, metadata,
-                                                snapshot=snapshot)
+                                                    display_name, size,
+                                                    description, metadata,
+                                                    snapshot=snapshot)
             if not success:
                 return failure_response(
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -314,8 +314,8 @@ class VolumeList(AuthAPIView):
             snapshot = None
         try:
             success, esh_volume = create_esh_volume(driver, user.username, identity_uuid,
-                                                name, size, description,
-                                                snapshot=snapshot, image=image)
+                                                    name, size, description,
+                                                    snapshot=snapshot, image=image)
         except BaseHTTPError as http_error:
             if 'Requested volume or snapshot exceed' in http_error.message:
                 return over_quota(http_error)
@@ -580,17 +580,6 @@ def valid_launch_data(data):
     Return any missing required post key names.
     """
     required = ['name', 'size']
-    return [key for key in required
-            # Key must exist and have a non-empty value.
-            if key not in data or
-            (isinstance(data[key], str) and len(data[key]) > 0)]
-
-
-def valid_snapshot_post_data(data):
-    """
-    Return any missing required post key names.
-    """
-    required = ['display_name', 'volume_id', 'size']
     return [key for key in required
             # Key must exist and have a non-empty value.
             if key not in data or

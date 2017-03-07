@@ -12,7 +12,7 @@ from core.models.quota import (
     has_storage_quota,
     has_storage_count_quota,
     has_snapshot_count_quota
-    )
+)
 from service.cache import get_cached_driver
 from service.driver import get_account_driver
 
@@ -80,7 +80,7 @@ def check_over_storage_quota(
     driver = get_cached_driver(identity=identity)
 
     # FIXME: I don't believe that 'snapshot' size and 'volume' size share
-    # the same quota, so for now we ignore 'snapshot-size', 
+    # the same quota, so for now we ignore 'snapshot-size',
     # and only care that value is 0 or >1
     new_snapshot = 1 if new_snapshot_size > 0 else 0
 
@@ -110,8 +110,6 @@ def set_provider_quota(identity_uuid, limit_dict=None):
     if not user_quota:
         # Can't update quota if it doesn't exist
         return
-    # Don't go above the hard-set limits per provider.
-    #_limit_user_quota(user_quota, identity, limit_dict=limit_dict)
     if identity.provider.type.name.lower() == 'openstack':
         return _set_openstack_quota(user_quota, identity)
     else:
@@ -205,13 +203,13 @@ def _set_compute_quota(user_quota, identity):
     # Use THESE values...
     compute_values = {
         'cores': user_quota.cpu,
-        'ram': user_quota.memory*1024,  # NOTE: Value is stored in GB, Openstack (Liberty) expects MB
+        'ram': user_quota.memory * 1024,  # NOTE: Value is stored in GB, Openstack (Liberty) expects MB
         'floating_ips': user_quota.floating_ip_count,
         'fixed_ips': user_quota.port_count,
         'instances': user_quota.instance_count,
     }
     creds = identity.get_all_credentials()
-    if creds.get('ex_force_auth_version','2.0_password') == "2.0_password":
+    if creds.get('ex_force_auth_version', '2.0_password') == "2.0_password":
         compute_values.pop('instances')
     username = identity.created_by.username
     logger.info("Updating quota for %s to %s" % (username, compute_values))

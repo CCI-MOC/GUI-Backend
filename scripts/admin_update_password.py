@@ -132,5 +132,6 @@ def update_password_for(prov, identities, dry_run=False, rebuild=False):
                 print "FAILED"
         print 'Changed passwords for %s accounts on %s' % (count, prov)
 
+
 if __name__ == "__main__":
     main()

@@ -13,6 +13,7 @@ from uuid import uuid5, uuid4
 from core.query import only_active_memberships, contains_credential
 from core.models.quota import Quota
 
+
 class Identity(models.Model):
 
     """
@@ -183,7 +184,7 @@ class Identity(models.Model):
         provider = Provider.objects.get(location__iexact=provider_location)
         credentials = cls._kwargs_to_credentials(kwarg_creds)
 
-        #DEV NOTE: 'New' identities are expected to have a router name directly assigned
+        # DEV NOTE: 'New' identities are expected to have a router name directly assigned
         # upon creation. If the value is not passed in, we can ask the provider to select
         # the router with the least 'usage' to ensure an "eventually consistent" distribution
         # of users->routers.
@@ -333,12 +334,12 @@ class Identity(models.Model):
     def get_total_hours(self):
         from service.monitoring import _get_allocation_result
         limit_instances = self.instance_set.all().values_list(
-                'provider_alias', flat=True
-            ).distinct()
+            'provider_alias', flat=True
+        ).distinct()
         result = _get_allocation_result(
             self,
             limit_instances=limit_instances)
-        total_hours = result.total_runtime().total_seconds()/3600.0
+        total_hours = result.total_runtime().total_seconds() / 3600.0
         hours = round(total_hours, 2)
         return hours
 
@@ -374,8 +375,6 @@ class Identity(models.Model):
             "remaining": hourly_difference,
             "ttz": zero_time,  # Time Til Zero
         }
-
-
 
     def get_allocation_dict(self):
         id_member = self.identity_memberships.all()[0]

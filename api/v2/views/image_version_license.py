@@ -6,6 +6,7 @@ from core.models import ApplicationVersionLicense as ImageVersionLicense
 from api.v2.serializers.details import ImageVersionLicenseSerializer
 from api.v2.views.base import AuthViewSet
 
+
 class VersionFilter(django_filters.FilterSet):
     version_id = django_filters.MethodFilter(action='filter_by_uuid')
     created_by = django_filters.MethodFilter(action='filter_owner')
@@ -15,6 +16,7 @@ class VersionFilter(django_filters.FilterSet):
             Q(image_version__created_by__username=value) |
             Q(image_version__application__created_by__username=value)
         )
+
     def filter_by_uuid(self, queryset, value):
         # NOTE: Remove this *HACK* once django_filters supports UUID as PK fields
         return queryset.filter(image_version__id=value)

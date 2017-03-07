@@ -24,6 +24,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             # 'date_joined'
         )
 
+
 class AdminUserSerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:atmosphereuser-detail',

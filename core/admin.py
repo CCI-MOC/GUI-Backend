@@ -16,16 +16,21 @@ from service.tasks import admin as admin_task
 
 def private_object(modeladmin, request, queryset):
     queryset.update(private=True)
+
+
 private_object.short_description = 'Make objects private True'
 
 
 def end_date_object(modeladmin, request, queryset):
     queryset.update(end_date=timezone.now())
+
+
 end_date_object.short_description = 'Add end-date to objects'
 
 
 # For removing 'standard' registrations
 admin.site.unregister(DjangoGroup)
+
 
 @admin.register(models.NodeController)
 class NodeControllerAdmin(admin.ModelAdmin):
@@ -45,7 +50,7 @@ class MaintenanceAdmin(admin.ModelAdmin):
 @admin.register(models.ApplicationVersion)
 class ImageVersionAdmin(admin.ModelAdmin):
     search_fields = [
-        "name","application__name",
+        "name", "application__name",
         "machines__instance_source__identifier"
     ]
     actions = [end_date_object, ]
@@ -57,6 +62,7 @@ class ImageVersionAdmin(admin.ModelAdmin):
         "start_date",
         "end_date",
     )
+
 
 @admin.register(models.Quota)
 class QuotaAdmin(admin.ModelAdmin):
@@ -72,7 +78,7 @@ class QuotaAdmin(admin.ModelAdmin):
 @admin.register(models.AllocationSource)
 class AllocationSourceAdmin(admin.ModelAdmin):
     search_fields = [
-        "name","source_id",
+        "name", "source_id",
         "users__user__username"
     ]
     actions = [end_date_object, ]
@@ -83,6 +89,7 @@ class AllocationSourceAdmin(admin.ModelAdmin):
         "compute_used",
         "compute_allowed",
     )
+
 
 @admin.register(models.AllocationStrategy)
 class AllocationStrategyAdmin(admin.ModelAdmin):
@@ -167,7 +174,7 @@ class ApplicationVersionMembershipAdmin(admin.ModelAdmin):
 
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['application_version'].queryset = \
-                models.ApplicationVersion.objects.order_by('application__name')
+            models.ApplicationVersion.objects.order_by('application__name')
         context['adminform'].form.fields[
             'group'].queryset = models.Group.objects.order_by('name')
         return super(
@@ -208,6 +215,7 @@ class ProviderMachineMembershipAdmin(admin.ModelAdmin):
 class ProviderCredentialInline(admin.TabularInline):
     model = models.ProviderCredential
     extra = 1
+
 
 @admin.register(models.EventTable)
 class EventTableAdmin(admin.ModelAdmin):
@@ -433,7 +441,7 @@ class MachineRequestAdmin(admin.ModelAdmin):
         parent_machine = models.ProviderMachine.objects.filter(
             instance_source__identifier=instance.source.identifier)
         new_machine = models.ProviderMachine.objects.filter(
-                instance_source__provider=provider)
+            instance_source__provider=provider)
 
         admin_fields = context['adminform'].form.fields
         admin_fields['new_machine_owner'].queryset = provider.list_users()
@@ -475,7 +483,7 @@ class InstanceStatusHistoryAdmin(admin.ModelAdmin):
     search_fields = ["instance__created_by__username",
                      "instance__source__identifier",
                      "instance__provider_alias", "status__name"]
-    list_display = ["instance_alias", "machine_alias", "instance_owner","instance_ip_address","status", "start_date", "end_date"]
+    list_display = ["instance_alias", "machine_alias", "instance_owner", "instance_ip_address", "status", "start_date", "end_date"]
     list_filter = ["instance__source__provider__location",
                    "status__name",
                    "instance__created_by__username"]
@@ -565,9 +573,10 @@ class GroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'uuid',)
     list_filter = ['name', ]
 
+
 @admin.register(models.EmailTemplate)
 class EmailTemplateAdmin(admin.ModelAdmin):
-    actions = None # disable the `delete selected` action
+    actions = None  # disable the `delete selected` action
 
     def has_add_permission(self, request):
         return False
@@ -578,11 +587,11 @@ class EmailTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(models.HelpLink)
 class HelpLinkAdmin(admin.ModelAdmin):
-    actions = None # disable the `delete selected` action
+    actions = None  # disable the `delete selected` action
     list_display = ["link_key", "topic", "context", "href"]
 
     def get_readonly_fields(self, request, obj=None):
-        if obj: # editing an existing object
+        if obj:  # editing an existing object
             return self.readonly_fields + ("link_key", )
         return self.readonly_fields
 

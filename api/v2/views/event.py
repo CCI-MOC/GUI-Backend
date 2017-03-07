@@ -23,4 +23,4 @@ class EventViewSet(MultipleFieldLookup, AuthViewSet):
     filter_class = EventFilter
     search_fields = ('^name',)
     lookup_fields = ('id', 'uuid')
-    http_method_names = ['options','head','post']
+    http_method_names = ['options', 'head', 'post']

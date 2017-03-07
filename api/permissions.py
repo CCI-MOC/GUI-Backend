@@ -171,9 +171,9 @@ class InMaintenance(permissions.BasePermission):
         records = MaintenanceRecord.active()\
                                    .filter(provider__isnull=True)
         if records:
-            session_username = request.session.get('username','')
+            session_username = request.session.get('username', '')
             request_username = request.user.username
-            #TODO: Optional logic related to session_username -- the one who is 'Authenticated'..
+            # TODO: Optional logic related to session_username -- the one who is 'Authenticated'..
             atmo_user = AtmosphereUser.objects.filter(username=request_username).first()
             if atmo_user and request_username in settings.MAINTENANCE_EXEMPT_USERNAMES:
                 return True

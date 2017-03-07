@@ -14,9 +14,9 @@ from core.models.abstract import BaseSource
 from core.models.instance_source import InstanceSource
 from core.models.application import create_application, get_application, verify_app_uuid
 from core.models.application_version import (
-        ApplicationVersion,
-        create_app_version,
-        get_version_for_machine)
+    ApplicationVersion,
+    create_app_version,
+    get_version_for_machine)
 from core.models.identity import Identity
 from core.models.provider import Provider
 
@@ -125,10 +125,10 @@ class ProviderMachine(BaseSource):
 
     def esh_ownerid(self):
         username = self.instance_source.created_by.username
-        #NOTE: Reaching deep -- Don't do this in the new API.
+        # NOTE: Reaching deep -- Don't do this in the new API.
         if self.esh and self.esh._image\
            and self.esh._image.extra\
-           and 'application_owner' in self.esh._image.extra.get('metadata',{}):
+           and 'application_owner' in self.esh._image.extra.get('metadata', {}):
             username = self.esh._image.extra['metadata']['application_owner']
         return username
 
@@ -196,13 +196,14 @@ def get_cached_machine(provider_alias, provider_id):
                     % (provider_alias, provider_id))
     return cached_mach
 
+
 def collect_image_metadata(glance_image):
     app_kwargs = {}
     try:
         app_kwargs['private'] = glance_image.visibility.lower() != 'public'
         if verify_app_uuid(glance_image.get('application_uuid'), glance_image.id):
             app_kwargs['uuid'] = glance_image.get('application_uuid')
-            app_kwargs['description'] = glance_image.get('application_description')#TODO: Verify that _LINE_BREAK_ is fixed
+            app_kwargs['description'] = glance_image.get('application_description')  # TODO: Verify that _LINE_BREAK_ is fixed
             app_kwargs['tags'] = glance_image.get('application_tags')
         elif is_replicated_version(glance_image.id):
             app_kwargs = replicate_app_kwargs(glance_image.id)
@@ -224,7 +225,7 @@ def replicate_app_kwargs(image_id):
     """
     try:
         app = Application.objects.get(versions__machines__instance_source__identifier=image_id)
-        tag_list = list(app.tags.values_list('name',flat=True))
+        tag_list = list(app.tags.values_list('name', flat=True))
         json_tags = json.dumps(tag_list)
         return {
             'uuid': app.uuid,
@@ -254,7 +255,7 @@ def convert_glance_image(glance_image, provider_uuid, owner=None):
     if provider_machine:
         return (provider_machine, False)
     app_kwargs = collect_image_metadata(glance_image)
-    if owner and hasattr(owner,'name'):
+    if owner and hasattr(owner, 'name'):
         owner_name = owner.name
     else:
         owner_name = glance_image.get('application_owner')
@@ -280,7 +281,7 @@ def convert_glance_image(glance_image, provider_uuid, owner=None):
             'provider_machine_id': image_id
         }
         version = create_app_version(app, **version_kwargs)
-    #TODO: fuzzy=True returns a list, but call comes through as a .get()?
+    # TODO: fuzzy=True returns a list, but call comes through as a .get()?
     #      this line will cover that edge-case.
     if type(version) in [models.QuerySet, list]:
         version = version[0]
@@ -320,7 +321,7 @@ def get_or_create_provider_machine(image_id, machine_name,
         version = get_version_for_machine(provider_uuid, image_id, fuzzy=True)
     if not version:
         version = create_app_version(app, "1.0", provider_machine_id=image_id)
-    #TODO: fuzzy=True returns a list, but call comes through as a .get()?
+    # TODO: fuzzy=True returns a list, but call comes through as a .get()?
     #      this line will cover that edge-case.
     if type(version) in [models.QuerySet, list]:
         version = version[0]
@@ -495,6 +496,7 @@ def update_provider_machine_metadata(provider_machine_id, metadata={}):
     provider_machine = find_provider_machine(provider_machine_id)
     return update_machine_metadata(provider_machine, metadata)
 
+
 def find_provider_machine(identifier):
     try:
         if type(identifier) == int:
@@ -506,6 +508,7 @@ def find_provider_machine(identifier):
         return None
     except MultipleObjectsReturned:
         raise MultipleObjectsReturned("Identifier %s is ambiguous. Use the 'pk' value")
+
 
 def get_provider_machine(identifier, provider_uuid):
     try:

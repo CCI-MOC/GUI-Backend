@@ -48,7 +48,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
                 return all_active.order_by('-start_date')
             return all_active.filter(
                 created_by=request_user
-                ).order_by('-start_date')
+            ).order_by('-start_date')
         return super(MachineRequestViewSet, self).get_queryset()
 
     def _get_new_provider(self):
@@ -64,7 +64,6 @@ class MachineRequestViewSet(BaseRequestViewSet):
             return new_provider
         except:
             raise Exception("settings.REPLICATION_PROVIDER_LOCATION could not be set. Contact a developer.")
-
 
     def filter_tags(self, user, tag_names):
         new_tag_names = []
@@ -98,9 +97,9 @@ class MachineRequestViewSet(BaseRequestViewSet):
         identity_id = serializer.initial_data.get("identity")
         parent_machine = serializer.validated_data['instance'].provider_machine
         access_list = serializer.initial_data.get("access_list") or []
-        visibility = serializer.initial_data.get("new_application_visibility") 
+        visibility = serializer.initial_data.get("new_application_visibility")
         new_provider = self._get_new_provider()
-        if  visibility in ["select", "private"]:
+        if visibility in ["select", "private"]:
             share_with_admins(access_list, parent_machine.provider.uuid)
             share_with_self(access_list, request_user.username)
             access_list = remove_duplicate_users(access_list)
@@ -124,7 +123,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
             parent_machine = parent_machine[0]
         else:
             raise rest_exceptions.ParseError(detail="Could not retrieve parent machine.")
-        new_tags = self.filter_tags(request_user, serializer.validated_data.get("new_version_tags",""))
+        new_tags = self.filter_tags(request_user, serializer.validated_data.get("new_version_tags", ""))
         try:
             membership = IdentityMembership.objects.get(identity=identity_id)
             instance = serializer.save(
@@ -167,7 +166,7 @@ class MachineRequestViewSet(BaseRequestViewSet):
         """
         Submits a resource request email
         """
-        #NOTE/FIXME: This should be considered when locking down "Imaging Strategy" for a "Provider Grouping"
+        # NOTE/FIXME: This should be considered when locking down "Imaging Strategy" for a "Provider Grouping"
         new_provider = self._get_new_provider()
         pre_approved = new_provider.auto_imaging
         requestImaging(self.request, instance.id, auto_approve=pre_approved)

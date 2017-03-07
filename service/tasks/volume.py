@@ -120,7 +120,7 @@ def mount_task(driverCls, provider, identity, instance_id, volume_id,
                 device = attach_data['device']
         except KeyError as IndexError:
             celery_logger.warn("Volume %s missing attachments in Extra"
-                        % (volume,))
+                               % (volume,))
             device = None
         if not device:
             celery_logger.warn("Device never attached. Nothing to mount")
@@ -272,8 +272,8 @@ def attach_task(driverCls, provider, identity, instance_id, volume_id,
             attempts += 1
             sleep_time = 2**attempts
             celery_logger.debug("Volume %s is not ready (%s). Sleep for %s"
-                         % (volume.id, volume.extra.get('status', 'no-status'),
-                            sleep_time))
+                                % (volume.id, volume.extra.get('status', 'no-status'),
+                                   sleep_time))
             time.sleep(sleep_time)
 
         if 'available' in volume.extra.get('status', ''):
@@ -286,8 +286,8 @@ def attach_task(driverCls, provider, identity, instance_id, volume_id,
             device = attach_data['device']
         except (IndexError, KeyError) as bad_fetch:
             celery_logger.warn("Could not find 'device' in "
-                        "volume.extra['attachments']: "
-                        "Volume:%s Extra:%s" % (volume.id, volume.extra))
+                               "volume.extra['attachments']: "
+                               "Volume:%s Extra:%s" % (volume.id, volume.extra))
             device = None
 
         celery_logger.debug("attach_task finished at %s." % datetime.now())
@@ -330,7 +330,7 @@ def detach_task(driverCls, provider, identity,
             attempts += 1
             sleep_time = 2**attempts
             celery_logger.debug("Volume %s is not ready (%s). Sleep for %s"
-                         % (volume.id, volume.extra['status'], sleep_time))
+                                % (volume.id, volume.extra['status'], sleep_time))
             time.sleep(sleep_time)
 
         if 'in-use' in volume.extra['status']:

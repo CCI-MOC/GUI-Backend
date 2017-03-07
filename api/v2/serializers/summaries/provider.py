@@ -8,6 +8,7 @@ class ProviderSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:provider-detail',
     )
+
     class Meta:
         model = Provider
         fields = (

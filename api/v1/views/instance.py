@@ -28,7 +28,7 @@ from service.exceptions import (
     UnderThresholdError, ActionNotAllowed, Unauthorized,
     # Technically owned by another
     socket_error, ConnectionFailure, LibcloudInvalidCredsError, LibcloudBadResponseError
-    )
+)
 from service.instance import (
     run_instance_action,
     launch_instance)
@@ -158,7 +158,7 @@ class InstanceList(AuthAPIView):
             return keys_not_found(missing_keys)
         # Pass these as args
         size_alias = data.pop("size_alias")
-        allocation_source_id = data.pop("allocation_source_id",None)
+        allocation_source_id = data.pop("allocation_source_id", None)
         machine_alias = data.pop("machine_alias")
         hypervisor_name = data.pop("hypervisor", None)
         if hypervisor_name:
@@ -371,8 +371,6 @@ class InstanceStatusHistoryDetail(AuthAPIView):
         response = Response(serialized_data)
         response['Cache-Control'] = 'no-cache'
         return response
-
-
 
 
 def _further_process_result(request, action, result):
@@ -671,7 +669,7 @@ class Instance(AuthAPIView):
         identity = Identity.objects.get(uuid=identity_uuid)
         if serializer.is_valid():
             logger.info('metadata = %s' % data)
-            #NOTE: We shouldn't allow 'full replacement' of metadata..
+            # NOTE: We shouldn't allow 'full replacement' of metadata..
             # We should also validate against potentional updating of 'atmo-used metadata'
             update_metadata.s(esh_driver.__class__, esh_driver.provider, esh_driver.identity, esh_instance.id,
                               data, replace_metadata=False).apply()

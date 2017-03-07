@@ -8,7 +8,8 @@ import pprint
 import sys
 import subprocess
 
-import django; django.setup()
+import django
+django.setup()
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 import libcloud.security
@@ -67,8 +68,6 @@ def review_information(provider_info, admin_info, provider_credentials, cloud_co
     pprint.pprint(admin_info)
     print "3. Provider Credentials"
     pprint.pprint(provider_credentials)
-    #jsonfile_text = json.dumps({'provider':provider_info, 'admin': admin_info, 'credentials': provider_credentials})
-    #print jsonfile_text
     review_completed = raw_input("Does everything above look correct? [Yes]/No")
     if not review_completed or review_completed.lower() == 'yes':
         return
@@ -92,6 +91,7 @@ def yes_no_truth(raw_text):
         return True
     else:
         return False
+
 
 def get_comma_list(raw_text):
     """
@@ -162,7 +162,7 @@ def read_openrc_file(filename):
         sys.exit(1)
     parse_results = urlparse(os_environ['OS_AUTH_URL'])
     server_hostport = parse_results.port
-    server_hostname = parse_results.netloc.replace(":"+str(server_hostport), '')
+    server_hostname = parse_results.netloc.replace(":" + str(server_hostport), '')
     server_scheme = parse_results.scheme
     provider_info = {
         "name": None,
@@ -173,7 +173,7 @@ def read_openrc_file(filename):
         "username": os_environ["OS_USERNAME"],
         "tenant": os_environ["OS_TENANT_NAME"],
         "password": os_environ["OS_PASSWORD"],
-        }
+    }
     credential_info = {
         "admin_url": "%s://%s:%s" % (server_scheme, server_hostname, "35357"),
         "auth_url": "%s://%s:%s" % (server_scheme, server_hostname, "5000"),
@@ -195,13 +195,13 @@ def get_provider_info(provider_info={}):
         print "Images on Public providers are advertised on Troposphere UI without authentication."
         print "Generally, users will have an identity created on each public provider."
         provider_info['public'] = require_input(
-        "Is this provider public? (yes/[no]): ",
-        yes_no_truth, default='no', allow_falsy=True, use_validated_answer=True)
+            "Is this provider public? (yes/[no]): ",
+            yes_no_truth, default='no', allow_falsy=True, use_validated_answer=True)
     # 2.  Collect platform type
     if not provider_info.get('platform'):
         print "Select a platform type for your new provider"
         print "1: KVM (Default), 2: Xen"
-        platform = require_input("Select a platform type ([1]/2): ", lambda answer: answer in ['1','2'], default='1')
+        platform = require_input("Select a platform type ([1]/2): ", lambda answer: answer in ['1', '2'], default='1')
         if platform == '1':
             platform = KVM
         elif platform_choice == '2':
@@ -255,7 +255,7 @@ def get_cloud_config(cloud_config={}):
 
 
 def set_deploy_config(deploy_config):
-    #get/set deploy_format
+    # get/set deploy_format
     hostname_format = deploy_config.get('hostname_format')
     if not hostname_format:
         print "What is the hostname format for the instances deployed by your provider? (Default selection will use IP address as hostname)"
@@ -265,7 +265,7 @@ def set_deploy_config(deploy_config):
 
 
 def set_network_config(net_config):
-    #FIXME/TODO: This is probably not an effective way of collecting data..
+    # FIXME/TODO: This is probably not an effective way of collecting data..
     if not net_config.get('default_security_rules'):
         print "What is the list of security rules for the provider? (Default: Uses the setting `DEFAULT_RULES`)"
         net_config['default_security_rules'] = require_input("default_security_rules for provider: (Should be a list)", default=settings.DEFAULT_RULES)
@@ -290,19 +290,19 @@ def set_network_config(net_config):
 
 
 def set_user_config(user_config):
-    #get/set admin_role_name
+    # get/set admin_role_name
     admin_role_name = user_config.get('admin_role_name')
     if not admin_role_name:
         print "What is the role name for 'admin' in your provider? (Default: admin)"
         admin_role_name = require_input("admin role_name for the provider: ", default='admin')
 
-    #get/set user_role_name
+    # get/set user_role_name
     user_role_name = user_config.get('user_role_name')
     if not user_role_name:
         print "What is the role name for default membership in your provider? (Default: _member_)"
         user_role_name = require_input("user_role_name for the provider: ", default='_member_')
 
-    #get/set domain
+    # get/set domain
     domain = user_config.get('domain')
     if not domain:
         print "What is the domain name for your provider? (Default: default)"
@@ -311,8 +311,8 @@ def set_user_config(user_config):
     secret = user_config.get('secret')
     if not secret or len(secret) < 32:
         secret = require_input("What secret would you like to use to create " +
-                "user accounts? (32 character minimum) ",
-                lambda answer: len(answer) >= 32)
+                               "user accounts? (32 character minimum) ",
+                               lambda answer: len(answer) >= 32)
     user_config.update({
         'admin_role_name': admin_role_name,
         'user_role_name': user_role_name,
@@ -350,7 +350,7 @@ def get_provider_credentials(credential_info={}):
 
     if not credential_info.get('ex_force_auth_version'):
         print "What is the Authentication Scheme (Openstack ONLY -- Default:'2.0_password')?"
-        ex_force_auth_version = require_input("ex_force_auth_version for the provider: ", lambda answer: answer in ['2.0_password','3.x_password'], default='2.0_password')
+        ex_force_auth_version = require_input("ex_force_auth_version for the provider: ", lambda answer: answer in ['2.0_password', '3.x_password'], default='2.0_password')
         credential_info['ex_force_auth_version'] = ex_force_auth_version
     # Verify that 'admin_url' is properly set.
     auth_version = credential_info['ex_force_auth_version']
@@ -364,7 +364,6 @@ def get_provider_credentials(credential_info={}):
     if '2' in auth_version and '/v2.0/tokens' not in auth_url:
         print "Note: Adding '/v2.0/tokens' to the end of the auth_url path (Required for 2.0_password)"
         credential_info['auth_url'] = urljoin(auth_url, '/v2.0/tokens')
-
 
     return credential_info
 
@@ -463,7 +462,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="Add a new cloud provider and adminstrator")
 
-
     parser.add_argument("--from-openrc", dest="openrc",
                         help="Add a new provider from an openrc file.")
     parser.add_argument("--from-json", dest="json",
@@ -484,7 +482,7 @@ def main():
         (provider_info,
          admin_info,
          provider_credentials) = read_openrc_file(arguments.openrc)
-    
+
     while True:
         get_provider_info(provider_info)
         get_admin_info(admin_info)
@@ -509,11 +507,11 @@ def validate_new_provider(new_provider, new_identity):
     acct_driver = get_account_driver(new_provider)
     if not acct_driver:
         print "Could not create an account driver for the new Provider"\
-                " %s - %s. Check your credentials and try again. "\
-                "If you believe you are receiving this message in error, "\
-                "AND you are able to use external CLI tools on this machine "\
-                "to contact your cloud, please report the issue to a developer!"\
-                % (new_provider, new_identity)
+            " %s - %s. Check your credentials and try again. "\
+            "If you believe you are receiving this message in error, "\
+            "AND you are able to use external CLI tools on this machine "\
+            "to contact your cloud, please report the issue to a developer!"\
+            % (new_provider, new_identity)
         return False
     return True
 

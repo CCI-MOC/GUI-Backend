@@ -25,6 +25,8 @@ from django.conf import settings
 from rtwo.exceptions import LibcloudInvalidCredsError
 
 # Private
+
+
 def _include_all_idents(identities, owner_map):
     # Include all identities with 0 instances to the monitoring
     identity_owners = [ident.get_credential('ex_tenant_name')
@@ -115,11 +117,11 @@ def get_allocation_result_for(
     * Create 'Allocation' using core representation
     * Calculate the 'AllocationResult' and return both
     """
-    #FIXME: Remove this after debug testing is complete
+    # FIXME: Remove this after debug testing is complete
     if print_logs:
         from service.tasks.monitoring import _init_stdout_logging, _exit_stdout_logging
         console_handler = _init_stdout_logging(logger)
-    #ENDFIXME: Remove this after debug testing is complete
+    # ENDFIXME: Remove this after debug testing is complete
 
     identity = _get_identity_from_tenant_name(provider, username)
     # Attempt to run through the allocation engine
@@ -140,11 +142,11 @@ def get_allocation_result_for(
         logger.exception("Unable to monitor Identity:%s"
                          % (identity,))
         raise
-    #FIXME: Remove this after debug testing is complete
+    # FIXME: Remove this after debug testing is complete
     else:
         if print_logs:
             _exit_stdout_logging(console_handler)
-    #ENDFIXME: Remove this after debug testing is complete
+    # ENDFIXME: Remove this after debug testing is complete
 
 
 def user_over_allocation_enforcement(
@@ -300,7 +302,7 @@ def update_instances(driver, identity, esh_list, core_list):
             core_size,
             esh_instance.extra.get('task'),
             esh_instance.extra.get(
-                'metadata', {}).get('tmp_status','MISSING'))
+                'metadata', {}).get('tmp_status', 'MISSING'))
 
 # Used in monitoring.py
 
@@ -407,9 +409,7 @@ def _get_instance_owner_map(provider, users=None):
     else:
         account_identity = None
 
-
     all_instances = get_cached_instances(provider=provider, identity=account_identity, force=True)
-    #all_tenants = admin_driver._connection._keystone_list_tenants()
     all_tenants = accounts.list_projects()
     # Convert instance.owner from tenant-id to tenant-name all at once
     all_instances = _convert_tenant_id_to_names(all_instances, all_tenants)
@@ -518,7 +518,7 @@ def apply_strategy(identity, core_allocation, limit_instances=[], limit_history=
     strategy = _get_strategy(identity)
     if not strategy:
         return Allocation(credits=[], rules=[], instances=[],
-            start_date=start_date, end_date=end_date)
+                          start_date=start_date, end_date=end_date)
     return strategy.apply(
         identity, core_allocation,
         limit_instances=limit_instances, limit_history=limit_history,
@@ -538,7 +538,7 @@ def allocation_source_overage_enforcement(allocation_source):
         all_user_instances[user.username] = []
         for identity in user.current_identities:
             affected_instances = allocation_source_overage_enforcement_for(
-                    allocation_source, user, identity)
+                allocation_source, user, identity)
             user_instances = all_user_instances[user.username]
             user_instances.extend(affected_instances)
             all_user_instances[user.username] = user_instances
@@ -546,7 +546,7 @@ def allocation_source_overage_enforcement(allocation_source):
 
 
 def filter_allocation_source_instances(allocation_source, esh_instances):
-    #Circ Dep
+    # Circ Dep
     from core.models.allocation_strategy import InstanceAllocationSourceSnapshot
     as_instances = []
     for inst in esh_instances:
@@ -580,6 +580,7 @@ def allocation_source_overage_enforcement_for(allocation_source, user, identity)
         core_instance = execute_provider_action(user, driver, identity, instance, action)
         instances.append(core_instance)
     return instances
+
 
 def execute_provider_action(user, driver, identity, instance, action):
     try:

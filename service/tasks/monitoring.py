@@ -115,8 +115,8 @@ def prune_machines_for(
         cloud_machines = account_driver.list_all_images()
     else:
         db_machines = ProviderMachine.objects.filter(
-                source_in_range(),  # like 'only_current..' w/o active_provider
-                instance_source__provider=provider)
+            source_in_range(),  # like 'only_current..' w/o active_provider
+            instance_source__provider=provider)
         cloud_machines = []
 
     # Don't do anything if cloud machines == [None,[]]
@@ -180,16 +180,16 @@ def monitor_machines_for(provider_id, print_logs=False, dry_run=False):
         if not machine_is_valid(cloud_machine, account_driver):
             continue
         owner_project = _get_owner(account_driver, cloud_machine)
-        #STEP 1: Get the application, version, and provider_machine registered in Atmosphere
+        # STEP 1: Get the application, version, and provider_machine registered in Atmosphere
         (db_machine, created) = convert_glance_image(cloud_machine, provider.uuid, owner_project)
-        #STEP 2: For any private cloud_machine, convert the 'shared users' as known by cloud
+        # STEP 2: For any private cloud_machine, convert the 'shared users' as known by cloud
         update_image_membership(account_driver, cloud_machine, db_machine)
 
         # into DB relationships: ApplicationVersionMembership, ProviderMachineMembership
-        #STEP 3: if ENFORCING -- occasionally 're-distribute' any ACLs that are *listed on DB but not on cloud* -- removals should be done explicitly, outside of this function
+        # STEP 3: if ENFORCING -- occasionally 're-distribute' any ACLs that are *listed on DB but not on cloud* -- removals should be done explicitly, outside of this function
         if settings.ENFORCING:
             distribute_image_membership(account_driver, cloud_machine, provider)
-        # ASSERTIONS about this method: 
+        # ASSERTIONS about this method:
         # 1) We will never 'remove' membership,
         # 2) We will never 'remove' a public or private flag as listed in application.
         # 2b) Future: Individual versions/machines as described by relationships above dictate whats shown in the application.
@@ -197,6 +197,7 @@ def monitor_machines_for(provider_id, print_logs=False, dry_run=False):
     if print_logs:
         _exit_stdout_logging(console_handler)
     return
+
 
 def _get_owner(accounts, cloud_machine):
     """
@@ -212,6 +213,7 @@ def _get_owner(accounts, cloud_machine):
         owner_project = accounts.get_project(owner)
     return owner_project
 
+
 def machine_is_valid(cloud_machine, accounts):
     """
     As the criteria for "what makes a glance image an atmosphere ProviderMachine" changes, we can use this function to hook out to external plugins, etc.
@@ -222,7 +224,7 @@ def machine_is_valid(cloud_machine, accounts):
     """
     provider = accounts.core_provider
     # If the name of the machine indicates that it is a Ramdisk, Kernel, or Chromogenic Snapshot, skip it.
-    if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-','eki-', 'ChromoSnapShot']):
+    if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-', 'eki-', 'ChromoSnapShot']):
         celery_logger.info("Skipping cloud machine %s" % cloud_machine)
         return False
     # If the metadata 'skip_atmosphere' is found, do not add the machine.
@@ -252,7 +254,7 @@ def machine_is_valid(cloud_machine, accounts):
     config_domain = accounts.get_config('user', 'domain', 'default')
     owner_domain = accounts.openstack_sdk.identity.get_domain(domain_id)
     account_domain = accounts.openstack_sdk.identity.get_domain(config_domain)
-    if owner_domain.id != account_domain.id: # and if FLAG FOR DOMAIN-SPECIFIC ATMOSPHERE
+    if owner_domain.id != account_domain.id:  # and if FLAG FOR DOMAIN-SPECIFIC ATMOSPHERE
         celery_logger.info("Skipping private machine %s - The owner belongs to a different domain (%s)" % (cloud_machine, owner_domain))
         return False
     return True
@@ -275,11 +277,11 @@ def update_image_membership(account_driver, cloud_machine, db_machine):
     """
     Given a cloud_machine and db_machine, create any relationships possible for ProviderMachineMembership and ApplicationVersionMembership
     """
-    image_visibility = cloud_machine.get('visibility','private')
+    image_visibility = cloud_machine.get('visibility', 'private')
     if image_visibility.lower() == 'public':
         return
-    image_owner = cloud_machine.get('application_owner','')
-    #TODO: In a future update to 'imaging' we might image 'as the user' rather than 'as the admin user', in this case we should just use 'owner' metadata
+    image_owner = cloud_machine.get('application_owner', '')
+    # TODO: In a future update to 'imaging' we might image 'as the user' rather than 'as the admin user', in this case we should just use 'owner' metadata
     shared_group_names = [image_owner]
     shared_projects = account_driver.shared_images_for(cloud_machine.id)
     shared_group_names.extend(p.name for p in shared_projects if p)
@@ -288,7 +290,6 @@ def update_image_membership(account_driver, cloud_machine, db_machine):
         return
     for group in groups:
         update_db_membership_for_group(db_machine, group)
-
 
 
 def get_public_and_private_apps(provider):
@@ -308,9 +309,9 @@ def get_public_and_private_apps(provider):
     # ASSERT: All non-end-dated machines in the DB can be found in the cloud
     # if you do not believe this is the case, you should call 'prune_machines_for'
     for cloud_machine in cloud_machines:
-        #Filter out: ChromoSnapShot, eri-, eki-, ... (Or dont..)
-        if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-','eki-', 'ChromoSnapShot']):
-            #celery_logger.debug("Skipping cloud machine %s" % cloud_machine)
+        # Filter out: ChromoSnapShot, eri-, eki-, ... (Or dont..)
+        if any(cloud_machine.name.startswith(prefix) for prefix in ['eri-', 'eki-', 'ChromoSnapShot']):
+            # celery_logger.debug("Skipping cloud machine %s" % cloud_machine)
             continue
         db_machine = get_or_create_provider_machine(cloud_machine.id, cloud_machine.name, provider.uuid)
         db_version = db_machine.application_version
@@ -318,14 +319,14 @@ def get_public_and_private_apps(provider):
 
         if cloud_machine.get('visibility') == 'public':
             if db_application.private and db_application not in new_public_apps:
-                new_public_apps.append(db_application) #Distinct list..
-            #Else the db app is public and no changes are necessary.
+                new_public_apps.append(db_application)  # Distinct list..
+            # Else the db app is public and no changes are necessary.
         else:
             # cloud machine is private
             membership = get_shared_identities(account_driver, cloud_machine, all_projects_map)
             all_members = private_apps.get(db_application, [])
             all_members.extend(membership)
-            #Distinct list..
+            # Distinct list..
             private_apps[db_application] = all_members
     return new_public_apps, private_apps
 
@@ -349,7 +350,7 @@ def remove_machine(db_machine, now_time=None, dry_run=False):
             # Look and see if all machines are end-dated.
             Q(instance_source__end_date__isnull=True) |
             Q(instance_source__end_date__gt=now_time)
-            ).count() != 0:
+    ).count() != 0:
         # Other machines exist.. No cascade necessary.
         return True
     # Version also completely end-dated. End date this version.
@@ -362,7 +363,7 @@ def remove_machine(db_machine, now_time=None, dry_run=False):
     if db_application.versions.filter(
             # If all versions are end-dated
             only_current(now_time)
-            ).count() != 0:
+    ).count() != 0:
         # Other versions exist.. No cascade necessary..
         return True
     db_application.end_date = now_time
@@ -385,7 +386,7 @@ def make_machines_private(application, identities, account_drivers={}, provider_
             account_driver = memoized_driver(machine, account_drivers)
             tenant_name_mapping = memoized_tenant_name_map(account_driver, provider_tenant_mapping)
             current_tenants = get_current_members(
-                    account_driver, machine, tenant_name_mapping)
+                account_driver, machine, tenant_name_mapping)
             provider = machine.instance_source.provider
             cloud_machine = memoized_image(account_driver, machine, image_maps)
             for identity in identities:
@@ -399,17 +400,19 @@ def make_machines_private(application, identities, account_drivers={}, provider_
         if not dry_run:
             application.save()
 
+
 def memoized_image(account_driver, db_machine, image_maps={}):
     provider = db_machine.instance_source.provider
     identifier = db_machine.instance_source.identifier
-    cloud_machine = image_maps.get( (provider, identifier) )
+    cloud_machine = image_maps.get((provider, identifier))
     # Return memoized result
     if cloud_machine:
         return cloud_machine
     # Retrieve and remember
     cloud_machine = account_driver.get_image(identifier)
-    image_maps[ (provider, identifier) ] = cloud_machine
+    image_maps[(provider, identifier)] = cloud_machine
     return cloud_machine
+
 
 def memoized_driver(machine, account_drivers={}):
     provider = machine.instance_source.provider
@@ -421,6 +424,7 @@ def memoized_driver(machine, account_drivers={}):
         account_drivers[provider] = account_driver
     return account_driver
 
+
 def memoized_tenant_name_map(account_driver, tenant_list_maps={}):
     tenant_id_name_map = tenant_list_maps.get(account_driver.core_provider)
     if not tenant_id_name_map:
@@ -429,9 +433,10 @@ def memoized_tenant_name_map(account_driver, tenant_list_maps={}):
 
     return tenant_id_name_map
 
+
 def get_current_members(account_driver, machine, tenant_id_name_map):
     current_membership = account_driver.image_manager.shared_images_for(
-            image_id=machine.identifier)
+        image_id=machine.identifier)
 
     current_tenants = []
     for membership in current_membership:
@@ -440,6 +445,7 @@ def get_current_members(account_driver, machine, tenant_id_name_map):
         if tenant_name:
             current_tenants.append(tenant_name)
     return current_tenants
+
 
 def add_application_membership(application, identity, dry_run=False):
     for membership_obj in identity.identity_memberships.all():
@@ -451,8 +457,9 @@ def add_application_membership(application, identity, dry_run=False):
             if not dry_run:
                 ApplicationMembership.objects.create(application=application, group=group)
         else:
-            #celery_logger.debug("SKIPPED _ Group %s already ApplicationMember for %s" % (group.name, application.name))
+            # celery_logger.debug("SKIPPED _ Group %s already ApplicationMember for %s" % (group.name, application.name))
             pass
+
 
 def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
     """
@@ -472,11 +479,11 @@ def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
             continue
         # Find matching 'tenantName' credential and add all matching identities w/ that tenantName.
         matching_creds = Credential.objects.filter(
-                key='ex_tenant_name',  # TODO: ex_project_name on next OStack update.
-                value=tenant_name,
-                # NOTE: re-add this line when not replicating clouds!
-                #identity__provider=account_driver.core_provider)
-                )
+            key='ex_tenant_name',  # TODO: ex_project_name on next OStack update.
+            value=tenant_name,
+            # NOTE: re-add this line when not replicating clouds!
+                # identity__provider=account_driver.core_provider)
+        )
         identity_ids = matching_creds.values_list('identity', flat=True)
         if not all_identities:
             all_identities = identity_ids
@@ -484,6 +491,7 @@ def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
             all_identities = all_identities | identity_ids
     identity_list = Identity.objects.filter(id__in=all_identities)
     return identity_list
+
 
 def update_membership(application, shared_identities):
     """
@@ -519,14 +527,14 @@ def make_machines_public(application, account_drivers={}, dry_run=False):
                 celery_logger.info("Image not found on this provider: %s" % (machine))
                 continue
 
-            image_is_public = image.is_public if hasattr(image,'is_public') else image.get('visibility','') == 'public'
+            image_is_public = image.is_public if hasattr(image, 'is_public') else image.get('visibility', '') == 'public'
             if image and image_is_public == False:
                 celery_logger.info("Making Machine %s public" % image.id)
                 if not dry_run:
                     account_driver.image_manager.glance.images.update(image.id, visibility='public')
     # Set top-level application to public (This will make all versions and PMs public too!)
     application.private = False
-    celery_logger.info("Making Application %s:%s public" % (application.id,application.name))
+    celery_logger.info("Making Application %s:%s public" % (application.id, application.name))
     if not dry_run:
         application.save()
 
@@ -553,6 +561,7 @@ def enforce_allocation_overage(allocation_source_id):
         payload=new_payload)
     return user_instances_enforced
 
+
 @task(name="monitor_instance_allocations")
 def monitor_instance_allocations():
     """
@@ -562,7 +571,7 @@ def monitor_instance_allocations():
         celery_logger.info("Skipping the old method of monitoring instance allocations")
         return False
     for p in Provider.get_active():
-        monitor_instances_for.apply_async(args=[p.id], kwargs={'check_allocations':True})
+        monitor_instances_for.apply_async(args=[p.id], kwargs={'check_allocations': True})
 
 
 @task(name="monitor_instances_for")
@@ -632,6 +641,7 @@ def monitor_volumes():
     """
     for p in Provider.get_active():
         monitor_volumes_for.apply_async(args=[p.id])
+
 
 @task(name="monitor_volumes_for")
 def monitor_volumes_for(provider_id, print_logs=False):
@@ -756,7 +766,7 @@ def reset_provider_allocation(provider_id, default_allocation_id):
     default_allocation = Allocation.objects.get(id=default_allocation_id)
     this_provider = Q(identity__provider_id=provider_id)
     no_privilege = (Q(identity__created_by__is_staff=False) &
-                   Q(identity__created_by__is_superuser=False))
+                    Q(identity__created_by__is_superuser=False))
     expiring_allocation = ~Q(allocation__delta=-1)
     members = IdentityMembership.objects.filter(
         this_provider,
@@ -764,6 +774,7 @@ def reset_provider_allocation(provider_id, default_allocation_id):
         expiring_allocation)
     num_reset = members.update(allocation=default_allocation)
     return num_reset
+
 
 def _end_date_missing_database_machines(db_machines, cloud_machines, now=None, dry_run=False):
     if not now:
@@ -827,12 +838,12 @@ def _share_image(account_driver, cloud_machine, identity, members, dry_run=False
     # Skip tenant-names who are NOT in the DB, and tenants who are already included
     missing_tenant = identity.credential_set.filter(~Q(value__in=members), key='ex_tenant_name')
     if missing_tenant.count() == 0:
-        #celery_logger.debug("SKIPPED _ Image %s already shared with %s" % (cloud_machine.id, identity))
+        # celery_logger.debug("SKIPPED _ Image %s already shared with %s" % (cloud_machine.id, identity))
         return
     elif missing_tenant.count() > 1:
         raise Exception("Safety Check -- You should not be here")
     tenant_name = missing_tenant[0]
-    cloud_machine_is_public = cloud_machine.is_public if hasattr(cloud_machine,'is_public') else cloud_machine.get('visibility','') == 'public'
+    cloud_machine_is_public = cloud_machine.is_public if hasattr(cloud_machine, 'is_public') else cloud_machine.get('visibility', '') == 'public'
     if cloud_machine_is_public == True:
         celery_logger.info("Making Machine %s private" % cloud_machine.id)
         account_driver.image_manager.glance.images.update(cloud_machine.id, visibility='private')
@@ -850,8 +861,10 @@ def _share_image(account_driver, cloud_machine, identity, members, dry_run=False
                 pass
     return
 
+
 def _exit_stdout_logging(consolehandler):
     celery_logger.removeHandler(consolehandler)
+
 
 def _init_stdout_logging(logger=None):
     if not logger:

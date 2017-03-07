@@ -18,9 +18,9 @@ class IdentitySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:identity-detail',
     )
+
     def get_usage(self, identity):
         return identity.get_allocation_usage()
-
 
     class Meta:
         model = Identity

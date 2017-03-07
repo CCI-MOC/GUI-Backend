@@ -45,7 +45,7 @@ class AccountDriver(BaseAccountDriver):
         for key, val in export_data.iteritems():
             str_builder += "export %s=%s\n" % (key, val)
         if filename:
-            with open(filename,'w') as the_file:
+            with open(filename, 'w') as the_file:
                 the_file.write(str_builder)
         return str_builder
 
@@ -59,7 +59,7 @@ class AccountDriver(BaseAccountDriver):
         all_creds = identity.get_all_credentials()
         tenant_name = all_creds.get('ex_project_name', "<PROJECT MISSING>")
         username = all_creds.get('key', "<USERNAME MISSING>")
-        password = all_creds.get('secret',"<PASSWORD MISSING>")
+        password = all_creds.get('secret', "<PASSWORD MISSING>")
         project_domain = all_creds.get('project_domain', 'default')
         user_domain = all_creds.get('user_domain', 'default')
         region_name = all_creds.get('region_name', 'RegionOne')
@@ -67,7 +67,6 @@ class AccountDriver(BaseAccountDriver):
         is_v2 = '2' in keystone_auth_version
         is_v3 = '3' in keystone_auth_version
         version_prefix = "/v2.0" if is_v2 else '/v3'
-        #auth_url = all_creds.get('auth_url', '<AUTH URL MISSING>') + version_prefix
         admin_url = all_creds.get('admin_url', '<ADMIN URL MISSING>').replace('/v2.0/tokens', '') + version_prefix
         export_data = {
             "OS_REGION_NAME": region_name,
@@ -87,7 +86,7 @@ class AccountDriver(BaseAccountDriver):
 
     def clear_cache(self):
         self.admin_driver.provider.machineCls.invalidate_provider_cache(
-                self.admin_driver.provider)
+            self.admin_driver.provider)
         return self.admin_driver
 
     def _init_by_provider(self, provider, *args, **kwargs):
@@ -393,8 +392,8 @@ class AccountDriver(BaseAccountDriver):
         if self.identity_version == 2:
             nova = clients["nova"]
             keypair = nova.keypairs.create(
-                    keyname,
-                    public_key=public_key)
+                keyname,
+                public_key=public_key)
         else:
             osdk = clients["openstack_sdk"]
             keypair = osdk.compute.create_keypair(
@@ -408,7 +407,7 @@ class AccountDriver(BaseAccountDriver):
         shared_with = self.image_manager.shared_images_for(
             image_id=image_id)
 
-	if getattr(settings, "REPLICATION_PROVIDER_LOCATION"):
+        if getattr(settings, "REPLICATION_PROVIDER_LOCATION"):
             from core.models import Provider
             from service.driver import get_account_driver
             provider = Provider.objects.get(location=settings.REPLICATION_PROVIDER_LOCATION)
@@ -446,8 +445,6 @@ class AccountDriver(BaseAccountDriver):
             glance_image.id,
             project.id,
             'accepted')
-
-        
 
     def rebuild_security_groups(self, core_identity, rules_list=None):
         creds = self.parse_identity(core_identity)
@@ -598,12 +595,12 @@ class AccountDriver(BaseAccountDriver):
         interface = None
         if router and subnet:
             interface = self.network_manager.find_router_interface(
-            router[0], subnet[0])
+                router[0], subnet[0])
         network_resources = {
             'network': network,
             'subnet': subnet,
             'router': router,
-            #'gateway': gateway,
+            # 'gateway': gateway,
             'interface': interface,
         }
         return network_resources
@@ -622,7 +619,6 @@ class AccountDriver(BaseAccountDriver):
         #       when we already have "non-prefixed" resources might be tough.
         #       to avoid conflicts with production boxes, we will not implement
         #       the prefixing portion now.
-        #prefix_name = "atmo_%s" % (identity_creds["tenant_name"],)
         prefix_name = "%s" % (identity_creds["tenant_name"],)
         neutron = self.get_openstack_client(identity, 'neutron')
         dns_nameservers = self.dns_nameservers_for(identity)
@@ -665,7 +661,7 @@ class AccountDriver(BaseAccountDriver):
         """
         Create a unique password using 'username'
         """
-        #FIXME: Remove these lines when crypt_hashpass is no longer used.
+        # FIXME: Remove these lines when crypt_hashpass is no longer used.
         strategy = self.get_config('user', 'strategy', '')
         cloud_pass = self.get_config('user', 'secret', '')
 
@@ -679,7 +675,7 @@ class AccountDriver(BaseAccountDriver):
     def sha_v2_hashpass(self, username, cloud_pass):
         if not cloud_pass or len(cloud_pass) < 32:
             raise ValueError("Cloud config ['user']['secret'] is required and " +
-                    "must be of length 32 or more")
+                             "must be of length 32 or more")
 
         if not username:
             raise ValueError("Missing username, cannot create hash")
@@ -787,7 +783,7 @@ class AccountDriver(BaseAccountDriver):
         return self.image_manager.list_images(**kwargs)
 
     def list_all_snapshots(self, **kwargs):
-        return [img for img in self.list_all_images(**kwargs) if 'snapshot' in img.get('image_type','image').lower()]
+        return [img for img in self.list_all_images(**kwargs) if 'snapshot' in img.get('image_type', 'image').lower()]
 
     def get_project_by_id(self, project_id):
         return self.user_manager.get_project_by_id(project_id)
@@ -898,7 +894,7 @@ class AccountDriver(BaseAccountDriver):
                 kwargs.pop(domain_key)
             return kwargs
         if domain_key not in kwargs:
-            kwargs[domain_key] = default_domain # Set to default domain
+            kwargs[domain_key] = default_domain  # Set to default domain
 
         domain_name_or_id = kwargs.get(domain_key)
         domain = self.openstack_sdk.identity.find_domain(domain_name_or_id)
@@ -936,7 +932,7 @@ class AccountDriver(BaseAccountDriver):
             limits['ram'] = absolute_limits['maxTotalRAMSize']
         except:
             logger.exception("The method for 'reading' absolute limits has changed!")
-            
+
         return limits
 
     def get_user_limits(self, username, project_name):
@@ -945,13 +941,13 @@ class AccountDriver(BaseAccountDriver):
             user_id = self.get_user(username).id
         except:
             logger.exception("Failed to find user %s" % username)
-            raise ValueError ("Unknown user %s" % username)
+            raise ValueError("Unknown user %s" % username)
 
         try:
             project_id = self.get_project(project_name).id
         except:
             logger.exception("Failed to find project %s" % project_name)
-            raise ValueError ("Unknown project %s" % project_name)
+            raise ValueError("Unknown project %s" % project_name)
 
         user_limits = self._ex_list_quota_for_user(user_id, project_id)
 
@@ -973,12 +969,9 @@ class AccountDriver(BaseAccountDriver):
         """
         """
         server_resp = self.admin_driver._connection.connection.request('/os-quota-sets/%s?user_id=%s'
-                                             % (tenant_id, user_id))
+                                                                       % (tenant_id, user_id))
         quota_obj = server_resp.object
         return quota_obj
-        
-
-
 
     def list_usergroup_names(self):
         return [user.name for (user, project) in self.list_usergroups()]
@@ -999,7 +992,6 @@ class AccountDriver(BaseAccountDriver):
                     usergroups.append((user, group))
                     break
         return usergroups
-
 
     def _get_horizon_url(self, tenant_id):
         parsed_url = urlparse(self.provider_creds["auth_url"])
@@ -1065,6 +1057,7 @@ class AccountDriver(BaseAccountDriver):
             "nova": nova,
             "swift": swift
         }
+
     def get_openstack_sdk_client(self, all_creds):
         sdk_creds = self._build_sdk_creds(all_creds)
         openstack_sdk = _connect_to_openstack_sdk(**sdk_creds)
@@ -1076,15 +1069,15 @@ class AccountDriver(BaseAccountDriver):
             tenant_name = self.get_project_name_for(username)
         if not password:
             password = self.hashpass(tenant_name)
-        version = self.user_manager.keystone_version() 
+        version = self.user_manager.keystone_version()
         if version == 2:
             ex_version = '2.0_password'
         elif version == 3:
             ex_version = '3.x_password'
 
         osdk_creds = {
-            "auth_url": self.user_manager.nova.client.auth_url.replace('/v3','').replace('/v2.0',''),
-            "admin_url": self.user_manager.keystone._management_url.replace('/v2.0','').replace('/v3',''),
+            "auth_url": self.user_manager.nova.client.auth_url.replace('/v3', '').replace('/v2.0', ''),
+            "admin_url": self.user_manager.keystone._management_url.replace('/v2.0', '').replace('/v3', ''),
             "ex_force_auth_version": ex_version,
             "region_name": self.user_manager.nova.client.region_name,
             "username": username,
@@ -1193,7 +1186,7 @@ class AccountDriver(BaseAccountDriver):
             auth_version = 'v3'
         img_args['version'] = auth_version
 
-        img_args["auth_url"] = img_args.get('auth_url','').replace("/v2.0","").replace("/tokens", "").replace('/v3','')
+        img_args["auth_url"] = img_args.get('auth_url', '').replace("/v2.0", "").replace("/tokens", "").replace('/v3', '')
         if auth_url_prefix not in img_args['auth_url']:
             img_args["auth_url"] += auth_url_prefix
         return img_args
@@ -1267,7 +1260,7 @@ class AccountDriver(BaseAccountDriver):
         if 'user_domain_name' not in os_args:
             os_args['user_domain_name'] = 'default'
         if 'identity_api_version' not in os_args:
-            os_args['identity_api_version'] = 3 #NOTE: this is what we use to determine whether or not to make openstack_sdk
+            os_args['identity_api_version'] = 3  # NOTE: this is what we use to determine whether or not to make openstack_sdk
         # Removable args:
         os_args.pop("ex_force_auth_version", None)
         os_args.pop("admin_url", None)

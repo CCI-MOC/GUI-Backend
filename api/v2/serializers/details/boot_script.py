@@ -29,7 +29,7 @@ class BootScriptSerializer(serializers.HyperlinkedModelSerializer):
         elif 'url' in raw_type:
             ScriptType.objects.get_or_create(name="URL")
         return super(BootScriptSerializer, self).is_valid(
-                raise_exception=raise_exception)
+            raise_exception=raise_exception)
 
     def create(self, validated_data):
         if 'created_by' not in validated_data:

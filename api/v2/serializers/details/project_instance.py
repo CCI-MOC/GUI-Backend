@@ -40,7 +40,7 @@ class ProjectInstanceSerializer(serializers.HyperlinkedModelSerializer):
             UniqueTogetherValidator(
                 queryset=ProjectInstance.objects.all(),
                 fields=('project', 'instance')
-                ),
+            ),
         ]
         fields = (
             'id',

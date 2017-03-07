@@ -27,7 +27,7 @@ class ProjectApplicationSerializer(serializers.HyperlinkedModelSerializer):
             UniqueTogetherValidator(
                 queryset=ProjectApplication.objects.all(),
                 fields=('project', 'application')
-                ),
+            ),
         ]
         fields = (
             'id',
