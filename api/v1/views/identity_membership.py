@@ -7,6 +7,7 @@ from threepio import logger
 
 from core.models.group import Group
 from core.models import IdentityMembership as CoreIdentityMembership
+from core.models import Identity
 from core.query import only_current_provider
 
 from api import failure_response
@@ -89,16 +90,16 @@ class IdentityMembership(AuthAPIView):
             return failure_response(
                 status.HTTP_404_NOT_FOUND,
                 "Identity does not exist.")
-        if not identity.can_share(user):
+        if not identity.can_share(request.user):
             logger.error(
                 "User %s cannot remove sharing from identity %s. "
                 "This incident will be reported"
-                % (user, identity_uuid))
+                % (request.user, identity_uuid))
             return failure_response(
                 status.HTTP_401_UNAUTHORIZED,
                 "User %s cannot remove sharing from identity %s. "
                 "This incident will be reported"
-                % (user, identity_uuid))
+                % (request.user, identity_uuid))
         group = Group.objects.get(name=group_name)
         id_member = identity.unshare(group)
         serializer = IdentitySerializer(id_member.identity)

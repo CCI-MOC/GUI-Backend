@@ -5,6 +5,7 @@ from core.models import (
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from api.v2.serializers.fields.base import ReprSlugRelatedField
+from Atmosphere import settings
 
 
 class InstanceSerializer(serializers.ModelSerializer):

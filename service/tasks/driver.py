@@ -75,7 +75,7 @@ def complete_resize(driverCls, provider, identity, instance_alias,
         driver = get_driver(driverCls, provider, identity)
         instance = driver.get_instance(instance_alias)
         if not instance:
-            celery_logger.debug("Instance has been teminated: %s." % instance_id)
+            celery_logger.debug("Instance has been teminated: %s." % instance.id)
             return False, None
         result = instance_service.confirm_resize(
             driver, instance, core_provider_uuid, core_identity_uuid, user)
@@ -202,12 +202,11 @@ def current_openstack_identities():
     identities = Identity.objects.filter(
         provider__type__name__iexact='openstack',
         provider__active=True)
-    key_sorter = lambda ident: attrgetter(
-        ident.provider.type.name,
-        ident.created_by.username)
     identities = sorted(
         identities,
-        key=key_sorter)
+        key=lambda ident: attrgetter(
+            ident.provider.type.name,
+            ident.created_by.username))
     return identities
 
 
@@ -630,9 +629,9 @@ def print_chain(start_task, idx=0):
         return mystr
     # Recursive Case
     mystr = "%s" % signature
-    next_tasks = start_task.options['link']
-    for task in next_tasks:
-        mystr += print_chain(task, idx + 1)
+    task_list = start_task.options['link']
+    for next_task in task_list:
+        mystr += print_chain(next_task, idx + 1)
     return mystr
 
 
@@ -800,14 +799,13 @@ def deploy_boot_script(driverCls, provider, identity, instance_id,
             datetime.now())
     except LibcloudDeploymentError as exc:
         celery_logger.exception(exc)
-        full_script_output = _parse_script_output(new_script)
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "Boot Script reported a NonZeroDeployment:%s"\
-                % full_script_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "Boot Script reported a NonZeroDeployment: %s"
+                % sys.exec_info()[2]
+            )
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1021,14 +1019,13 @@ def deploy_ready_test(driverCls, provider, identity, instance_id,
         deploy_ready_test.retry(exc=exc)
     except LibcloudDeploymentError as exc:
         celery_logger.exception(exc)
-        full_deploy_output = _parse_steps_output(msd)
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "One or more Script(s) reported a NonZeroDeployment:%s"\
-                % full_deploy_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "One or more Script(s) reported a NonZeroDeployment: %s"
+                % sys.exc_info()[2]
+            )
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1078,14 +1075,13 @@ def _deploy_instance_for_user(driverCls, provider, identity, instance_id,
         _deploy_instance_for_user.retry(exc=exc)
     except LibcloudDeploymentError as exc:
         celery_logger.exception(exc)
-        full_deploy_output = _parse_steps_output(msd)
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "One or more Script(s) reported a NonZeroDeployment:%s"\
-                % full_deploy_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "One or more Script(s) reported a NonZeroDeployment: %s"
+                % sys.exc_info()[2]
+            )
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1135,14 +1131,13 @@ def _deploy_instance(driverCls, provider, identity, instance_id,
         _deploy_instance.retry(exc=exc)
     except LibcloudDeploymentError as exc:
         celery_logger.exception(exc)
-        full_deploy_output = _parse_steps_output(msd)
         if isinstance(exc.value, NonZeroDeploymentException):
             # The deployment was successful, but the return code on one or more
             # steps is bad. Log the exception and do NOT try again!
-            raise NonZeroDeploymentException,\
-                "One or more Script(s) reported a NonZeroDeployment:%s"\
-                % full_deploy_output,\
-                sys.exc_info()[2]
+            raise NonZeroDeploymentException(
+                "One or more Script(s) reported a NonZeroDeployment: %s"
+                % (sys.exc_info()[2])
+            )
         # TODO: Check if all exceptions thrown at this time
         # fall in this category, and possibly don't retry if
         # you hit the Exception block below this.
@@ -1150,23 +1145,6 @@ def _deploy_instance(driverCls, provider, identity, instance_id,
     except (BaseException, Exception) as exc:
         celery_logger.exception(exc)
         _deploy_instance.retry(exc=exc)
-
-
-def _parse_steps_output(msd):
-    output = ""
-    length = len(msd.steps)
-    for idx, script in enumerate(msd.steps):
-        output += _parse_script_output(script, idx, length)
-
-
-def _parse_script_output(script, idx=1, length=1):
-    if settings.DEBUG:
-        debug_out = "Script:%s" % script.script
-    output = "\nBootScript %d/%d: "\
-        "%sExitCode:%s Output:%s Error:%s" %\
-        (idx + 1, length, debug_out if settings.DEBUG else "",
-             script.exit_status, script.stdout, script.stderr)
-    return output
 
 
 @task(name="check_web_desktop_task",
