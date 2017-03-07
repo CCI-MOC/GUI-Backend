@@ -14,7 +14,8 @@ def main():
 
     # Check environment
     try:
-        import django; django.setup()
+        import django
+        django.setup()
         from core.models import Instance
     except:
         print "\n".join([

@@ -21,7 +21,6 @@ from api.v2.serializers.summaries import (
     ProviderSummarySerializer,
     ProviderMachineSummarySerializer,
     QuotaSummarySerializer,
-    UserSummarySerializer,
     StatusTypeSummarySerializer
 )
 from api.v2.serializers.fields import (

@@ -57,7 +57,7 @@ class VolumeSupportEmailViewSet(EmailViewSet):
 
         Returns a response.
         """
-        subject = "Volume Instance Report from %s" % user.username;
+        subject = "Volume Instance Report from %s" % user.username
         volume = Volume.objects \
             .filter(id=data["volume"])[0]
 
@@ -90,7 +90,7 @@ class InstanceSupportEmailViewSet(EmailViewSet):
 
         Returns a response.
         """
-        subject = "Atmosphere Instance Report from %s" % user.username;
+        subject = "Atmosphere Instance Report from %s" % user.username
         instance = Instance.objects.filter(id=data["instance"])[0]
         last_status = instance.instancestatushistory_set \
                               .order_by('start_date')  \

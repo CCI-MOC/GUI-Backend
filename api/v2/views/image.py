@@ -17,7 +17,9 @@ from core.models import Application as Image
 #
 #   https://code.djangoproject.com/ticket/27303#comment:26
 #
-from django.utils import six; from django.db import models; import operator
+from django.utils import six
+from django.db import models
+import operator
 
 
 def filter_queryset(self, request, queryset, view):

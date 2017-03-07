@@ -12,7 +12,8 @@ NOTES:This is the only script that will (re)assign router names to identities.
       After the routers have been re-distributed, you should be able to resume/start your instance without incident.
 """
 import argparse
-import django; django.setup()
+import django
+django.setup()
 from core.models import Provider, Identity
 from service.monitoring import _get_instance_owner_map
 
