@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase, APIRequestFactory, force_authentica
 from api.tests.factories import UserFactory, AnonymousUserFactory
 from api.v2.views import ReportingViewSet
 from core.models import AtmosphereUser
+from test_utilities.comparison_utils import dict_eq_
 
 
 def contains_user(username):

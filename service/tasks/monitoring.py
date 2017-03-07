@@ -493,25 +493,6 @@ def get_shared_identities(account_driver, cloud_machine, tenant_id_name_map):
     return identity_list
 
 
-def update_membership(application, shared_identities):
-    """
-    For machine in application/version:
-        Get list of current users
-        For "super-set" list of identities:
-            if identity exists on provider && identity NOT in current user list:
-                account_driver.add_user(identity.name)
-    """
-    db_identity_membership = identity.identity_memberships.all().distinct()
-    for db_identity_member in db_identity_membership:
-        # For each group who holds this identity:
-        #   grant them access to the now-private App, Version & Machine
-        db_group = db_identity_member.member
-        ApplicationMembership.objects.get_or_create(
-            application=application, group=db_group)
-        celery_logger.info("Added Application, Version, and Machine Membership to Group: %s" % (db_group,))
-    return application
-
-
 def make_machines_public(application, account_drivers={}, dry_run=False):
     """
     This method is called when the DB has marked the Machine/Application as PRIVATE
@@ -546,20 +527,6 @@ def monitor_instances():
     """
     for p in Provider.get_active():
         monitor_instances_for.apply_async(args=[p.id])
-
-
-@task(name="enforce_allocation_overage")
-def enforce_allocation_overage(allocation_source_id):
-    """
-    Update instances for each active provider.
-    """
-    allocation_source = AllocationSource.objects.get(source_id=allocation_source_id)
-    user_instances_enforced = allocation_source_overage_enforcement(allocation_source)
-    EventTable.create_event(
-        name="allocation_source_threshold_enforced",
-        entity_id=source.source_id,
-        payload=new_payload)
-    return user_instances_enforced
 
 
 @task(name="monitor_instance_allocations")
