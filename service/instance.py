@@ -235,7 +235,7 @@ def remove_ips(esh_driver, esh_instance, identity_uuid, update_meta=True):
     Returns: (floating_removed, fixed_removed)
     """
     from service.tasks.driver import update_metadata
-    core_identity = CoreIdentity.objects.get(uuid=identity_uuid)
+    core_identity = Identity.objects.get(uuid=core_identity_uuid)
     network_driver = _to_network_driver(core_identity)
     result = network_driver.disassociate_floating_ip(esh_instance.id)
     logger.info("Removed Floating IP for Instance %s - Result:%s"
@@ -368,6 +368,9 @@ def resize_and_redeploy(esh_driver, esh_instance, core_identity_uuid):
         esh_instance.id, esh_driver.__class__, esh_driver.provider,
         esh_driver.identity, "verify_resize")
     raise Exception("Programmer -- Fix this method based on the TODO")
+    # task_two = deploy_script.si(
+    #     esh_driver.__class__, esh_driver.provider,
+    #     esh_driver.identity, esh_instance.id, touch_script)
     task_three = complete_resize.si(
         esh_driver.__class__, esh_driver.provider,
         esh_driver.identity, esh_instance.id,
@@ -376,7 +379,8 @@ def resize_and_redeploy(esh_driver, esh_instance, core_identity_uuid):
         esh_driver.__class__, esh_driver.provider,
         esh_driver.identity, esh_instance.id, core_identity, redeploy=True)
     # Link em all together!
-    task_one.link(task_three)
+    task_one.link(task_two)
+    task_two.link(task_three)
     task_three.link(task_four)
     return task_one
 
@@ -943,9 +947,10 @@ def boot_volume_instance(
     """
     kwargs, userdata, network = _pre_launch_instance(
         driver, identity, size, name, **kwargs)
+    kwargs.update(prep_kwargs)
     instance, token, password = _boot_volume(
         driver, identity, copy_source, size,
-        name, userdata, network, **kwargs)
+        name, userdata, network, **prep_kwargs)
     return _complete_launch_instance(
         driver, identity, instance,
         identity.created_by, token, password, deploy=deploy)
@@ -958,6 +963,7 @@ def launch_volume_instance(driver, identity, volume, size, name,
     """
     kwargs, userdata, network = _pre_launch_instance(
         driver, identity, size, name, **kwargs)
+    kwargs.update(prep_kwargs)
     instance, token, password = _launch_volume(
         driver, identity, volume, size,
         name, userdata, network, **kwargs)
@@ -1000,7 +1006,7 @@ def _boot_volume(driver, identity, copy_source, size, name, userdata, network,
     return (new_instance, token, password)
 
 
-def _launch_volume(driver, identity, volume, size, name, userdata_content, network,
+def _launch_volume(driver, identity, volume, size, userdata_content, network,
                    password=None, token=None,
                    boot_index=0, shutdown=False, **kwargs):
     if not isinstance(driver.provider, OSProvider):
@@ -1041,7 +1047,7 @@ def _launch_machine(driver, identity, machine, size,
         logger.info("EUCA -- driver.create_instance EXTRAS:%s" % kwargs)
         esh_instance = driver\
             .create_instance(name=name, image=machine, size=size,
-                             ex_userdata=userdata_content, **kwargs)
+                             ex_userdata=userdata_contents, **kwargs)
     elif isinstance(driver.provider, AWSProvider):
         # TODO:Extra stuff needed for AWS provider here
         esh_instance = driver.deploy_instance(
@@ -1119,7 +1125,7 @@ def _generate_userdata_content(
                                          password,
                                          name,
                                          username, init_file)
-    return userdata_contents
+    return userdata_content
 
 
 def _complete_launch_instance(

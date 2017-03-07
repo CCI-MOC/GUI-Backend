@@ -251,12 +251,12 @@ def _execute_provider_action(identity, user, instance, action_name):
         elif action_name == 'Terminate':
             destroy_instance(user, identity.uuid, instance)
         else:
-            raise Exception("Encountered Unknown Action Named %s" % action_name)
+            raise Exception("Encountered Unknown Action Named %s" % action)
     except ObjectDoesNotExist:
         # This may be unreachable when null,blank = True
         logger.debug(
             "Provider %s - 'Do Nothing' for Over Allocation" %
-            identity.provider)
+            provider)
         return
 
 

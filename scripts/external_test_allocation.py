@@ -4,8 +4,7 @@ setup()
 from service.monitoring import get_allocation_result_for
 from core.models import Identity, Instance, AtmosphereUser
 from django.utils.timezone import timedelta, datetime
-import pytz
-import sys
+import pytz, sys
 from dateutil.parser import parse
 
 if len(sys.argv) < 3:

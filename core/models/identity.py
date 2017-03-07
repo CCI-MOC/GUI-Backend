@@ -94,7 +94,7 @@ class Identity(models.Model):
         shared = False
         leader_groups = django_user.group_set.get(leaders__in=[django_user])
         for group in leader_groups:
-            id_member = group.identity_memberships.get(identity=self)
+            id_member = g.identity_memberships.get(identity=self)
             if not id_member:
                 continue
             # ASSERT: You have SHARED access to the identity

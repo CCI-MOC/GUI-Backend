@@ -1,5 +1,4 @@
 import uuid
-import hashlib
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.core import validators
@@ -179,12 +178,13 @@ class AtmosphereUser(AbstractBaseUser, PermissionsMixin):
         return Volume.objects.filter(id__in=volume_db_ids)
 
     def email_hash(self):
-        m = hashlib.md5()
+        m = md5()
         m.update(self.user.email)
         return m.hexdigest()
 
-
 # Save Hooks Here:
+
+
 def get_or_create_user_profile(sender, instance, created, **kwargs):
     from core.models.profile import UserProfile
     prof = UserProfile.objects.get_or_create(user=instance)

@@ -204,7 +204,7 @@ def get_provider_info(provider_info={}):
         platform = require_input("Select a platform type ([1]/2): ", lambda answer: answer in ['1', '2'], default='1')
         if platform == '1':
             platform = KVM
-        elif platform == '2':
+        elif platform_choice == '2':
             platform = XEN
         provider_info['platform'] = platform
 

@@ -28,6 +28,7 @@ def listen_for_allocation_overage(sender, instance, raw, **kwargs):
         return None
     # Circular dep...
     from core.models import EventTable
+    from service.tasks.monitoring import enforce_allocation_overage
     payload = event.payload
     allocation_source_id = payload['allocation_source_id']
     new_compute_used = payload['compute_used']
@@ -35,6 +36,25 @@ def listen_for_allocation_overage(sender, instance, raw, **kwargs):
     prev_enforcement_event = EventTable.objects\
         .filter(name="allocation_source_threshold_enforced")\
         .filter(entity_id=allocation_source_id).last()
+    # test for previous event of 'allocation_source_threshold_enforced'
+    if prev_enforcement_event:
+        return
+    if new_compute_used == 0:
+        return
+    if not source:
+        return
+    if source.compute_allowed in [None, 0]:
+        return
+    # FIXME: Remove this line when you are ready to start enforcing 100% allocation:
+    return
+    current_percentage = int(100.0 * new_compute_used / source.compute_allowed) if source.compute_allowed != 0 else 0
+    if new_compute_used < source.compute_allowed:
+        return
+    enforce_allocation_overage.apply_async(args=(source.source_id,))
+    new_payload = {
+        "allocation_source_id": source.source_id,
+        "actual_value": current_percentage
+    }
     return
 
 

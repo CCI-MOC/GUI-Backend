@@ -28,7 +28,7 @@ class T(models.Model):
     @classmethod
     def get(cls):
         t = T.create()
-        with t.atomic():
+        with transaction.atomic():
             t.save()
         return t
 

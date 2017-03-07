@@ -5,7 +5,6 @@ from core.models import AtmosphereUser as User
 from core.models.identity import Identity as CoreIdentity
 from core.models.provider import Provider as CoreProvider
 from core.models.size import convert_esh_size
-from service.exceptions import ServiceException
 
 from threepio import logger
 

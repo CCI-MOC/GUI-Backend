@@ -69,7 +69,6 @@ def glance_update_machine_metadata(provider_machine, metadata={}):
     base_source = provider_machine.instance_source
     base_app = provider_machine.application
     identifier = base_source.identifier
-    provider = provider_machine.provider
     accounts = get_account_driver(provider)
     g_image = glance_image_for(base_source.provider.uuid, identifier)
     if not g_image:

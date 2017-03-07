@@ -54,7 +54,7 @@ def fix_images(provider, images=[]):
         except Application.DoesNotExist:
             print "ProviderMachine %s is an update to Application: %s" % (pm, current_application)
             print "Creating seperate Application for ProviderMachine %s" % pm
-            original_application = MachineRequest._create_new_application(mr, image_id)
+            original_application = _create_new_application(mr, image_id)
         # Update Application from MachineRequest information
         if mr:
             original_application = _update_application(
@@ -117,7 +117,7 @@ def find_kernel_ramdisk(accounts, machine_request):
             print " Fail! Old Image:%s ALSO missing kernel+ramdisk" % old_glance_image
         try:
             existing_parent_request = MachineRequest.objects.get(
-                new_machine__identifier=machine_request.parent_image_id)
+                new_machine__identifier=image_id)
         except MachineRequest.DoesNotExist:
             print "ALSO: MachineRequest for parent could not be found! FAIL!"
             return None, None

@@ -72,15 +72,15 @@ class Project(models.Model):
         from core.models import ProjectInstance, ProjectVolume
         if isinstance(related_obj, Instance):
             instance = related_obj
-            self._test_project_ownership(instance.created_by, related_obj)
+            self._test_project_ownership(instance.created_by)
             new_join = ProjectInstance(project=self, instance=instance)
         elif isinstance(related_obj, Volume):
             volume = related_obj
-            self._test_project_ownership(volume.instance_source.created_by, related_obj)
+            self._test_project_ownership(volume.instance_source.created_by)
             new_join = ProjectVolume(project=self, volume=volume)
         elif isinstance(related_obj, Application):
             application = related_obj
-            self._test_project_ownership(application.created_by, related_obj)
+            self._test_project_ownership(application.created_by)
             # TODO: Replace w/ new_join when 'through' is added
             self.applications.add(related_obj)
         else:
@@ -89,7 +89,7 @@ class Project(models.Model):
         new_join.save()
         return new_join
 
-    def _test_project_ownership(self, user, related_obj):
+    def _test_project_ownership(self, user):
         group = self.owner
         if user in group.user_set.all():
             return True
