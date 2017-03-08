@@ -56,9 +56,9 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid token passed")
         endpoint_catalog = catalog['token']['catalog']
         compute = None
-        for l in endpoint_catalog:
-            if l['type'] == 'compute':
-                compute = l
+        for listing in endpoint_catalog:
+            if listing['type'] == 'compute':
+                compute = listing
         if not compute:
             raise serializers.ValidationError("Cannot find compute endpoint catalog")
         # need to go through the endpoints to find the public one
