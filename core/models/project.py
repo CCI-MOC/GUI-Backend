@@ -36,6 +36,7 @@ class Project(models.Model):
                                      blank=True)
     links = models.ManyToManyField(ExternalLink, related_name="projects",
                                    blank=True)
+
     def active_volumes(self):
         return self.volumes.model.active_volumes.filter(
             pk__in=self.volumes.values_list("id"))
