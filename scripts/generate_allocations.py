@@ -102,5 +102,6 @@ def _get_results(idents):
             print "Calculating %s/%s.." % (idx, total)
     return results
 
+
 if __name__ == "__main__":
     main()

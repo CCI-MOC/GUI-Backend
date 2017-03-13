@@ -43,7 +43,7 @@ class MaintenanceRecord(models.Model):
         if request and 'username' in request.session:
             username = request.session['username']
         else:
-            #Username not in session - disable
+            # Username not in session - disable
             return True
         user = User.objects.get(username=username)
         if user.is_staff or user.is_superuser:

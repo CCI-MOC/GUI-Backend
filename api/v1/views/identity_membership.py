@@ -58,7 +58,7 @@ class IdentityMembershipList(AuthAPIView):
             # Group has access to the identity on an active,
             # currently-running provider
             identity = group.current_identities.get(
-                                            uuid=identity_uuid)
+                uuid=identity_uuid)
             # All other members of the identity are visible
             id_members = CoreIdentityMembership.objects.filter(
                 identity__uuid=identity_uuid)

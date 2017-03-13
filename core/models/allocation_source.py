@@ -4,6 +4,7 @@ from django.utils import timezone
 from threepio import logger
 from pprint import pprint
 
+
 class AllocationSource(models.Model):
     name = models.CharField(max_length=255)
     source_id = models.CharField(max_length=255)
@@ -47,10 +48,10 @@ class AllocationSource(models.Model):
             (self.name, self.source_id,
              self.compute_allowed)
 
-
     class Meta:
         db_table = 'allocation_source'
         app_label = 'core'
+
 
 class UserAllocationSource(models.Model):
     """
@@ -92,7 +93,7 @@ class UserAllocationSnapshot(models.Model):
     class Meta:
         db_table = 'user_allocation_snapshot'
         app_label = 'core'
-        unique_together = ('user','allocation_source')
+        unique_together = ('user', 'allocation_source')
 
 
 class InstanceAllocationSourceSnapshot(models.Model):
@@ -103,6 +104,7 @@ class InstanceAllocationSourceSnapshot(models.Model):
     def __unicode__(self):
         return "%s is using allocation %s" %\
             (self.instance, self.allocation_source)
+
     class Meta:
         db_table = 'instance_allocation_source_snapshot'
         app_label = 'core'
@@ -119,31 +121,33 @@ class AllocationSourceSnapshot(models.Model):
         return "%s (Used:%s, Burn Rate:%s Updated on:%s)" %\
             (self.allocation_source, self.compute_used,
              self.global_burn_rate, self.updated)
+
     class Meta:
         db_table = 'allocation_source_snapshot'
         app_label = 'core'
 
-def total_usage(username, start_date, allocation_source_name=None,end_date=None, burn_rate=False, email=None):
-    """ 
+
+def total_usage(username, start_date, allocation_source_name=None, end_date=None, burn_rate=False, email=None):
+    """
         This function outputs the total allocation usage in hours
     """
     from service.allocation_logic import create_report
     if not end_date:
         end_date = timezone.now()
-    user_allocation = create_report(start_date,end_date,user_id=username,allocation_source_name=allocation_source_name)
+    user_allocation = create_report(start_date, end_date, user_id=username, allocation_source_name=allocation_source_name)
     if email:
         return user_allocation
     total_allocation = 0.0
     for data in user_allocation:
-        #print data['instance_id'], data['allocation_source'], data['instance_status_start_date'], data['instance_status_end_date'], data['applicable_duration']
-        if not data['allocation_source']=='N/A':
+        # print data['instance_id'], data['allocation_source'], data['instance_status_start_date'], data['instance_status_end_date'], data['applicable_duration']
+        if not data['allocation_source'] == 'N/A':
             total_allocation += data['applicable_duration']
-    compute_used_total = round(total_allocation/3600.0,2)
+    compute_used_total = round(total_allocation / 3600.0, 2)
     if compute_used_total > 0:
         logger.info("Total usage for User %s with AllocationSource %s from %s-%s = %s"
                     % (username, allocation_source_name, start_date, end_date, compute_used_total))
     if burn_rate:
-        burn_rate_total = 0 if len(user_allocation)<1 else user_allocation[-1]['burn_rate']
+        burn_rate_total = 0 if len(user_allocation) < 1 else user_allocation[-1]['burn_rate']
         if burn_rate_total != 0:
             logger.info("User %s with AllocationSource %s Burn Rate: %s"
                         % (username, allocation_source_name, burn_rate_total))

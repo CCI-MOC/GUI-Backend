@@ -18,7 +18,7 @@ from rest_framework import serializers
 
 from rtwo.exceptions import LibcloudDeploymentError
 
-#TODO: Internalize exception into RTwo
+# TODO: Internalize exception into RTwo
 from rtwo.exceptions import NonZeroDeploymentException, NeutronBadRequest
 from neutronclient.common.exceptions import IpAddressGenerationFailureClient
 
@@ -41,7 +41,7 @@ from service.deploy import (
     build_host_name,
     ready_to_deploy as ansible_ready_to_deploy,
     run_utility_playbooks, execution_has_failures, execution_has_unreachable
-    )
+)
 from service.driver import get_driver, get_account_driver
 from service.exceptions import AnsibleDeployException
 from service.instance import _update_instance_metadata
@@ -351,7 +351,7 @@ def _is_instance_ready(driverCls, provider, identity,
             "Instance: %s: Status: (%s - %s) - Not Ready"
             % (instance.id, i_status, i_task))
     celery_logger.debug("Instance %s: Status: (%s - %s) - Ready"
-                 % (instance.id, i_status, i_task))
+                        % (instance.id, i_status, i_task))
     if return_id:
         return instance.id
     return True
@@ -408,7 +408,7 @@ def _remove_extra_floating_ips(driver, tenant_name):
     num_ips_removed = driver._clean_floating_ip()
     if num_ips_removed:
         celery_logger.debug("Removed %s ips from OpenStack Tenant %s"
-                     % (num_ips_removed, tenant_name))
+                            % (num_ips_removed, tenant_name))
     return num_ips_removed
 
 
@@ -512,14 +512,14 @@ def clear_empty_ips():
 def _send_instance_email(driverCls, provider, identity, instance_id):
     try:
         celery_logger.debug("_send_instance_email task started at %s." %
-                     datetime.now())
+                            datetime.now())
         driver = get_driver(driverCls, provider, identity)
         instance = driver.get_instance(instance_id)
         # Breakout if instance has been deleted at this point
         if not instance:
             celery_logger.debug("Instance has been teminated: %s." % instance_id)
             return
-        #FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
+        # FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
         username = identity.user.username
         profile = UserProfile.objects.get(user__username=username)
         if profile.send_emails:
@@ -534,13 +534,14 @@ def _send_instance_email(driverCls, provider, identity, instance_id):
                                 username)
         else:
             celery_logger.debug("User %s elected NOT to receive new instance emails"
-                         % username)
+                                % username)
 
         celery_logger.debug("_send_instance_email task finished at %s." %
-                     datetime.now())
+                            datetime.now())
     except (BaseException, Exception) as exc:
         celery_logger.warn(exc)
         _send_instance_email.retry(exc=exc)
+
 
 def _send_instance_email_with_failure(driverCls, provider, identity, instance_id, username, error_message):
     driver = get_driver(driverCls, provider, identity)
@@ -551,7 +552,7 @@ def _send_instance_email_with_failure(driverCls, provider, identity, instance_id
     if not instance:
         celery_logger.debug("Instance has been teminated: %s." % instance_id)
         return
-    #FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
+    # FIXME: this is not a safe way to retrieve username. this is not a CoreIdentity.
     send_instance_email(username,
                         instance.id,
                         instance.name,
@@ -562,6 +563,8 @@ def _send_instance_email_with_failure(driverCls, provider, identity, instance_id
                         user_failure_message=error_message)
 
 # Deploy and Destroy tasks
+
+
 @task(name="user_deploy_failed")
 def user_deploy_failed(
         task_uuid,
@@ -588,8 +591,8 @@ def user_deploy_failed(
         celery_logger.error(err_str)
         # Send deploy email
         _send_instance_email_with_failure(driverCls, provider, identity, instance_id, user.username, err_str)
-	# Update metadata on the instance
-        metadata={'tmp_status': 'user_deploy_error'}
+        # Update metadata on the instance
+        metadata = {'tmp_status': 'user_deploy_error'}
         update_metadata.s(driverCls, provider, identity, instance_id,
                           metadata, replace_metadata=False).apply_async()
         celery_logger.debug("user_deploy_failed task finished at %s." % datetime.now())
@@ -624,7 +627,7 @@ def deploy_failed(
         driver = get_driver(driverCls, provider, identity)
         instance = driver.get_instance(instance_id)
 
-        metadata={'tmp_status': 'deploy_error'}
+        metadata = {'tmp_status': 'deploy_error'}
         update_metadata.s(driverCls, provider, identity, instance.id,
                           metadata, replace_metadata=False).apply_async()
         # Send deploy email
@@ -812,18 +815,19 @@ def get_chain_from_build(
 
 
 def print_chain(start_task, idx=0):
-    #FINAL case
+    # FINAL case
     count = idx + 1
-    signature = "\n%s Task %s: %s(args=%s) " % ("  "*(idx), count, start_task.task, start_task.args)
+    signature = "\n%s Task %s: %s(args=%s) " % ("  " * (idx), count, start_task.task, start_task.args)
     if not start_task.options.get('link'):
-        mystr = '%s\n%s(FINAL TASK)' % (signature, "  "*(idx+1))
+        mystr = '%s\n%s(FINAL TASK)' % (signature, "  " * (idx + 1))
         return mystr
-    #Recursive Case
+    # Recursive Case
     mystr = "%s" % signature
     next_tasks = start_task.options['link']
     for task in next_tasks:
-        mystr += print_chain(task, idx+1)
+        mystr += print_chain(task, idx + 1)
     return mystr
+
 
 def get_chain_from_active_no_ip(
         driverCls, provider, identity, instance, core_identity,
@@ -920,7 +924,6 @@ def get_chain_from_active_with_ip(
     # JUST before we finish, check for boot_scripts_chain
     boot_chain_start, boot_chain_end = _get_boot_script_chain(
         driverCls, provider, identity, instance.id, core_identity)
-
 
     # (SUCCESS_)LINKS and ERROR_LINKS
     deploy_task.link_error(
@@ -1021,7 +1024,7 @@ def boot_script_failed(task_uuid, driverCls, provider, identity, instance_id,
         driver = get_driver(driverCls, provider, identity)
         instance = driver.get_instance(instance_id)
 
-        metadata={'tmp_status': 'boot_script_error'}
+        metadata = {'tmp_status': 'boot_script_error'}
         update_metadata.s(driverCls, provider, identity, instance.id,
                           metadata, replace_metadata=False).apply_async()
         # TODO: Send 'boot script failed' email
@@ -1042,9 +1045,9 @@ def _get_boot_script_chain(
     if not scripts:
         return first_task, end_task
     script_zero = deploy_boot_script.si(
-            driverCls, provider, identity, instance_id,
-            inject_env_script(core_identity.created_by.username),
-            "Inject ENV variables")
+        driverCls, provider, identity, instance_id,
+        inject_env_script(core_identity.created_by.username),
+        "Inject ENV variables")
     total = len(scripts)
     for idx, script in enumerate(scripts):
         # Name the status
@@ -1073,7 +1076,7 @@ def _get_boot_script_chain(
             script_zero.link_error(
                 boot_script_failed.s(driverCls, provider, identity, instance_id))
         else:
-	    # All other links: Add init to end_task (a deploy)
+            # All other links: Add init to end_task (a deploy)
             end_task.link(init_script_status_task)
 
         init_script_status_task.link(deploy_script_task)
@@ -1148,7 +1151,7 @@ def _deploy_ready_failed_email_test(
     if 'terminated' in str(exc_message):
         # Do NOTHING!
         pass
-    elif num_retries == int(task_class.max_retries/2):
+    elif num_retries == int(task_class.max_retries / 2):
         # Halfway point. Send preemptive failure
         send_preemptive_deploy_failed_email(core_instance, message)
     elif num_retries == task_class.max_retries - 1:
@@ -1234,8 +1237,8 @@ def deploy_ready_test(driverCls, provider, identity, instance_id,
       max_retries=3
       )
 def _deploy_instance_for_user(driverCls, provider, identity, instance_id,
-                    username=None, password=None, token=None, redeploy=False,
-                    **celery_task_args):
+                              username=None, password=None, token=None, redeploy=False,
+                              **celery_task_args):
     # Note: Splitting preperation (Of the MultiScriptDeployment) and execution
     # This makes it easier to output scripts for debugging of users.
     try:
@@ -1285,16 +1288,14 @@ def _deploy_instance_for_user(driverCls, provider, identity, instance_id,
         _deploy_instance_for_user.retry(exc=exc)
 
 
-
-
 @task(name="_deploy_instance",
       default_retry_delay=124,
       soft_time_limit=32 * 60,  # 32 minute hard-set time limit.
       max_retries=10
       )
 def _deploy_instance(driverCls, provider, identity, instance_id,
-                    username=None, password=None, token=None, redeploy=False,
-                    **celery_task_args):
+                     username=None, password=None, token=None, redeploy=False,
+                     **celery_task_args):
     # Note: Splitting preperation (Of the MultiScriptDeployment) and execution
     # This makes it easier to output scripts for debugging of users.
     try:
@@ -1365,7 +1366,7 @@ def _parse_script_output(script, idx=1, length=1):
       max_retries=2,
       default_retry_delay=15)
 def check_web_desktop_task(driverCls, provider, identity,
-                       instance_alias, *args, **kwargs):
+                           instance_alias, *args, **kwargs):
     """
     """
     try:
@@ -1378,7 +1379,7 @@ def check_web_desktop_task(driverCls, provider, identity,
         username = identity.user.username
         hostname = build_host_name(instance.id, instance.ip)
         playbooks = run_utility_playbooks(instance.ip, username, instance_alias, ["atmo_check_novnc.yml"], raise_exception=False)
-        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname)  else True
+        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname) else True
 
         # NOTE: Throws Instance.DoesNotExist
         core_instance = Instance.objects.get(provider_alias=instance_alias)
@@ -1390,7 +1391,7 @@ def check_web_desktop_task(driverCls, provider, identity,
         check_web_desktop_task.retry(exc=exc)
     except Instance.DoesNotExist:
         celery_logger.warn("check_web_desktop_task failed: Instance %s no longer exists"
-                    % instance_alias)
+                           % instance_alias)
     except (BaseException, Exception) as exc:
         celery_logger.exception(exc)
         check_web_desktop_task.retry(exc=exc)
@@ -1417,7 +1418,7 @@ def check_process_task(driverCls, provider, identity,
         # USE ANSIBLE
         username = identity.user.username
         playbooks = run_utility_playbooks(instance.ip, username, instance_alias, ["atmo_check_vnc.yml"], raise_exception=False)
-        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname)  else True
+        result = False if execution_has_failures(playbooks, hostname) or execution_has_unreachable(playbooks, hostname) else True
 
         # NOTE: Throws Instance.DoesNotExist
         core_instance = Instance.objects.get(provider_alias=instance_alias)
@@ -1429,7 +1430,7 @@ def check_process_task(driverCls, provider, identity,
         check_process_task.retry(exc=exc)
     except Instance.DoesNotExist:
         celery_logger.warn("check_process_task failed: Instance %s no longer exists"
-                    % instance_alias)
+                           % instance_alias)
     except (BaseException, Exception) as exc:
         celery_logger.exception(exc)
         check_process_task.retry(exc=exc)
@@ -1494,14 +1495,14 @@ def add_floating_ip(driverCls, provider, identity, core_identity_uuid,
             celery_logger.debug("Created new floating_ip_address - %s" % floating_ip)
         _update_status_log(instance, "Networking Complete")
         # TODO: Implement this as its own task, with the result from
-        #'floating_ip' passed in. Add it to the deploy_chain before deploy_to
+        #       'floating_ip' passed in. Add it to the deploy_chain before deploy_to
         hostname = build_host_name(instance.id, floating_ip)
         metadata_update = {
             'public-hostname': hostname,
             'public-ip': floating_ip
         }
         # NOTE: This is part of the temp change, should be removed when moving
-        # to vxlan
+        #       to vxlan
         instance_ports = network_driver.list_ports(
             device_id=instance.id)
         network = network_driver.tenant_networks()
@@ -1535,13 +1536,13 @@ def add_floating_ip(driverCls, provider, identity, core_identity_uuid,
         # Here we will attempt to 'fix' requests and put the 'add_floating_ip'
         # task back on the queue after we're done.
         celery_logger.exception("Neutron did not accept request - %s."
-            % bad_request.message)
+                                % bad_request.message)
         if 'no fixed ip' in bad_request.message.lower():
             fixed_ip = add_fixed_ip(driverCls, provider, identity,
                                     instance_alias)
             if fixed_ip:
                 celery_logger.debug("Fixed IP %s has been added to Instance %s."
-                             % (fixed_ip, instance_alias))
+                                    % (fixed_ip, instance_alias))
         # let the exception bubble-up for a retry..
         raise
     except (BaseException, Exception) as exc:
@@ -1560,11 +1561,11 @@ def add_floating_ip(driverCls, provider, identity, core_identity_uuid,
 def clean_empty_ips(driverCls, provider, identity, *args, **kwargs):
     try:
         celery_logger.debug("remove_floating_ip task started at %s." %
-                     datetime.now())
+                            datetime.now())
         driver = get_driver(driverCls, provider, identity)
         ips_cleaned = driver._clean_floating_ip()
         celery_logger.debug("remove_floating_ip task finished at %s." %
-                     datetime.now())
+                            datetime.now())
         return ips_cleaned
     except Exception as exc:
         celery_logger.warn(exc)
@@ -1579,11 +1580,11 @@ def clean_empty_ips(driverCls, provider, identity, *args, **kwargs):
 def add_os_project_network(core_identity, *args, **kwargs):
     try:
         celery_logger.debug("add_os_project_network task started at %s." %
-                     datetime.now())
+                            datetime.now())
         account_driver = get_account_driver(core_identity.provider)
         account_driver.create_network(core_identity)
         celery_logger.debug("add_os_project_network task finished at %s." %
-                     datetime.now())
+                            datetime.now())
     except Exception as exc:
         add_os_project_network.retry(exc=exc)
 
@@ -1602,7 +1603,7 @@ def remove_empty_network(
             celery_logger.debug("Eager task waiting 1 minute")
             time.sleep(60)
         celery_logger.debug("remove_empty_network task started at %s." %
-                     datetime.now())
+                            datetime.now())
 
         celery_logger.debug("CoreIdentity(uuid=%s)" % core_identity_uuid)
         core_identity = Identity.objects.get(uuid=core_identity_uuid)
@@ -1632,7 +1633,7 @@ def remove_empty_network(
                 instance_service.delete_security_group(core_identity)
             return True
         celery_logger.debug("remove_empty_network task finished at %s." %
-                     datetime.now())
+                            datetime.now())
         return False
     except Exception as exc:
         celery_logger.exception("Exception occurred project network is empty")
@@ -1642,10 +1643,10 @@ def remove_empty_network(
 def check_image_membership():
     try:
         celery_logger.debug("check_image_membership task started at %s." %
-                     datetime.now())
+                            datetime.now())
         update_membership()
         celery_logger.debug("check_image_membership task finished at %s." %
-                     datetime.now())
+                            datetime.now())
     except Exception as exc:
         celery_logger.exception('Error during check_image_membership task')
         check_image_membership.retry(exc=exc)
@@ -1661,7 +1662,7 @@ def update_membership_for(provider_uuid):
         acct_driver = get_account_driver(provider)
     else:
         celery_logger.warn("Encountered unknown ProviderType:%s, expected"
-                    " [Openstack] " % (provider.type.name,))
+                           " [Openstack] " % (provider.type.name,))
         return
     if not acct_driver:
         raise Exception("Encountered error creating driver -- check 'get_account_driver'")
@@ -1677,20 +1678,20 @@ def update_membership_for(provider_uuid):
         else:
             pm = pm[0]
         app_manager = pm.application_version.application.applicationmembership_set
-        if img.get('visibility','') is not 'public':
+        if img.get('visibility', '') is not 'public':
             # Lookup members
             image_members = acct_driver.image_manager.shared_images_for(
                 image_id=img.id)
             # add machine to each member
-            #(Who owns the cred:ex_project_name) in MachineMembership
+            # (Who owns the cred:ex_project_name) in MachineMembership
             # for member in image_members:
         else:
             members = app_manager.all()
             # if MachineMembership exists, remove it (No longer private)
             if members:
                 celery_logger.info("Application for PM:%s used to be private."
-                            " %s Users membership has been revoked. "
-                            % (img.id, len(members)))
+                                   " %s Users membership has been revoked. "
+                                   % (img.id, len(members)))
                 changes += len(members)
                 members.delete()
     celery_logger.info("Total Updates to machine membership:%s" % changes)
@@ -1731,8 +1732,8 @@ def update_links(instances):
             instance = Instance.objects.get(provider_alias=instance_id)
             if link_results['vnc'] != instance.vnc:
                 celery_logger.debug('Change Instance %s VNC %s-->%s' %
-                             (instance, instance.vnc,
-                              link_results['vnc']))
+                                    (instance, instance.vnc,
+                                     link_results['vnc']))
                 instance.vnc = link_results['vnc']
                 update = True
             if update:

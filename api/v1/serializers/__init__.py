@@ -9,9 +9,9 @@ from .boot_script_related_field import BootScriptRelatedField
 from .license_related_field import LicenseRelatedField
 from .account_serializer import AccountSerializer
 from .provider_serializer import (
-        ProviderSerializer, ProviderInstanceActionSerializer,
-        PATCH_ProviderInstanceActionSerializer,
-        POST_ProviderInstanceActionSerializer)
+    ProviderSerializer, ProviderInstanceActionSerializer,
+    PATCH_ProviderInstanceActionSerializer,
+    POST_ProviderInstanceActionSerializer)
 from .cleaned_identity_serializer import CleanedIdentitySerializer
 from .boot_script_serializer import BootScriptSerializer
 from .credential_serializer import CredentialDetailSerializer

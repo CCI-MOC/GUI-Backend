@@ -20,14 +20,13 @@ class Unauthorized(ServiceException):
         self.status_code = 401
         super(Unauthorized, self).__init__()
 
+
 class ActionNotAllowed(ServiceException):
 
     def __init__(self, message):
         self.message = message
         self.status_code = 409
         super(ActionNotAllowed, self).__init__()
-
-
 
 
 class InstanceDoesNotExist(ServiceException):
@@ -137,7 +136,7 @@ class VolumeAttachConflict(ServiceException):
     def __init__(self, instance_id=None, volume_id=None, message=None):
         if not message:
             message = "Volume %s is still attached to instance %s"\
-            % (volume_id, instance_id)
+                % (volume_id, instance_id)
         self.message = message
         super(VolumeAttachConflict, self).__init__()
 

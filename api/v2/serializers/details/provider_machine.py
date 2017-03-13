@@ -1,9 +1,9 @@
 from core.models import ProviderMachine
 from rest_framework import serializers
 from api.v2.serializers.summaries import (
-        ImageSummarySerializer, ImageVersionSummarySerializer,
-        ProviderSummarySerializer, UserSummarySerializer,
-        LicenseSummarySerializer)
+    ImageSummarySerializer, ImageVersionSummarySerializer,
+    ProviderSummarySerializer, UserSummarySerializer,
+    LicenseSummarySerializer)
 from api.v2.serializers.fields.base import InstanceSourceHyperlinkedIdentityField
 
 

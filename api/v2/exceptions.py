@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from threepio import logger, api_logger
 
+
 def failure_response(status, message):
     """
     Return a djangorestframework Response object given an error
@@ -36,5 +37,3 @@ def connection_failure(identity):
         status.HTTP_504_GATEWAY_TIMEOUT,
         'Multiple connection attempts to the provider %s have failed. Please'
         ' try again later.' % provider_id)
-
-

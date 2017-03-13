@@ -16,7 +16,7 @@ from allocation.models.strategy import \
 
 
 def _get_default_threshold():
-    if not getattr(settings, 'DEFAULT_ALLOCATION_THRESHOLD',None):
+    if not getattr(settings, 'DEFAULT_ALLOCATION_THRESHOLD', None):
         return -1
     return settings.DEFAULT_ALLOCATION_THRESHOLD
 

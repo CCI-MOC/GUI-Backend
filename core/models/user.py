@@ -140,7 +140,7 @@ class AtmosphereUser(AbstractBaseUser, PermissionsMixin):
     @classmethod
     def for_allocation_source(cls, allocation_source_id):
         from core.models import UserAllocationSource
-        user_ids = UserAllocationSource.objects.filter(allocation_source__source_id=allocation_source_id).values_list('user',flat=True)
+        user_ids = UserAllocationSource.objects.filter(allocation_source__source_id=allocation_source_id).values_list('user', flat=True)
         return AtmosphereUser.objects.filter(id__in=user_ids)
 
     def can_use_identity(self, identity_id):
@@ -151,8 +151,6 @@ class AtmosphereUser(AbstractBaseUser, PermissionsMixin):
         Set, save and return an active selected_identity for the user.
         """
         # Return previously selected identity
-        if settings.AUTO_CREATE_NEW_ACCOUNTS:
-            new_identities = create_new_accounts(self.username)
         if self.selected_identity and self.selected_identity.is_active(user=self):
             return self.selected_identity
         else:
@@ -192,6 +190,7 @@ def get_or_create_user_profile(sender, instance, created, **kwargs):
     prof = UserProfile.objects.get_or_create(user=instance)
     if prof[1] is True:
         logger.debug("Creating User Profile for %s" % instance)
+
 
 # Instantiate the hooks:
 post_save.connect(get_or_create_user_profile, sender=AtmosphereUser)
@@ -236,14 +235,8 @@ def get_default_identity(username, provider=None):
         from core.models.group import get_user_group
         group = get_user_group(username)
         if not group or not group.current_identities.all().count():
-            if settings.AUTO_CREATE_NEW_ACCOUNTS:
-                new_identities = create_new_accounts(username, selected_provider=provider)
-                if not new_identities:
-                    logger.error("%s has no identities. Functionality will be severely limited." % username)
-                    return None
-                return new_identities[0]
-            else:
-                return None
+            logger.info("Cannot find the group for user: %s" % username)
+            return None
         identities = group.current_identities.all()
         if provider:
             if provider.is_active():
@@ -260,7 +253,7 @@ def get_default_identity(username, provider=None):
             if not default_identity:
                 logger.error("User %s has no identities on Provider %s" % (username, default_provider))
                 raise Exception("No Identities on Provider %s for %s" % (default_provider, username))
-            #Passing
+            # Passing
             default_identity = default_identity[0]
             logger.debug(
                 "default_identity set to %s " %
@@ -270,39 +263,6 @@ def get_default_identity(username, provider=None):
         logger.exception(e)
         return None
 
-def create_new_accounts(username, selected_provider=None):
-    user = AtmosphereUser.objects.get(username=username)
-    if not user.is_valid():
-        raise InvalidUser("The account %s is not yet valid." % username)
-
-    providers = get_available_providers()
-    identities = []
-    if not providers:
-        logger.error("No currently active providers")
-        return identities
-    if selected_provider and selected_provider not in providers:
-        logger.error("The provider %s is NOT in the list of currently active providers. Account will not be created" % selected_provider)
-        return identities
-    for provider in providers:
-        new_identity = create_new_account_for(provider, user)
-        if new_identity:
-            identities.append(new_identity)
-    return identities
-
-def create_new_account_for(provider, user):
-    from service.driver import get_account_driver
-    existing_user_list = provider.identity_set.values_list('created_by__username', flat=True)
-    if user.username in existing_user_list:
-        logger.info("Accounts already exists on %s for %s" % (provider.location, user.username))
-        return None
-    try:
-        accounts = get_account_driver(provider)
-        logger.info("Create NEW account for %s" % user.username)
-        new_identity = accounts.create_account(user.username)
-        return new_identity
-    except:
-        logger.exception("Could *NOT* Create NEW account for %s" % user.username)
-        return None
 
 def get_available_providers():
     from core.models.provider import Provider

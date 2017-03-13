@@ -136,5 +136,6 @@ def total_launched(json_data):
         'total_uptime': total_uptime,
         'total_count': total_count}
 
+
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@ from api.v2.serializers.details import ImageVersionMembershipSerializer
 from api.v2.views.base import AuthViewSet
 from api.v2.views.mixins import MultipleFieldLookup
 
+
 class VersionFilter(django_filters.FilterSet):
     version_id = django_filters.MethodFilter(action='filter_by_uuid')
     created_by = django_filters.MethodFilter(action='filter_owner')
@@ -16,6 +17,7 @@ class VersionFilter(django_filters.FilterSet):
             Q(image_version__created_by__username=value) |
             Q(image_version__application__created_by__username=value)
         )
+
     def filter_by_uuid(self, queryset, value):
         # NOTE: Remove this *HACK* once django_filters supports UUID as PK fields
         return queryset.filter(image_version__id=value)
@@ -50,4 +52,3 @@ class ImageVersionMembershipViewSet(AuthViewSet):
         group = serializer.validated_data['group']
         add_membership(image_version, group)
         serializer.save()
-

@@ -11,6 +11,7 @@ from allocation.models import Instance as AllocInstance
 
 from threepio import logger
 
+
 class PythonAllocationStrategy(object):
 
     """
@@ -44,10 +45,10 @@ class PythonAllocationStrategy(object):
                 continue
             try:
                 allocation_instance = AllocInstance.from_core(
-                        inst,
-                        self.counting_behavior.start_date,
-                        limit_history=limit_history
-                    )
+                    inst,
+                    self.counting_behavior.start_date,
+                    limit_history=limit_history
+                )
                 if allocation_instance:
                     alloc_instances.append(allocation_instance)
             except Exception as exc:

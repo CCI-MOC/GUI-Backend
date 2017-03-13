@@ -31,6 +31,7 @@ def get_email_template():
     email_template = EmailTemplate.get_instance()
     return email_template
 
+
 def send_email_template(subject, template, recipients, sender,
                         context=None, cc=None, html=True, silent=False):
     """
@@ -142,8 +143,6 @@ def ldap_get_email_info(username):
     return (username, user_email, user_name)
 
 
-
-
 def lookupEmail(username):
     """
     Given a username, return the email address
@@ -154,6 +153,7 @@ def lookupEmail(username):
     lookup_fn = settings._get_method_for_string(lookup_fn_str, the_globals=globals())
     # Known function and args..
     return lookup_fn(username)
+
 
 def user_email_info(username):
     """
@@ -172,14 +172,15 @@ def request_data(request):
     user_agent, remote_ip, location, resolution = request_info(request)
     username, email, name = lookup_user(request)
     return {
-        "username" : username,
-        "email" : email,
-        "name" : name,
-        "resolution" : resolution,
-        "location" : location,
-        "remote_ip" : remote_ip,
-        "user_agent" : user_agent,
+        "username": username,
+        "email": email,
+        "name": name,
+        "resolution": resolution,
+        "location": location,
+        "remote_ip": remote_ip,
+        "user_agent": user_agent,
     }
+
 
 def request_info(request):
     """ Return commonly used information from a django request object.
@@ -200,8 +201,9 @@ def request_info(request):
             request.POST.get('resolution[screen][height]', '') + ")"
     return (user_agent, remote_ip, location, resolution)
 
+
 def email_admin(request, subject, message,
-        cc_user=True, request_tracker=False, html=False):
+                cc_user=True, request_tracker=False, html=False):
     """ Use request, subject and message to build and send a standard
         Atmosphere user request email. From an atmosphere user to admins.
         Returns True on success and False on failure.
@@ -249,11 +251,11 @@ def email_to_admin(
     else:
         cc = [email_address_str(username, user_email)]
     celery_task = send_email.si(subject, body,
-               from_email=email_address_str(username, user_email),
-               to=[email_address_str(sendto, sendto_email)],
-               cc=cc,
-               html=html)
-    celery_task.delay() # Task executes here
+                                from_email=email_address_str(username, user_email),
+                                to=[email_address_str(sendto, sendto_email)],
+                                cc=cc,
+                                html=html)
+    celery_task.delay()  # Task executes here
     return True
 
 
@@ -267,11 +269,11 @@ def email_from_admin(username, subject, message, html=False):
     if not user_email:
         user_email = "%s@%s" % (username, settings.DEFAULT_EMAIL_DOMAIN)
     celery_task = send_email.si(subject, message,
-               from_email=email_address_str(from_name, from_email),
-               to=[email_address_str(username, user_email)],
-               cc=[email_address_str(from_name, from_email)],
-               html=html)
-    celery_task.delay() # Task executes here
+                                from_email=email_address_str(from_name, from_email),
+                                to=[email_address_str(username, user_email)],
+                                cc=[email_address_str(from_name, from_email)],
+                                html=html)
+    celery_task.delay()  # Task executes here
     return True
 
 
@@ -385,12 +387,12 @@ def send_allocation_usage_email(user, allocation_source, threshold, usage_percen
     # For simplicity, force all values to integer.
     usage_percentage = int(usage_percentage)
     threshold = int(threshold)
-    total_used = int(allocation_source.compute_allowed * (usage_percentage/100.0))
+    total_used = int(allocation_source.compute_allowed * (usage_percentage / 100.0))
     if user_compute_used is None:
         user_compute_used = "N/A"
         user_compute_used_percent = "N/A"
     else:
-        user_compute_used_percent = int((user_compute_used/allocation_source.compute_allowed)*100)
+        user_compute_used_percent = int((user_compute_used / allocation_source.compute_allowed) * 100)
         user_compute_used = min(int(user_compute_used), total_used)  # This is a hack until the values can be more accurately calcualted in EventTable.
 
     allocation_source_total = int(allocation_source.compute_allowed)
@@ -566,6 +568,7 @@ def requestImaging(request, machine_request_id, auto_approve=False):
 
     return email_from_admin(user.username, subject, body)
 
+
 def resource_request_email(request, username, quota, reason, options={}):
     """
     Processes Resource request. Sends email to the admins
@@ -595,6 +598,7 @@ def resource_request_email(request, username, quota, reason, options={}):
     body = render_to_string("resource_request.html", context=context)
     success = email_admin(request, subject, body, cc_user=False, request_tracker=True)
     return {"email_sent": success}
+
 
 def support_email(request, subject, message):
     """

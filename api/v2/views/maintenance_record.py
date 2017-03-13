@@ -23,6 +23,7 @@ class MaintenanceRecordFilterBackend(filters.BaseFilterBackend):
             queryset = MaintenanceRecord.active()
         return queryset
 
+
 class MaintenanceRecordViewSet(AuthOptionalViewSet):
 
     """

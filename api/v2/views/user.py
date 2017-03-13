@@ -34,7 +34,7 @@ class MinLengthRequiredSearchFilter(SearchFilter):
                 query = Q(**{orm_lookups[idx]: search_value})
                 queryset = queryset.filter(query)
 
-        #NOTE: This code only executed if 'search=' in request.GET
+        # NOTE: This code only executed if 'search=' in request.GET
         for search_term in self.get_search_terms(request):
             # Skip 'search_term' if its  too small to evaluate.
             if len(search_term) < min_length:

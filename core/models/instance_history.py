@@ -51,7 +51,7 @@ class InstanceStatusHistory(models.Model):
             identity,
             limit_instances=limit_instances,
             limit_history=limit_history)
-        total_hours = result.total_runtime().total_seconds()/3600.0
+        total_hours = result.total_runtime().total_seconds() / 3600.0
         hours = round(total_hours, 2)
         return hours
 
@@ -75,7 +75,7 @@ class InstanceStatusHistory(models.Model):
         # In this situation, the instance is presumably still running.
         if not self.end_date:
             if self.instance.end_date:
-                raise ValueError("Whoa! The instance %s has been terminated, but status %s has not! This could leak time" % (self.instance,self))
+                raise ValueError("Whoa! The instance %s has been terminated, but status %s has not! This could leak time" % (self.instance, self))
             raise LookupError("This is the final state of instance %s" % self.instance)
         # In this situation, the end_date of the final history is an exact match to the instance's end-date.
         if self.instance.end_date == self.end_date:

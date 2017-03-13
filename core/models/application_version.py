@@ -15,6 +15,7 @@ from core.models.license import License
 from core.models.identity import Identity
 from core.query import only_current_source, only_current, only_current_machines_in_version
 
+
 class ApplicationVersion(models.Model):
 
     """
@@ -52,7 +53,7 @@ class ApplicationVersion(models.Model):
     installed_software = models.TextField(default='', null=True, blank=True)
     excluded_files = models.TextField(default='', null=True, blank=True)
     licenses = models.ManyToManyField(License,
-            blank=True, related_name='application_versions')
+                                      blank=True, related_name='application_versions')
     boot_scripts = models.ManyToManyField(
         "BootScript",
         blank=True,
@@ -70,11 +71,11 @@ class ApplicationVersion(models.Model):
     # NOTE: Created_by, created_by_ident will be == Application (EVERY TIME!)
     def __unicode__(self):
         return "%s - %s - %s" % (self.application.name,
-                               self.name,
-                               self.start_date if not self.end_date else "END-DATED")
+                                 self.name,
+                                 self.start_date if not self.end_date else "END-DATED")
 
     def get_threshold(self):
-        #TODO: except ObjectDoesNotExist to avoid core import loop
+        # TODO: except ObjectDoesNotExist to avoid core import loop
         from core.models.application import ApplicationThreshold
         try:
             return self.threshold
@@ -103,7 +104,7 @@ class ApplicationVersion(models.Model):
 
     def get_metrics(self, now_time=None):
         """
-        # TODO: Consider how this question could be answered 
+        # TODO: Consider how this question could be answered
         # with 'allocation' and the engine/routines used inside it..
         """
         if not now_time:
@@ -137,9 +138,9 @@ class ApplicationVersion(models.Model):
             }
             provider_map[key] = metrics
         return {
-                'domains' : user_domain_map,
-                'providers': provider_map
-                }
+            'domains': user_domain_map,
+            'providers': provider_map
+        }
 
     @classmethod
     def get_admin_image_versions(cls, user):
@@ -213,7 +214,7 @@ class ApplicationVersion(models.Model):
         self.created_by_identity = identity
         self.save()
         if propagate:
-           [m.instance_source.change_owner(identity, user) for m in self.machines.all()]
+            [m.instance_source.change_owner(identity, user) for m in self.machines.all()]
 
 
 class ApplicationVersionMembership(models.Model):
@@ -273,6 +274,7 @@ def get_app_version(app, version, created_by=None, created_by_identity=None):
             created_by_identity)
         return app_version
 
+
 def test_machine_in_version(app, version_name, new_machine_id):
     """
     Returns 'app_version' IF:
@@ -289,6 +291,7 @@ def test_machine_in_version(app, version_name, new_machine_id):
             return app_version
     except DoesNotExist:
         return None
+
 
 def create_unique_version(app, version, created_by, created_by_identity):
     while True:
@@ -360,11 +363,11 @@ def create_app_version(
         if change_log != None:
             app_version.change_log = change_log
         else:
-            app_version.change_log=last_version.change_log
+            app_version.change_log = last_version.change_log
         if allow_imaging != None:
             app_version.allow_imaging = allow_imaging
         else:
-            app_version.allow_imaging=last_version.allow_imaging
+            app_version.allow_imaging = last_version.allow_imaging
         app_version.save()
         transfer_licenses(last_version, app_version)
         transfer_membership(last_version, app_version)
@@ -394,6 +397,3 @@ def transfer_membership(parent_version, new_version):
                 image_version=new_version,
                 group=old_membership.group,
                 can_share=old_membership.can_share)
-
-
-

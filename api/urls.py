@@ -6,7 +6,6 @@ from django.conf.urls import url, include
 from api.v2 import urls as v2_urls
 from api.v1 import urls as v1_urls
 from api.status import urls as status_urls
-#from api import v1, v2, status
 
 urlpatterns = [
     url(r'', include(v2_urls, namespace="default")),

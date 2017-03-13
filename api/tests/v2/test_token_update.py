@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase, APIRequestFactory, force_authentica
 from api.tests.factories import UserFactory, AnonymousUserFactory, ProviderFactory
 from api.v2.views import TokenUpdateViewSet, IdentityViewSet, CredentialViewSet
 
+
 class TokenUpdateTests(APITestCase):
     def setUp(self):
         self.anonymous_user = AnonymousUserFactory()

@@ -12,4 +12,3 @@ class LicenseRelatedField(serializers.PrimaryKeyRelatedField):
         license = License.objects.get(pk=value.pk)
         serializer = LicenseSerializer(license, context=self.context)
         return serializer.data
-

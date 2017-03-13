@@ -43,4 +43,3 @@ class CredentialSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Credential
         fields = ('id', 'uuid', 'url', 'identity', 'key', 'value')
-

@@ -7,6 +7,7 @@ class StatusTypeSummarySerializer(serializers.HyperlinkedModelSerializer):
     url = UUIDHyperlinkedIdentityField(
         view_name='api:v2:statustype-detail',
     )
+
     class Meta:
         model = StatusType
         fields = (

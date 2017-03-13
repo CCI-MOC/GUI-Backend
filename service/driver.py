@@ -16,7 +16,7 @@ from rtwo.models.identity import AWSIdentity, EucaIdentity,\
 from rtwo.driver import AWSDriver, EucaDriver, OSDriver, MockDriver
 
 
-#TODO: Remove these ASAP -- Once we determine it will not be a problem.
+# TODO: Remove these ASAP -- Once we determine it will not be a problem.
 EucaProvider.set_meta()
 AWSProvider.set_meta()
 OSProvider.set_meta()

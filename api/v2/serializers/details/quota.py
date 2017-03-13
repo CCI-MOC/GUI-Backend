@@ -40,7 +40,7 @@ class QuotaSerializer(serializers.HyperlinkedModelSerializer):
             'snapshot_count', 'storage_count',
             # networking
             'floating_ip_count', 'port_count',
-            )
+        )
 
 
 class AllocationSerializer(serializers.HyperlinkedModelSerializer):

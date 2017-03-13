@@ -79,5 +79,6 @@ def instance_size_distribution(provider_id, days_ago, now_time, is_now=True):
             size_distribution[size.name] = count
     return size_distribution
 
+
 if __name__ == "__main__":
     main()
