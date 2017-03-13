@@ -279,6 +279,7 @@ def complete_resize(driverCls, provider, identity, instance_alias,
         celery_logger.exception(exc)
         complete_resize.retry(exc=exc)
 
+
 @task(name="wait_for_instance", max_retries=250, default_retry_delay=15)
 def wait_for_instance(
         instance_alias,
