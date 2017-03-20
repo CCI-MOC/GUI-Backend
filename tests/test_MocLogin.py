@@ -70,4 +70,3 @@ class MocLogin(TestCase):
         if user[0]:
             logger.info("Atm user: %s" % user[0].username)
             self.assertTrue(user[0].username=='friday-test')
-            
