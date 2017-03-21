@@ -11,8 +11,8 @@ from atmosphere import settings
 
 # This is assuming a clean database
 class MocLogin(TestCase):
-    username = 'friday-test'
-    password = 'friday-test'
+    username = settings.test.username
+    password = settings.test.password
 
     def setUp(self):
         # Need to set up the default provider
@@ -46,7 +46,7 @@ class MocLogin(TestCase):
         MOC.providercredential_set.get_or_create(key='network_name', value='public')
         MOC.providercredential_set.get_or_create(key='ex_force_auth_version', value='3.x_password')
         MOC.providercredential_set.get_or_create(key='admin_url', value='https://engage1.massopencloud.org:35357')
-        MOC.providercredential_set.get_or_create(key='auth_url', value='https://engage1.massopencloud.org:35357')
+        MOC.providercredential_set.get_or_create(key='auth_url', value=settings.AUTHENTICATION.KEYSTONE_SERVER)
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
 
     # This is not strictly a unit test, but it is a test of API
@@ -69,5 +69,5 @@ class MocLogin(TestCase):
         self.assertTrue(user)
         if user[0]:
             logger.info("Atm user: %s" % user[0].username)
-            self.assertTrue(user[0].username=='friday-test')
-            
+            self.assertTrue(user[0].username==self.username)
+
