@@ -11,8 +11,8 @@ from atmosphere import settings
 
 # This is assuming a clean database
 class MocLogin(TestCase):
-    username = 'friday-test'
-    password = 'friday-test'
+    username = test_settings['username']
+    password = test_settings['password']
 
     def setUp(self):
         # Need to set up the default provider
