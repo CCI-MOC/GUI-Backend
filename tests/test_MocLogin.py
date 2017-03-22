@@ -46,7 +46,7 @@ class MocLogin(TestCase):
         MOC.providercredential_set.get_or_create(key='network_name', value='public')
         MOC.providercredential_set.get_or_create(key='ex_force_auth_version', value='3.x_password')
         MOC.providercredential_set.get_or_create(key='admin_url', value='https://engage1.massopencloud.org:35357')
-        MOC.providercredential_set.get_or_create(key='auth_url', value='https://engage1.massopencloud.org:35357')
+        MOC.providercredential_set.get_or_create(key='auth_url', value=auth_settings['KEYSTONE_SERVER'])
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
 
     # Thses not strictly a unit test, but it is a test of API and the configuration
