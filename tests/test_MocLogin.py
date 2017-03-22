@@ -61,7 +61,7 @@ class MocLogin(TestCase):
             'auth_url': "localhost"
         }
         user = User.objects.filter(username=self.username)
-        if len(user)>0:
+        if len(user) > 0:
             logger.info("    username exists - non-empty database - test still OK")
         response = self.client.post("/auth", data)
         self.assertEquals(response.status_code, 201)
@@ -74,7 +74,7 @@ class MocLogin(TestCase):
         if user[0]:
             logger.info("    Atm user: %s" % user[0].username)
             logger.info("    PASSED")
-            self.assertTrue(user[0].username==self.username)
+            self.assertTrue(user[0].username == self.username)
         else:
             logger.info("    FAILED")
 
@@ -88,7 +88,7 @@ class MocLogin(TestCase):
         response = self.client.post("/auth", data)
         self.assertEquals(response.status_code, 400)
 
-    def test_openstack_failed_auth(self):
+    def test_openstack_failed_auth2(self):
         logger.info("Auth Test: test to see if Test.username and invalid Test.password fails to log into Openstack")
         data = {
             'username': test_settings['non_username'],
@@ -98,5 +98,4 @@ class MocLogin(TestCase):
         response = self.client.post("/auth", data)
         self.assertEquals(response.status_code, 400)
         user = User.objects.filter(username=data['username'])
-        self.assertEqual(len(user),0)
-
+        self.assertEqual(len(user), 0)
