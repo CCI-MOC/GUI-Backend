@@ -49,16 +49,20 @@ class MocLogin(TestCase):
         MOC.providercredential_set.get_or_create(key='auth_url', value='https://engage1.massopencloud.org:35357')
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
 
-    # This is not strictly a unit test, but it is a test of API
-    # @override_settings(AUTHENTICATION_BACKENDS=('django_cyverse_auth.authBackends.OpenstackLoginBackend',))
+    # Thses not strictly a unit test, but it is a test of API and the configuration
+    # Assume that auth_settings.authBackends.OpenstakLogin is being used.
+    # Since we are using the OpenstackLoginBackend, there is no need to override this setting
+
     def test_openstack_auth(self):
-        if 'django_cyverse_auth.authBackends.OpenstackLoginBackend' not in settings.AUTHENTICATION_BACKENDS:
-            self.skipTest('django_cyverse_auth.authBackends.OpenstackLoginBackend not in settings.AUTHENTICATION_BACKENDS')
+        logger.info("Auth Test: test to see if Test.username/Test.password can log into Openstack")
         data = {
             'username': self.username,
             'password': self.password,
             'auth_url': "localhost"
         }
+        user = User.objects.filter(username=self.username)
+        if len(user)>0:
+            logger.info("    username exists - non-empty database - test still OK")
         response = self.client.post("/auth", data)
         self.assertEquals(response.status_code, 201)
         resp_data = response.data
@@ -66,7 +70,33 @@ class MocLogin(TestCase):
         self.assertTrue(resp_data['token'] is not None)
         # should also include some database checks to ensure the account was created.
         user = User.objects.filter(username=self.username)
-        self.assertTrue(user)
+        self.assertTrue(user[0])
         if user[0]:
-            logger.info("Atm user: %s" % user[0].username)
-            self.assertTrue(user[0].username == 'friday-test')
+            logger.info("    Atm user: %s" % user[0].username)
+            logger.info("    PASSED")
+            self.assertTrue(user[0].username==self.username)
+        else:
+            logger.info("    FAILED")
+
+    def test_openstack_failed_auth(self):
+        logger.info("Auth Test: test to see if Test.username and invalid Test.password fails to log into Openstack")
+        data = {
+            'username': self.username,
+            'password': self.password + "_dummy",
+            'auth_url': "localhost"
+        }
+        response = self.client.post("/auth", data)
+        self.assertEquals(response.status_code, 400)
+
+    def test_openstack_failed_auth(self):
+        logger.info("Auth Test: test to see if Test.username and invalid Test.password fails to log into Openstack")
+        data = {
+            'username': test_settings['non_username'],
+            'password': self.password + "_dummy",
+            'auth_url': "localhost"
+        }
+        response = self.client.post("/auth", data)
+        self.assertEquals(response.status_code, 400)
+        user = User.objects.filter(username=data['username'])
+        self.assertEqual(len(user),0)
+
