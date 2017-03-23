@@ -7,6 +7,8 @@ from core.models import ProviderType
 from threepio import logger
 
 from atmosphere import settings
+from atmosphere.settings.local import AUTHENTICATION as auth_settings
+from atmosphere.settings.local import TEST as test_settings
 
 
 # This is assuming a clean database
