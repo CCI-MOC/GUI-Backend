@@ -24,28 +24,10 @@ class MocLogin(TestCase):
             virtualization=kvm,
             type=openstack_type,
             public=True)[0]
-        MOC.cloud_config = \
-            '{"user": {"domain": "default", "secret": "012345678901234567890123456789012",'\
-            ' "user_role_name": "_member_", "admin_role_name": "admin"},'\
-            ' "deploy": {"hostname_format": "%(one)s.%(two)s.%(three)s.%(four)s"},'\
-            ' "network": {"topology": "External Network Topology",'\
-            '     "dns_nameservers": ["8.8.8.8", "8.8.4.4"],'\
-            '     "default_security_rules": [["ICMP", -1, -1], ["UDP", 20, 20], ["TCP", 20, 21], ["TCP", 22, 23],'\
-            '         ["UDP", 22, 23], ["TCP", 80, 80], ["TCP", 115, 115], ["TCP", 389, 389],'\
-            '         ["UDP", 389, 389], ["TCP", 443, 443], ["TCP", 636, 636],'\
-            '         ["UDP", 636, 636], ["TCP", 1024, 4199], ["UDP", 1024, 4199],'\
-            '         ["TCP", 4201, 65535], ["UDP", 4201, 65535],'\
-            '         ["TCP", 4200, 4200, "128.196.0.0/16"], ["UDP", 4200, 4200, "128.196.0.0/16"],'\
-            '         ["TCP", 4200, 4200, "150.135.0.0/16"], ["UDP", 4200, 4200, "150.135.0.0/16"],'\
-            '         ["TCP", 4200, 4200, "149.165.238.0/24"], ["UDP", 4200, 4200, "149.165.238.0/24"],'\
-            '         ["TCP", 4200, 4200, "129.114.104.5/32"], ["UDP", 4200, 4200, "129.114.104.5/32"]]'\
-            '  }'\
-            '}'
         MOC.save()
         MOC.providercredential_set.get_or_create(key='region_name', value='MOC_Engage1')
         MOC.providercredential_set.get_or_create(key='network_name', value='public')
         MOC.providercredential_set.get_or_create(key='ex_force_auth_version', value='3.x_password')
-        MOC.providercredential_set.get_or_create(key='admin_url', value='https://engage1.massopencloud.org:35357')
         MOC.providercredential_set.get_or_create(key='auth_url', value=auth_settings['KEYSTONE_SERVER'])
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
 
