@@ -27,7 +27,7 @@ class MocLogin(TestCase):
             type=openstack_type,
             public=True)[0]
         MOC.save()
-        MOC.providercredential_set.get_or_create(key='region_name', value='MOC_Engage1')
+        MOC.providercredential_set.get_or_create(key='region_name', value='Region1')
         MOC.providercredential_set.get_or_create(key='network_name', value='public')
         MOC.providercredential_set.get_or_create(key='ex_force_auth_version', value='3.x_password')
         MOC.providercredential_set.get_or_create(key='auth_url', value=auth_settings['KEYSTONE_SERVER'])
