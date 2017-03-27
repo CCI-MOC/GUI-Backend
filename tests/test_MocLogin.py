@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, LiveServerTestCase
 from core.models import AtmosphereUser as User
 from core.models import Provider
 from core.models import PlatformType
@@ -10,13 +10,30 @@ from atmosphere import settings
 from atmosphere.settings.local import AUTHENTICATION as auth_settings
 from atmosphere.settings.local import TEST as test_settings
 
+import requests
+import requests_mock
+
+
+def keystone_callback(request,context):
+    logger.info("keystone_callback called:")
+    logger.info(repr(request))
+    if request.data[username]=='MockeyMock' and request.data[password]=='MockeyMock':
+        context.status_code = 200
+        context.txt = "-->some text"
+    else:
+        context.status_code = 400
+        context.text = "-->Bad username/password"
+    return context
+
 
 # This is assuming a clean database
-class MocLogin(TestCase):
-    username = test_settings['username']
-    password = test_settings['password']
+class MocLogin(LiveServerTestCase):
+#basic method, simulate keystone server.
+#run atmosphere 
+    username = 'MockeyMock'  
+    password = 'MockeyMock'  
 
-    def setUp(self):
+    def _setup_provider(self):
         # Need to set up the default provider
         kvm = PlatformType.objects.get_or_create(name='KVM')[0]
         openstack_type = ProviderType.objects.get_or_create(name='OpenStack')[0]
@@ -47,9 +64,21 @@ class MocLogin(TestCase):
         MOC.providercredential_set.get_or_create(key='region_name', value='MOC_Engage1')
         MOC.providercredential_set.get_or_create(key='network_name', value='public')
         MOC.providercredential_set.get_or_create(key='ex_force_auth_version', value='3.x_password')
-        MOC.providercredential_set.get_or_create(key='admin_url', value='https://engage1.massopencloud.org:35357')
         MOC.providercredential_set.get_or_create(key='auth_url', value=auth_settings['KEYSTONE_SERVER'])
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
+
+
+    def _setup_mock_keystone(self):
+        m = requests_mock.mock()
+        m.get(auth_settings['KEYSTONE_SERVER'] + '/v3/auth/tokens', text=keystone_callback)
+        m.post(auth_settings['KEYSTONE_SERVER'] + '/v3/auth/tokens', text=keystone_callback)
+        ret_str = requests.get(auth_settings['KEYSTONE_SERVER']+'/v3/auth/tokens')
+        logger.info("%s ret_str: " % (auth_settings['KEYSTONE_SERVER']+'/v3/auth/tokens'))
+        logger.info(repr(ret_str))
+ 
+    def setUp(self):
+        self._setup_provider()
+        self._setup_mock_keystone()
 
     # Thses not strictly a unit test, but it is a test of API and the configuration
     # Assume that auth_settings.authBackends.OpenstakLogin is being used.

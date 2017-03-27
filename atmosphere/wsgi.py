@@ -56,4 +56,5 @@ from django.core.wsgi import get_wsgi_application
 try:
     application = get_wsgi_application()
 except Exception as e:
+    logger.info("Atmosphere exception: %s" % e.message)
     raise
