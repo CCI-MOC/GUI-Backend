@@ -119,7 +119,7 @@ class MocLogin(LiveServerTestCase):
         response = self.client.post("/auth", data)
         self.assertEquals(response.status_code, 400)
 
-    def test_openstack_failed_auth(self):
+    def test_openstack_failed_auth2(self):
         logger.info("Auth Test: test to see if Test.username and invalid Test.password fails to log into Openstack")
         data = {
             'username': test_settings['non_username'],
