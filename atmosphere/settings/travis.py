@@ -167,8 +167,8 @@ AUTHENTICATION = {
 
 TEST = {
     'Testing: 1',
-    'username': 'friday-test',
-    'password': 'friday-test',
+    'username': 'MockeyMock',
+    'password': 'MockeyMock',
     'non_username':'dummy_user'  
 }
 
