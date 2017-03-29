@@ -14,18 +14,6 @@ import requests
 import requests_mock
 
 
-def keystone_callback(request,context):
-    logger.info("keystone_callback called:")
-    logger.info(repr(request))
-    if request.data[username]=='MockeyMock' and request.data[password]=='MockeyMock':
-        context.status_code = 200
-        context.txt = "-->some text"
-    else:
-        context.status_code = 400
-        context.text = "-->Bad username/password"
-    return context
-
-
 # This is assuming a clean database
 class MocLogin(LiveServerTestCase):
 #basic method, simulate keystone server.
@@ -68,17 +56,8 @@ class MocLogin(LiveServerTestCase):
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
 
 
-    def _setup_mock_keystone(self):
-        m = requests_mock.mock()
-        m.get(auth_settings['KEYSTONE_SERVER'] + '/v3/auth/tokens', text=keystone_callback)
-        m.post(auth_settings['KEYSTONE_SERVER'] + '/v3/auth/tokens', text=keystone_callback)
-        ret_str = requests.get(auth_settings['KEYSTONE_SERVER']+'/v3/auth/tokens')
-        logger.info("%s ret_str: " % (auth_settings['KEYSTONE_SERVER']+'/v3/auth/tokens'))
-        logger.info(repr(ret_str))
- 
     def setUp(self):
         self._setup_provider()
-        self._setup_mock_keystone()
 
     # Thses not strictly a unit test, but it is a test of API and the configuration
     # Assume that auth_settings.authBackends.OpenstakLogin is being used.
