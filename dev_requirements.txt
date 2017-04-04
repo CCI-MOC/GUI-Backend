@@ -4,7 +4,8 @@
 #
 #    pip-compile --output-file dev_requirements.txt dev_requirements.in
 #
-appdirs==1.4.0            # via setuptools
+-e git+https://github.com/xuhang57/billiard.git#egg=billiard
+appdirs==1.4.3            # via setuptools
 backports.shutil-get-terminal-size==1.0.0  # via ipython
 click==6.7                # via pip-tools
 colorama==0.3.3
