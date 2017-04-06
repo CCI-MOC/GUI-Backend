@@ -5,6 +5,7 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 -e git+https://github.com/xuhang57/billiard.git#egg=billiard
+-e git+https://github.com/CCI-MOC/django-cyverse-auth.git#egg=django-cyverse-auth
 amqp==2.1.4               # via kombu
 ansible==2.1              # via subspace
 anyjson==0.3.3            # via kombu
@@ -26,7 +27,6 @@ debtcollector==1.11.0     # via oslo.config, oslo.utils, python-keystoneclient, 
 defusedxml==0.4.1         # via djangorestframework-xml
 django-celery==3.1.16
 django-cors-headers==0.12.0
-django-cyverse-auth==1.0.9
 django-filter==0.13.0
 django-redis-cache==0.13.0
 django-sslserver==0.19

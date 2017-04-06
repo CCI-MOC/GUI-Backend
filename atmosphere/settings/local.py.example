@@ -140,7 +140,7 @@ AUTHENTICATION = {
     "LOGOUT_REDIRECT_URL": '/logout',
 
     #KEYSTONE -- Required for OpenstackLoginBackend
-    "KEYSTONE_SERVER": 'https://your-cloud.org:5000/v3',
+    "KEYSTONE_SERVER": 'http://localhost:8082/api/test/keystone',
     "KEYSTONE_DOMAIN_NAME": 'default',
 
     #CAS
@@ -169,6 +169,12 @@ AUTHENTICATION = {
     "GLOBUS_AUTH_URL": 'https://auth.globus.org/v2/oauth2/authorize',
 }
 
+TEST = {
+    'Testing': 1,
+    'username': 'MockeyMock',
+    'password': 'MockeyMock',
+    'non_username': 'dummy_user'
+}
 
 # MOCK - Uncomment these lines to allow one-user-only access. Useful for debug/development
 # ALWAYS_AUTH_USER = "test_user"

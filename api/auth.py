@@ -11,6 +11,8 @@ from api.permissions import ApiAuthIgnore
 from api.exceptions import invalid_auth
 from api.v1.serializers import TokenSerializer
 
+from core.models import AtmosphereUser as User
+
 
 class Authentication(APIView):
 
@@ -41,8 +43,22 @@ class Authentication(APIView):
         if project_name and auth_url:
             auth_kwargs['project_name'] = project_name
             auth_kwargs['auth_url'] = auth_url
+        # This authenticate will fail if the username is not in the database
+        # if the user doesn't exist - create the user
+        created_user = False
+        try:
+            u = User.objects.get(username=username)  # see if the account exists
+        except:
+            u = User()
+            u.username = username
+            u.password = "TrustNoOne"  # we don't use this for keystone
+            u.save()
+            created_user = True
+
         user = authenticate(**auth_kwargs)
         if not user:
+            if created_user:
+                u.delete()
             return invalid_auth("Username/Password combination was invalid")
 
         login(request, user)
