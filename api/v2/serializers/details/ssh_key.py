@@ -8,3 +8,4 @@ class SSHKeySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SSHKey
+        fields = "__all__"
