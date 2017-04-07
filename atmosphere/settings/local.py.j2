@@ -311,6 +311,19 @@ AUTHENTICATION_BACKENDS = (
     'django_cyverse_auth.authBackends.OpenstackLoginBackend',
     {% endif -%}
 )
+
+TEST = (
+    {% if TESTING %}
+    'Testing': 1,
+    {% else %}
+    'Testing': 0,
+    {% endif %}
+    'username': 'MockeyMock',
+    'password': 'MockeyMock',
+    'non_username': 'dummy_user',
+    'Projects': ['MockeyMock I', 'MockyMock II']
+)
+
 # UPDATE REST_FRAMEWORK
 REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = (
     'django_cyverse_auth.token.TokenAuthentication',  # Generic Tokens
