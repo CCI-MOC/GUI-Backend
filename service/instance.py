@@ -49,6 +49,8 @@ from service.exceptions import (
 
 from service.accounts.openstack_manager import AccountDriver as OSAccountDriver
 
+from neutronclient.common.exceptions import Conflict
+
 
 def _get_size(esh_driver, esh_instance):
     if isinstance(esh_instance.size, MockSize):
@@ -1319,57 +1321,111 @@ def user_delete_security_group(core_identity):
 
 def security_group_init(core_identity, max_attempts=3):
     has_secret = core_identity.get_credential('secret') is not None
+    security_group_name = core_identity.provider.get_config("network", "security_group_name", "MOC-GIJI")
     if has_secret:
         return admin_security_group_init(core_identity)
-    return user_security_group_init(core_identity)
+    return user_security_group_init(core_identity, security_group_name=security_group_name)
 
 
-def user_security_group_init(core_identity, security_group_name='default'):
-    # Rules can come from the provider _or_ from settings _otherwise_ empty-list
-    rules = core_identity.provider.get_config('network', 'default_security_rules', getattr(settings, 'DEFAULT_RULES', []))
-    driver = get_cached_driver(identity=core_identity)
-    lc_driver = driver._connection
-    security_group = get_or_create_security_group(lc_driver, security_group_name)
-    set_security_group_rules(lc_driver, security_group, rules)
+def user_security_group_init(core_identity, security_group_name):
+    network_driver = _to_network_driver(core_identity)
+    user_neutron = network_driver.neutron
+    extended_default_rules = _get_default_rules()
+    user_security_group_rules = core_identity.provider.get_config('network', 'user_security_rules', extended_default_rules)
+    security_group = get_or_create_security_group(security_group_name, user_neutron)
+    neutron_set_security_group_rules(security_group_name, user_security_group_rules, user_neutron)
     return security_group
 
 
-def set_security_group_rules(lc_driver, security_group, rules):
-    for rule_tuple in rules:
-        if len(rule_tuple) == 3:
-            (ip_protocol, from_port, to_port) = rule_tuple
-            cidr = None
-        elif len(rule_tuple) == 4:
-            (ip_protocol, from_port, to_port, cidr) = rule_tuple
-        else:
-            raise Exception("Invalid DEFAULT_RULES contain a rule, %s, which does not match the expected format" % rule_tuple)
+def _get_default_rules():
+    """
+    A basic set of rules:
+    - Allow access to Port 22 (SSH)
+    - Allow IPv4 Access
+    - Allow IPv6 Access
+    ---
+    This is an EXAMPLE of what should be in your PROVIDER's `cloud_config`:
+    cloud_config = {
+        ...
+        'network': {
+            ...
+            'user_security_rules': [
+                {... rule1 ...},
+                {... rule2 ...},
+                {... rule3 ...}
+            ],
+            ...
+        },
+        ...
+    }
+    NOTE: new rules are DICTs and not 4-tuples!
+    """
+    extended_default_rules = [
+        {
+            "direction": "ingress",
+            "ethertype": "IPv4",
+        },
+        {
+            "direction": "ingress",
+            "ethertype": "IPv6",
+        },
+        {
+            "direction": "ingress",
+            "port_range_min": 22,
+            "port_range_max": 22,
+            "protocol": "tcp",
+            "remote_ip_prefix": "0.0.0.0/0",
+        }
+    ]
+    return extended_default_rules
 
+
+def neutron_set_security_group_rules(security_group_name, security_group_rules_dict, user_neutron):
+    security_group = find_security_group(security_group_name, user_neutron)
+    security_group_id = security_group[u'id']
+    for sg_rule in security_group_rules_dict:
         try:
-            # attempt to find
-            rule_found = any(
-                sg_rule for sg_rule in security_group.rules
-                if sg_rule.ip_protocol == ip_protocol.lower() and
-                sg_rule.from_port == from_port and
-                sg_rule.to_port == to_port and
-                (not cidr or sg_rule.ip_range == cidr))
-            if rule_found:
-                continue
-            # Attempt to create
-            lc_driver.ex_create_security_group_rule(security_group, ip_protocol, from_port, to_port, cidr)
-        except BaseHTTPError as exc:
-            if "Security group rule already exists" in exc.message:
-                continue
-            raise
-    return security_group
+            rule_body = {"security_group_rule": {
+                "direction": sg_rule['direction'],
+                "port_range_min": sg_rule.get('port_range_min', None),
+                "ethertype": sg_rule.get("ethertype", "IPv4"),
+                "port_range_max": sg_rule.get('port_range_max', None),
+                "protocol": sg_rule.get("protocol", None),
+                "remote_group_id": security_group_id,
+                "security_group_id": security_group_id}
+            }
+            if 'remote_ip_prefix' in sg_rule:
+                rule_body['security_group_rule']['remote_ip_prefix'] = sg_rule['remote_ip_prefix']
+                rule_body['security_group_rule'].pop("remote_group_id")
+            user_neutron.create_security_group_rule(body=rule_body)
+        except Conflict:
+            pass
+    return True
 
 
-def get_or_create_security_group(lc_driver, security_group_name):
-    sgroup_list = lc_driver.ex_list_security_groups()
-    security_group = [sgroup for sgroup in sgroup_list if sgroup.name == security_group_name]
+def find_security_group(security_group_name, user_neutron):
+    security_groups = user_neutron.list_security_groups()[u'security_groups']
+    security_group = ''
+    for sg in security_groups:
+        if sg[u'name'] == security_group_name:
+            security_group = sg
+    if security_group != '':
+        return security_group
+    else:
+        raise Exception('Could not find any existing security group')
+
+
+def get_or_create_security_group(security_group_name, user_neutron):
+    security_group_list = user_neutron.list_security_groups()[u'security_groups']
+    security_group = [sgroup for sgroup in security_group_list if sgroup[u'name'] == security_group_name]
     if len(security_group) > 0:
         security_group = security_group[0]
     else:
-        security_group = lc_driver.ex_create_security_group(security_group_name, 'Security Group created by Atmosphere')
+        body = {"security_group": {
+            "name": security_group_name,
+            "description": "Security Group created by GIJI"}
+        }
+        security_group = user_neutron.create_security_group(body=body)
 
     if security_group is None:
         raise Exception("Could not find or create security group")
@@ -1451,6 +1507,28 @@ def _to_network_driver(core_identity):
             project_name, domain_name)
     network_driver = NetworkManager(session=sess)
     return network_driver
+
+
+def _to_user_driver(core_identity):
+    all_creds = core_identity.get_all_credentials()
+    project_name = core_identity.project_name()
+    domain_name = all_creds.get('domain_name', 'default')
+    auth_url = all_creds.get('auth_url')
+    if '/v' not in auth_url:
+        auth_url += '/v3'
+    if 'ex_force_auth_token' in all_creds:
+        auth_token = all_creds['ex_force_auth_token']
+        (auth, sess, token) = _token_to_keystone_scoped_project(
+            auth_url, auth_token,
+            project_name, domain_name)
+    else:
+        username = all_creds['key']
+        password = all_creds['secret']
+        (auth, sess, token) = _connect_to_keystone_v3(
+            auth_url, username, password,
+            project_name, domain_name)
+    user_driver = UserManager(session=sess)
+    return user_driver
 
 
 def user_network_init(core_identity):
