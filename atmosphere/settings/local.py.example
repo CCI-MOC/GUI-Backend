@@ -173,7 +173,8 @@ TEST = {
     'Testing': 1,
     'username': 'MockeyMock',
     'password': 'MockeyMock',
-    'non_username': 'dummy_user'
+    'non_username': 'dummy_user',
+    'Projects': ['MockeyMock I', 'MockeyMock II']
 }
 
 # MOCK - Uncomment these lines to allow one-user-only access. Useful for debug/development

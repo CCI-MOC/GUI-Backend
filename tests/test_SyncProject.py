@@ -1,5 +1,7 @@
 from django.test import TestCase, LiveServerTestCase
 from core.models import AtmosphereUser as User
+from core.models.group import Group, get_user_group
+from core.models import Project
 from core.models import Provider
 from core.models import PlatformType
 from core.models import ProviderType
@@ -11,12 +13,13 @@ from atmosphere.settings.local import AUTHENTICATION as auth_settings
 from atmosphere.settings.local import TEST as test_settings
 
 import requests
+import time
 
 
 # This is assuming a clean database
-class MocLogin(LiveServerTestCase):
-    username = 'MockeyMock'
-    password = 'MockeyMock'
+class SyncProject(LiveServerTestCase):
+    username = test_settings['username']
+    password = test_settings['password']
 
     def _setup_provider(self):
         # Need to set up the default provider
@@ -35,7 +38,14 @@ class MocLogin(LiveServerTestCase):
             ' "network": {"topology": "External Network Topology",'\
             '     "dns_nameservers": ["8.8.8.8", "8.8.4.4"],'\
             '     "default_security_rules": [["ICMP", -1, -1], ["UDP", 20, 20], ["TCP", 20, 21], ["TCP", 22, 23],'\
-            '         ["UDP", 22, 23], ["TCP", 80, 80], ["TCP", 443, 443]]'\
+            '         ["UDP", 22, 23], ["TCP", 80, 80], ["TCP", 115, 115], ["TCP", 389, 389],'\
+            '         ["UDP", 389, 389], ["TCP", 443, 443], ["TCP", 636, 636],'\
+            '         ["UDP", 636, 636], ["TCP", 1024, 4199], ["UDP", 1024, 4199],'\
+            '         ["TCP", 4201, 65535], ["UDP", 4201, 65535],'\
+            '         ["TCP", 4200, 4200, "128.196.0.0/16"], ["UDP", 4200, 4200, "128.196.0.0/16"],'\
+            '         ["TCP", 4200, 4200, "150.135.0.0/16"], ["UDP", 4200, 4200, "150.135.0.0/16"],'\
+            '         ["TCP", 4200, 4200, "149.165.238.0/24"], ["UDP", 4200, 4200, "149.165.238.0/24"],'\
+            '         ["TCP", 4200, 4200, "129.114.104.5/32"], ["UDP", 4200, 4200, "129.114.104.5/32"]]'\
             '  }'\
             '}'
         MOC.save()
@@ -51,7 +61,8 @@ class MocLogin(LiveServerTestCase):
     # Thses not strictly a unit test, but it is a test of API and the configuration
     # Assume that auth_settings.authBackends.OpenstakLogin is being used.
     # Since we are using the OpenstackLoginBackend, there is no need to override this setting
-    def test_openstack_auth(self):
+
+    def test_openstack_SyncProject(self):
         logger.info("Auth Test: test to see if Test.username/Test.password can log into Openstack")
         data = {
             'username': self.username,
@@ -71,29 +82,16 @@ class MocLogin(LiveServerTestCase):
         self.assertTrue(user[0])
         if user[0]:
             logger.info("    Atm user: %s" % user[0].username)
-            logger.info("    PASSED")
             self.assertTrue(user[0].username == self.username)
+            # now check for the projects
+            project = Project.objects.all()
+            logger.info("Project: ")
+            logger.info(repr(project))
+            logger.info("test projects: ")
+            logger.info(repr(test_settings.get('Projects', [])[0]))
+            logger.info(project[0].name in test_settings.get('Projects', []))
+            self.assertTrue(project[0].name in test_settings.get('Projects', []))
+            self.assertTrue(project[1].name in test_settings.get('Projects', []))
+            logger.info("    PASSED")
         else:
             logger.info("    FAILED")
-
-    def test_openstack_failed_auth(self):
-        logger.info("Auth Test: test to see if Test.username and invalid Test.password fails to log into Openstack")
-        data = {
-            'username': self.username,
-            'password': self.password + "_dummy",
-            'auth_url': "localhost"
-        }
-        response = self.client.post("/auth", data)
-        self.assertEquals(response.status_code, 400)
-
-    def test_openstack_failed_auth2(self):
-        logger.info("Auth Test: test to see if Test.username and invalid Test.password fails to log into Openstack")
-        data = {
-            'username': test_settings['non_username'],
-            'password': self.password + "_dummy",
-            'auth_url': "localhost"
-        }
-        response = self.client.post("/auth", data)
-        self.assertEquals(response.status_code, 400)
-        user = User.objects.filter(username=data['username'])
-        self.assertEqual(len(user), 0)

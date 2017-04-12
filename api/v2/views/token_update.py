@@ -4,6 +4,7 @@ from core.models import Identity
 
 from api.v2.serializers.post import TokenUpdateSerializer
 from api.v2.views.base import AuthViewSet
+from threepio import logger
 
 
 class TokenUpdateViewSet(AuthViewSet):

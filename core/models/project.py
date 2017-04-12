@@ -25,6 +25,8 @@ class Project(models.Model):
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(null=True, blank=True)
     owner = models.ForeignKey(Group, related_name="projects")
+    os_domain_id = models.CharField(max_length=512, blank=True, null=True)
+    os_project_id = models.CharField(max_length=512, blank=True, null=True)
     applications = models.ManyToManyField(Application, related_name="projects",
                                           blank=True)
     # FIXME: Instances + Volumes are *NOT* MANYTOMANY

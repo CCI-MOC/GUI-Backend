@@ -7,6 +7,7 @@ import requests
 import json
 from rest_framework import serializers
 from threepio import logger
+from service.tasks.sync_project import sync_atm_with_openstack
 
 
 class TokenUpdateSerializer(serializers.ModelSerializer):
@@ -27,6 +28,7 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, data):
+        logger.info("TokenUpdateSerializer::create start")
         identity = self._find_identity_match(data['provider'], data['username'])
         if not identity:
             identity = self._create_identity(data['provider'], data['username'], data['token'])
@@ -34,28 +36,13 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
         identity.update_credential(identity, 'ex_force_auth_token', data.get('token'), replace=True)
         auth_url = settings.AUTHENTICATION['KEYSTONE_SERVER'] + '/v3'
         identity.update_credential(identity, 'ex_force_auth_url', settings.AUTHENTICATION['KEYSTONE_SERVER'], replace=True)
-        response = requests.get(auth_url + '/auth/tokens', headers={'x-auth-token': data['token'], 'x-subject-token': data['token']})
-        try:
-            catalog = json.loads(response.text)
-            project = catalog['token']['project']
-        except KeyError:
-            raise serializers.ValidationError("Invalid token passed")
-        enpoint_catalog = catalog['token']['catalog']
-        comput = None
-        for listing in enpoint_catalog:
-            if listing['type'] == 'compute':
-                compute = listing
-        if not compute:
-            raise serializers.ValidationError("Cannot find compute endpoint catalog")
-        compute_url = None
-        for ep in compute['endpoints']:
-            if ep['interface'] == 'public':
-                compute_url = ep['url']
-        if not compute_url:
-            raise serializers.ValidationError("Cannot find a public compute endpoint url")
-        identity.update_credential(identity, 'ex_force_base_url', compute_url, replace=True)
-        identity.update_credential(identity, 'ex_tenant_name', str(project['name']))
-        identity.update_credential(identity, 'ex_project_name', str(project['name']))
+        # Note: sync_atm_with_openstack will add the following credentials
+        #       ex_force_base_url
+        #       ex_tenant_name
+        #       ex_project_name
+        #       cat_<os project id> - json catalog for each project
+        sync_atm_with_openstack(identity.id)  # .delay(identity.id) RBB celery doesn't play nice with travis
+        logger.info("TokenUpdateSerializer::create end")
         return identity
 
     def validate_token_with_driver(self, provider_uuid, username, project_name, new_token_key):
