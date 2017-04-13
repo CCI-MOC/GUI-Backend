@@ -13,8 +13,10 @@ from rtwo.models.provider import AWSProvider, AWSUSEastProvider,\
     AWSUSWestProvider, EucaProvider,\
     OSProvider, OSValhallaProvider
 from rtwo.driver import OSDriver
-from rtwo.drivers.common import _connect_to_keystone_v3, _token_to_keystone_scoped_project
-from rtwo.drivers.openstack_network import NetworkManager
+
+from service.driver import AtmosphereNetworkManager
+from service.mock import AtmosphereMockNetworkManager
+
 from rtwo.models.machine import Machine
 from rtwo.models.size import MockSize
 from rtwo.models.volume import Volume
@@ -102,7 +104,7 @@ def reboot_instance(
         _permission_to_act(identity_uuid, "Hard Reboot")
     size = _get_size(esh_driver, esh_instance)
     esh_driver.reboot_instance(esh_instance, reboot_type=reboot_type)
-    # reboots take very little time..
+# reboots take very little time..
     core_identity = CoreIdentity.objects.get(uuid=identity_uuid)
     redeploy_init(esh_driver, esh_instance, core_identity)
 
@@ -144,7 +146,7 @@ def confirm_resize(
 
 
 def stop_instance(esh_driver, esh_instance, provider_uuid, identity_uuid, user,
-                  reclaim_ip=True):
+                  reclaim_ip=False):
     """
 
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -167,7 +169,7 @@ def stop_instance(esh_driver, esh_instance, provider_uuid, identity_uuid, user,
 
 def start_instance(esh_driver, esh_instance,
                    provider_uuid, identity_uuid, user,
-                   restore_ip=True, update_meta=True):
+                   restore_ip=False, update_meta=True):
     """
 
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -208,7 +210,7 @@ def start_instance(esh_driver, esh_instance,
 
 def suspend_instance(esh_driver, esh_instance,
                      provider_uuid, identity_uuid,
-                     user, reclaim_ip=True):
+                     user, reclaim_ip=False):
     """
 
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -237,7 +239,7 @@ def remove_ips(esh_driver, esh_instance, identity_uuid, update_meta=True):
     Returns: (floating_removed, fixed_removed)
     """
     from service.tasks.driver import update_metadata
-    core_identity = Identity.objects.get(uuid=core_identity_uuid)
+    core_identity = CoreIdentity.objects.get(uuid=identity_uuid)
     network_driver = _to_network_driver(core_identity)
     result = network_driver.disassociate_floating_ip(esh_instance.id)
     logger.info("Removed Floating IP for Instance %s - Result:%s"
@@ -542,7 +544,7 @@ def test_capacity(hypervisor_hostname, instance, hypervisor_stats):
 
 def resume_instance(esh_driver, esh_instance,
                     provider_uuid, identity_uuid,
-                    user, restore_ip=True,
+                    user, restore_ip=False,
                     update_meta=True):
     """
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -574,7 +576,7 @@ def resume_instance(esh_driver, esh_instance,
 
 def shelve_instance(esh_driver, esh_instance,
                     provider_uuid, identity_uuid,
-                    user, reclaim_ip=True):
+                    user, reclaim_ip=False):
     """
 
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -601,7 +603,7 @@ def shelve_instance(esh_driver, esh_instance,
 
 def unshelve_instance(esh_driver, esh_instance,
                       provider_uuid, identity_uuid,
-                      user, restore_ip=True,
+                      user, restore_ip=False,
                       update_meta=True):
     """
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -626,7 +628,7 @@ def unshelve_instance(esh_driver, esh_instance,
 
 def offload_instance(esh_driver, esh_instance,
                      provider_uuid, identity_uuid,
-                     user, reclaim_ip=True):
+                     user, reclaim_ip=False):
     """
 
     raise OverQuotaError, OverAllocationError, LibcloudInvalidCredsError
@@ -793,6 +795,8 @@ def update_status(esh_driver, instance_id, provider_uuid, identity_uuid, user):
     else:
         esh_instance = esh_driver.get_instance(instance_id)
     if not esh_instance:
+        return None
+    if esh_driver.provider.location.lower() == 'mock':
         return None
     # Convert & Update based on new status change
     core_instance = convert_esh_instance(esh_driver,
@@ -1488,25 +1492,10 @@ def network_init(core_identity):
 
 
 def _to_network_driver(core_identity):
-    all_creds = core_identity.get_all_credentials()
-    project_name = core_identity.project_name()
-    domain_name = all_creds.get('domain_name', 'default')
-    auth_url = all_creds.get('auth_url')
-    if '/v' not in auth_url:  # Add /v3 if no version specified in auth_url
-        auth_url += '/v3'
-    if 'ex_force_auth_token' in all_creds:
-        auth_token = all_creds['ex_force_auth_token']
-        (auth, sess, token) = _token_to_keystone_scoped_project(
-            auth_url, auth_token,
-            project_name, domain_name)
-    else:
-        username = all_creds['key']
-        password = all_creds['secret']
-        (auth, sess, token) = _connect_to_keystone_v3(
-            auth_url, username, password,
-            project_name, domain_name)
-    network_driver = NetworkManager(session=sess)
-    return network_driver
+    provider_type = core_identity.provider.type.name
+    if provider_type == 'mock':
+        return AtmosphereMockNetworkManager.create_manager(core_identity)
+    return AtmosphereNetworkManager.create_manager(core_identity)
 
 
 def _to_user_driver(core_identity):
@@ -1535,6 +1524,9 @@ def user_network_init(core_identity):
     """
     WIP -- need to figure out how to do this within the scope of libcloud // OR using existing authtoken to connect with neutron.
     """
+    provider_type = core_identity.provider.type.name
+    if provider_type == 'mock':
+        return _to_network_driver(core_identity)
     username = core_identity.get_credential('key')
     if not username:
         username = core_identity.created_by.username
