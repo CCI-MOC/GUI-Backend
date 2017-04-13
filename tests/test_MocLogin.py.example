@@ -42,7 +42,7 @@ class MocLogin(LiveServerTestCase):
         MOC.providercredential_set.get_or_create(key='region_name', value='MOC_Engage1')
         MOC.providercredential_set.get_or_create(key='network_name', value='public')
         MOC.providercredential_set.get_or_create(key='ex_force_auth_version', value='3.x_password')
-        MOC.providercredential_set.get_or_create(key='auth_url', value=auth_settings['KEYSTONE_SERVER'])
+        MOC.providercredential_set.get_or_create(key='auth_url', value='http://localhost:8082/api/test/keystone')
         MOC.providercredential_set.get_or_create(key='public_routers', value='public_router')
 
     def setUp(self):
