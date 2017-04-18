@@ -13,7 +13,7 @@ from rtwo.models.provider import AWSProvider, AWSUSEastProvider,\
     AWSUSWestProvider, EucaProvider,\
     OSProvider, OSValhallaProvider
 from rtwo.driver import OSDriver
-
+from rtwo.drivers.openstack_user import UserManager
 from service.driver import AtmosphereNetworkManager
 from service.mock import AtmosphereMockNetworkManager
 
@@ -1510,13 +1510,25 @@ def _to_user_driver(core_identity):
         (auth, sess, token) = _token_to_keystone_scoped_project(
             auth_url, auth_token,
             project_name, domain_name)
+        user_driver = UserManager(auth_url=auth_url,
+                                  auth_token=auth_token,
+                                  project_name=project_name,
+                                  domain_name=domain_name,
+                                  session=sess,
+                                  version="v3")
     else:
         username = all_creds['key']
         password = all_creds['secret']
         (auth, sess, token) = _connect_to_keystone_v3(
             auth_url, username, password,
             project_name, domain_name)
-    user_driver = UserManager(session=sess)
+        user_driver = UserManager(auth_url=auth_url,
+                                  username=username,
+                                  password=password,
+                                  project_name=project_name,
+                                  domain_name=domain_name,
+                                  session=sess,
+                                  version="v3")
     return user_driver
 
 
