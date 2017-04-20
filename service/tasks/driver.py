@@ -1185,6 +1185,7 @@ def check_web_desktop_task(driverCls, provider, identity,
                            instance_alias, *args, **kwargs):
     """
     """
+    return True
     try:
         celery_logger.debug("check_web_desktop_task started at %s." % datetime.now())
         driver = get_driver(driverCls, provider, identity)
@@ -1245,6 +1246,7 @@ def check_process_task(driverCls, provider, identity,
     # and large, uncached images can have a build time.
     # TODO: This should be ansible-ized. Ansible will have already run by the time this process is started.
     """
+    return True
     try:
         celery_logger.debug("check_process_task started at %s." % datetime.now())
         driver = get_driver(driverCls, provider, identity)

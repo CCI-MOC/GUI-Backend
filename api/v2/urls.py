@@ -74,6 +74,8 @@ router.register(r'provider_types', views.ProviderTypeViewSet, base_name='provide
 router.register(r'quotas', views.QuotaViewSet)
 router.register(r'resource_requests', views.ResourceRequestViewSet)
 router.register(r'reporting', views.ReportingViewSet, base_name='reporting')
+router.register(r'sahara_cluster', views.ClusterViewSet, base_name='cluster')
+router.register(r'sahara_job', views.JobViewSet, base_name='job')
 router.register(r'sizes', views.SizeViewSet)
 router.register(r'status_types', views.StatusTypeViewSet)
 router.register(r'tags', views.TagViewSet)

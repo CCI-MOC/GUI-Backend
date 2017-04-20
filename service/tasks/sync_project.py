@@ -152,7 +152,7 @@ def sync_atm_with_openstack(identity_id):
     identity = Identity.objects.get(id=identity_id)
     atm_user = identity.created_by
     creds = identity.get_all_credentials()
-    auth_url = creds['ex_force_auth_url'] + '/v3'
+    auth_url = creds['ex_force_auth_url']
     auth_token = creds['ex_force_auth_token']
     (unscoped_token, unscoped_sess) = get_unscoped_token_and_session(auth_url,
                                                                      auth_token)

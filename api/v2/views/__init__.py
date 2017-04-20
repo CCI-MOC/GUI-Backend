@@ -49,3 +49,5 @@ from .user import UserViewSet
 from .volume import VolumeViewSet
 from .metric import MetricViewSet
 from .ssh_key import SSHKeyViewSet
+from .sahara_cluster import ClusterViewSet
+from .sahara_job import JobViewSet

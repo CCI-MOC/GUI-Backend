@@ -79,7 +79,7 @@ class Authentication(APIView):
         if 'django_cyverse_auth.authBackends.OpenstackLoginBackend' in settings.AUTHENTICATION_BACKENDS:
             # This was added as the token serializer is not always being called.
             # Currently there should only be one identity
-            prov = Provider.objects.all()
+            prov = [Provider.objects.get(public=True)]
             if len(prov) > 0:
                 identity_list = Identity.objects.filter(created_by=user, provider=prov[0])
                 if len(identity_list) > 0:
@@ -94,7 +94,7 @@ class Authentication(APIView):
                 if not token_key:
                     # The first time logging in yealds a null token
                     password_auth = v3.Password(
-                        auth_url=settings.AUTHENTICATION['KEYSTONE_SERVER'] + '/v3',
+                        auth_url=settings.AUTHENTICATION['KEYSTONE_SERVER'],
                         user_domain_name=settings.AUTHENTICATION['KEYSTONE_DOMAIN_NAME'],
                         username=username, password=password,
                         unscoped=True)
@@ -102,7 +102,7 @@ class Authentication(APIView):
                     token_key = ks_session.get_token()
 
                 identity.update_credential(identity, 'ex_force_auth_token', token_key, replace=True)
-                auth_url = settings.AUTHENTICATION['KEYSTONE_SERVER'] + '/v3'
+                auth_url = settings.AUTHENTICATION['KEYSTONE_SERVER']
                 identity.update_credential(identity, 'ex_force_auth_url', settings.AUTHENTICATION['KEYSTONE_SERVER'], replace=True)
                 sync_atm_with_openstack(identity.id)  # .delay(identity.id) RBB celery doesn't play nice with travis
 

@@ -52,5 +52,6 @@ from core.models.template import (EmailTemplate, HelpLink)
 from core.models.user import AtmosphereUser
 from core.models.volume import Volume
 from core.models.ssh_key import SSHKey
-
+from core.models.cluster import Cluster
+from core.models.job import Job
 from core.models.event_table import EventTable

@@ -34,7 +34,7 @@ class TokenUpdateSerializer(serializers.ModelSerializer):
             identity = self._create_identity(data['provider'], data['username'], data['token'])
         identity.update_credential(identity, 'key', data['username'], replace=True)
         identity.update_credential(identity, 'ex_force_auth_token', data.get('token'), replace=True)
-        auth_url = settings.AUTHENTICATION['KEYSTONE_SERVER'] + '/v3'
+        auth_url = settings.AUTHENTICATION['KEYSTONE_SERVER']
         identity.update_credential(identity, 'ex_force_auth_url', settings.AUTHENTICATION['KEYSTONE_SERVER'], replace=True)
         # Note: sync_atm_with_openstack will add the following credentials
         #       ex_force_base_url
