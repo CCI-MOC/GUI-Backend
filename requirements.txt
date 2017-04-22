@@ -120,6 +120,7 @@ uWSGI==2.0.13
 warlock==1.2.0            # via python-glanceclient
 wrapt==1.10.8             # via debtcollector, positional
 xlsxwriter==0.9.6
+vine==1.1.3
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools                # via ansible, cryptography, django-sslserver, python-ldap
